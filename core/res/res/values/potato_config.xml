@@ -51,9 +51,9 @@
     <integer name="config_buttonBrightnessSettingDefault">255</integer>
     <bool name="config_deviceHasVariableButtonBrightness">false</bool>
 
-	<!-- Any package that has one of the package names defined below will be prevented
+    <!-- Any package that has one of the package names defined below will be prevented
          from using specific sensors in order to stop battery drain -->
-	<string-array name="config_blockPackagesSensorDrain">
+    <string-array name="config_blockPackagesSensorDrain">
       <item>com.whatsapp</item>
       <item>com.gbwhatsapp</item>
       <item>com.yowhatsapp</item>
@@ -61,5 +61,19 @@
       <item>org.telegram.messenger</item>
       <item>org.telegram.messenger.plus</item>
       <item>com.snapchat.android</item>
-	</string-array>
+    </string-array>
+
+    <!-- The second metric to be used for antenna bar display for LTE
+         The metrics to be used for Antenna display is based on RSRP and either one of the
+           0. RSSNR
+           1. RSRQ
+    -->
+    <integer name="config_LTE_antenna_bar_quantity_metric">0</integer>
+    <!-- Flag indicating whether strict threshold is used, or lenient threshold is used,
+          when evaluating RSRP for LTE antenna bar display
+           0. Strict threshold
+           1. Lenient threshold
+    -->
+    <integer name="config_LTE_RSRP_threshold_type">0</integer>
+
 </resources>
