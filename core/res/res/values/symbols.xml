@@ -3419,4 +3419,7 @@
 
   <java-symbol type="string" name="config_misprovisionedDeviceModel" />
   <java-symbol type="string" name="config_misprovisionedBrandValue" />
+
+  <!-- Gesture Sensor -->
+  <java-symbol type="bool" name="config_enableGestureService" />
 </resources>

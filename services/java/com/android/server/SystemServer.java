@@ -1759,6 +1759,14 @@ public final class SystemServer {
         mSystemServiceManager.startBootPhase(SystemService.PHASE_DEVICE_SPECIFIC_SERVICES_READY);
         traceEnd();
 
+        if (gestureService != null) {
+            try {
+                gestureService.systemReady();
+            } catch (Throwable e) {
+                reportWtf("making Gesture Sensor Service ready", e);
+            }
+        }
+
         // These are needed to propagate to the runnable below.
         final NetworkManagementService networkManagementF = networkManagement;
         final NetworkStatsService networkStatsF = networkStats;
