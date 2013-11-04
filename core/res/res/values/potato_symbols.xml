@@ -122,4 +122,9 @@
   <java-symbol type="array" name="config_custom_globalActionsList" />
   <java-symbol type="color" name="power_menu_hot_reboot" />
 
+  <!-- ADB notification -->
+  <java-symbol type="string" name="adb_net_active_notification_title" />
+  <java-symbol type="string" name="adb_both_active_notification_title" />
+  <java-symbol type="string" name="adb_active_generic_notification_message" />
+
 </resources>
