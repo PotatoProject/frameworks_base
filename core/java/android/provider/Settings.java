@@ -3098,6 +3098,8 @@ public final class Settings {
 
             // At one time in System, then Global, but now back in Secure
             MOVED_TO_SECURE.add(Secure.INSTALL_NON_MARKET_APPS);
+
+            MOVED_TO_SECURE.add(Secure.VOLUME_LINK_NOTIFICATION);
         }
 
         @UnsupportedAppUsage
@@ -9107,15 +9109,19 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String QS_SHOW_AUTO_BRIGHTNESS =
-                "qs_show_auto_brightness";
+        public static final String QS_SHOW_AUTO_BRIGHTNESS = "qs_show_auto_brightness";
 
         /**
          * @hide
          */
-        public static final String QS_SHOW_BRIGHTNESS_SLIDER =
-                "qs_show_brightness_slider";
-
+        public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
+ 
+        /**
+         * Boolean value whether to link ringtone and notification volume
+         * @hide
+         */
+        public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
+        
         /**
          * Whether applications can fake a signature.
          * 1 = permit apps to fake signature
