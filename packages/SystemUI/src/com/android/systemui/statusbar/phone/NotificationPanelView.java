@@ -27,10 +27,12 @@ import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.app.Fragment;
 import android.app.StatusBarManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -39,12 +41,16 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Region;
+import android.net.Uri;
 import android.hardware.biometrics.BiometricSourceType;
 import android.os.PowerManager;
+import android.os.Handler;
+import android.provider.Settings;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.MathUtils;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -431,6 +437,13 @@ public class NotificationPanelView extends PanelView implements
     private boolean mAllowExpandForSmallExpansion;
     private Runnable mExpandAfterLayoutRunnable;
 
+    private Handler mHandler = new Handler();
+    private SettingsObserver mSettingsObserver;
+
+    private boolean mDoubleTapToSleepEnabled;
+    private int mStatusBarHeaderHeight;
+    private GestureDetector mDoubleTapGesture;
+
     /**
      * If face auth with bypass is running for the first time after you turn on the screen.
      * (From aod or screen off)
@@ -482,6 +495,18 @@ public class NotificationPanelView extends PanelView implements
         });
         mBottomAreaShadeAlphaAnimator.setDuration(160);
         mBottomAreaShadeAlphaAnimator.setInterpolator(Interpolators.ALPHA_OUT);
+
+        mSettingsObserver = new SettingsObserver(mHandler);
+        mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                if (pm != null) {
+                    pm.goToSleep(e.getEventTime());
+                }
+                return true;
+            }
+        });
         mLockscreenDoubleTapToSleep = new GestureDetector(context,
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -597,6 +622,8 @@ public class NotificationPanelView extends PanelView implements
                 com.android.internal.R.dimen.status_bar_height);
         mHeadsUpInset = statusbarHeight + getResources().getDimensionPixelSize(
                 R.dimen.heads_up_status_bar_padding);
+        mStatusBarHeaderHeight = getResources().getDimensionPixelSize(
+		R.dimen.status_bar_height);
     }
 
     /**
@@ -778,6 +805,16 @@ public class NotificationPanelView extends PanelView implements
     private void setIsFullWidth(boolean isFullWidth) {
         mIsFullWidth = isFullWidth;
         mNotificationStackScroller.setIsFullWidth(isFullWidth);
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        mSettingsObserver.observe();
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        mSettingsObserver.unobserve();
     }
 
     private void startQsSizeChangeAnimation(int oldHeight, final int newHeight) {
@@ -1240,6 +1277,12 @@ public class NotificationPanelView extends PanelView implements
         // pull down QS or expand the shade.
         if (mStatusBar.isBouncerShowingScrimmed()) {
             return false;
+        }
+
+        if (mDoubleTapToSleepEnabled
+                && mBarState == StatusBarState.KEYGUARD
+                && event.getY() < mStatusBarHeaderHeight) {
+            mDoubleTapGesture.onTouchEvent(event);
         }
 
         // Make sure the next touch won't the blocked after the current ends.
@@ -3205,6 +3248,40 @@ public class NotificationPanelView extends PanelView implements
 
     private void setGroupManager(NotificationGroupManager groupManager) {
         mGroupManager = groupManager;
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
+            update();
+        }
+
+        void unobserve() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.unregisterContentObserver(this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            update();
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            update();
+        }
+
+        public void update() {
+            ContentResolver resolver = mContext.getContentResolver();
+            mDoubleTapToSleepEnabled = Settings.System.getInt(
+                    resolver, Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 0) == 1;
+        }
     }
 
     public boolean hideStatusBarIconsWhenExpanded() {
