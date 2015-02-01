@@ -78,4 +78,6 @@
     <!-- Ambient Display Pixel-Like string -->
     <string name="ambientmusic_songinfo">%s by %s</string>
 
+    <!-- USB tethering QS Tile -->
+    <string name="quick_settings_usb_tether_label">USB tethering</string>
 </resources>
