@@ -102,4 +102,6 @@
     <string name="menu_ime_always_show">Menu</string>
     <string name="search">Search</string>
 
+    <!-- USB tethering QS Tile -->
+    <string name="quick_settings_usb_tether_label">USB tethering</string>
 </resources>
