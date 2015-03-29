@@ -4485,6 +4485,13 @@ public final class Settings {
         private static final Validator BATTERY_LIGHT_REALLYFULL_COLOR_VALIDATOR =
                 ANY_STRING_VALIDATOR;
 
+         /**
+          * Screenshod sound enable, This is the noise made when taking a screesnhot
+          * Defaults to 1 - sounds enabled
+          * @hide
+          */
+         public static final String SCREENSHOT_SHUTTER_SOUND = "screenshot_shutter_sound";
+
         /**
          * Wheter to show network traffic indicator in statusbar
          * @hide
