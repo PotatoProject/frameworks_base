@@ -1725,7 +1725,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         Drawable artworkDrawable = null;
-        if (mediaMetadata != null) {
+        if (mediaMetadata != null && (Settings.System.getIntForUser(mContext.getContentResolver(),
+            Settings.System.LOCKSCREEN_MEDIA_METADATA, 1, UserHandle.USER_CURRENT) == 1)) {
             Bitmap artworkBitmap = mediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ART);
             if (artworkBitmap == null) {
                 artworkBitmap = mediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
@@ -5082,6 +5083,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setIconTintOverlay(shouldUseDarkTheme());
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_ALBUM_ART_FILTER))) {
                 updateLockscreenFilter();
+            }
         }
 
         @Override
