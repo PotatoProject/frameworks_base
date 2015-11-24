@@ -80,4 +80,7 @@
 
     <!-- Notification sender text color -->
     <color name="sender_text_color">@android:color/black</color>
+
+    <!-- App permission tint -->
+    <color name="app_permission_icon_tint">@android:color/black</color>
 </resources>
