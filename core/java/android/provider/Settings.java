@@ -4555,6 +4555,16 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * whether to enable or disable vibration on succesful fingerprint auth
+         *
+         * @hide
+         */
+        public static final String FINGERPRINT_SUCCESS_VIB = "fingerprint_success_vib";
+        /** @hide */
+        private static final Validator FINGERPRINT_SUCCESS_VIB_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Transparency of the qs panel
          * @hide
          */
@@ -4695,6 +4705,7 @@ public final class Settings {
             QS_PANEL_BG_USE_WALL,
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
+            FINGERPRINT_SUCCESS_VIB,
         };
 
         /**
@@ -4826,6 +4837,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_WALL);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
+            PRIVATE_SETTINGS.add(FINGERPRINT_SUCCESS_VIB);
         }
 
         /**
@@ -4931,6 +4943,7 @@ public final class Settings {
             VALIDATORS.put(QS_PANEL_BG_USE_FW, QS_PANEL_BG_USE_FW_VALIDATOR);
             VALIDATORS.put(CUSTOM_BACK_GESTURE_HEIGHT, CUSTOM_BACK_GESTURE_HEIGHT_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
+            VALIDATORS.put(FINGERPRINT_SUCCESS_VIB, FINGERPRINT_SUCCESS_VIB_VALIDATOR);
         }
 
         /**
