@@ -4553,16 +4553,21 @@ public final class Settings {
         public static final String NETWORK_TRAFFIC_HIDEARROW = "network_traffic_hidearrow";
 
         /**
+         * whether to enable or disable vibration on succesful fingerprint auth
+         *
+         * @hide
+         */
+        public static final String FINGERPRINT_SUCCESS_VIB = "fingerprint_success_vib";
+
+        /** @hide */
+        private static final Validator FINGERPRINT_SUCCESS_VIB_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether to use icon pack for Recents
          * @hide
          */
         public static final String RECENTS_ICON_PACK = "recents_icon_pack";
-
-        /**
-         * Whether to show media art on lockscreen
-         * @hide
-         */
-        public static final String LOCKSCREEN_MEDIA_METADATA = "lockscreen_media_metadata";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -4976,15 +4981,6 @@ public final class Settings {
         public static final String BLUETOOTH_ON = Global.BLUETOOTH_ON;
 
         private static final Validator BLUETOOTH_ON_VALIDATOR = BOOLEAN_VALIDATOR;
-
-        /**
-         * modify how the album art shows up on lockscreen
-         * 0 - default
-         * 1 - grayscale
-         * 2 - blurry
-         * @hide
-         */
-        public static final String LOCKSCREEN_ALBUM_ART_FILTER = "lockscreen_album_art_filter";
 
         /**
          * @deprecated Use {@link android.provider.Settings.Global#DATA_ROAMING} instead
