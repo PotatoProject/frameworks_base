@@ -66,7 +66,7 @@ public class VolumeUI extends SystemUI {
     }
 
     private void setDefaultVolumeController() {
-        DndTile.setVisible(mContext, true);
+        //DndTile.setVisible(mContext, true);
         if (LOGD) Log.d(TAG, "Registering default volume controller");
         getVolumeComponent().register();
     }

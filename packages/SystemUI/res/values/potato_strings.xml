@@ -60,4 +60,17 @@
     <string name="quick_settings_sound_ring">Ring</string>
     <string name="quick_settings_sound_vibrate">Vibrate</string>
     <string name="quick_settings_sound_dnd">Do not disturb</string>
+
+    <!-- QuickSettings: Alert slider tile related strings (re-using some of the do not disturb ones) [CHAR LIMIT=NONE] -->
+    <string name="quick_settings_alert_slider_unavailable">Alert slider tile not available</string>
+    <string name="quick_settings_alert_slider_detail_alarms_only_description">This blocks ALL sounds and vibrations except those from alarms and media playback.</string>
+    <string name="quick_settings_alert_slider_none_label">All notifications</string>
+    <string name="quick_settings_alert_slider_detail_disabled_message_description">Additional settings are not available when do not disturb is off.</string>
+
+    <string name="zen_footer_alert_slider_priority_only_summary">Specified notifications only</string>
+    <string name="zen_footer_alert_slider_alarms_only_summary">Alarms and media playback only</string>
+    <string name="zen_footer_alert_slider_no_interruptions_summary">No sounds and interruptions</string>
+
+    <string name="quick_settings_alert_slider_detail_priority_events_title">Events</string>
+    <string name="quick_settings_alert_slider_detail_priority_reminders_title">Reminders</string>
 </resources>

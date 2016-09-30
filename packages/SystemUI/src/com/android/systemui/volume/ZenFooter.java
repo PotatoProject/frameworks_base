@@ -20,6 +20,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.provider.Settings.Global;
 import android.service.notification.ZenModeConfig;
+import android.text.TextUtils;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.AttributeSet;
@@ -54,6 +55,7 @@ public class ZenFooter extends LinearLayout {
     private int mZen = -1;
     private ZenModeConfig mConfig;
     private ZenModeController mController;
+    private boolean mHasAlertSlider = false;
 
     public ZenFooter(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +64,9 @@ public class ZenFooter extends LinearLayout {
         final LayoutTransition layoutTransition = new LayoutTransition();
         layoutTransition.setDuration(new ValueAnimator().getDuration() / 2);
         setLayoutTransition(layoutTransition);
+        mHasAlertSlider = mContext.getResources().getBoolean(com.android.internal.R.bool.config_hasAlertSlider)
+                && !TextUtils.isEmpty(mContext.getResources().getString(com.android.internal.R.string.alert_slider_state_path))
+                && !TextUtils.isEmpty(mContext.getResources().getString(com.android.internal.R.string.alert_slider_uevent_match_path));
     }
 
     @Override
@@ -140,17 +145,39 @@ public class ZenFooter extends LinearLayout {
     }
 
     public void update() {
-        mIcon.setImageResource(isZenNone() ? R.drawable.ic_dnd_total_silence : R.drawable.ic_dnd);
+        mIcon.setImageResource(isZenPriority() ? R.drawable.ic_dnd_priority
+                        : isZenAlarms() ? R.drawable.ic_dnd
+                        : isZenNone() ? R.drawable.ic_dnd_total_silence
+                        : 0);
         final String line1 =
                 isZenPriority() ? mContext.getString(R.string.interruption_level_priority)
-                : isZenAlarms() ? mContext.getString(R.string.interruption_level_alarms)
-                : isZenNone() ? mContext.getString(R.string.interruption_level_none)
-                : null;
+                        : isZenAlarms() ? mContext.getString(R.string.interruption_level_alarms)
+                        : isZenNone() ? mContext.getString(R.string.interruption_level_none)
+                        : null;
         Util.setText(mSummaryLine1, line1);
 
-        final CharSequence line2 = ZenModeConfig.getConditionSummary(mContext, mConfig,
+        CharSequence line2 = ZenModeConfig.getConditionSummary(mContext, mConfig,
                                 mController.getCurrentUser(), true /*shortVersion*/);
+
+        if (mHasAlertSlider) {
+            switch(mZen) {
+                case Global.ZEN_MODE_NO_INTERRUPTIONS:
+                    line2 = mContext.getString(R.string.zen_footer_alert_slider_no_interruptions_summary);
+                    break;
+                case Global.ZEN_MODE_ALARMS:
+                    line2 = mContext.getString(R.string.zen_footer_alert_slider_alarms_only_summary);
+                    break;
+                case Global.ZEN_MODE_IMPORTANT_INTERRUPTIONS:
+                    line2 = mContext.getString(R.string.zen_footer_alert_slider_priority_only_summary);
+                    break;
+            }
+        }
+
         Util.setText(mSummaryLine2, line2);
+        mConfigurableTexts.update();
+
+        Util.setText(mEndNowButton, mContext.getString(R.string.volume_zen_end_now));
+        mEndNowButton.setVisibility(mHasAlertSlider ? View.GONE : View.VISIBLE);
     }
 
     public boolean shouldShowIntroduction() {
@@ -164,7 +191,7 @@ public class ZenFooter extends LinearLayout {
     }
 
     public void onConfigurationChanged() {
-        mConfigurableTexts.update();
+        update();
     }
 
     private final ZenModeController.Callback mZenCallback = new ZenModeController.Callback() {

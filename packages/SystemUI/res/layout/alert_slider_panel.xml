@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2016 The ParanoidAndroid Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alert_slider_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:orientation="vertical" >
+
+    <com.android.systemui.volume.SegmentedButtons
+        android:id="@+id/alert_slider_buttons"
+        android:background="@drawable/segmented_buttons_background"
+        android:baselineAligned="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <RelativeLayout
+        android:id="@+id/alert_slider_introduction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/zen_introduction_message_background" >
+
+        <TextView
+            android:id="@+id/alert_slider_introduction_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:textDirection="locale"
+            android:lineSpacingMultiplier="1.20029"
+            android:textAppearance="@style/TextAppearance.QS.Introduction" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_below="@id/alert_slider_introduction_message"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/zen_introduction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/zen_introduction_message_background">
+        <!--android:theme="@*android:style/ThemeOverlay.DeviceDefault.Accent.Light"-->
+
+        <ImageView
+            android:id="@+id/zen_introduction_confirm"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/btn_borderless_rect"
+            android:clickable="true"
+            android:contentDescription="@string/accessibility_desc_close"
+            android:scaleType="center"
+            android:src="@drawable/ic_close"
+            android:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/zen_introduction_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_alignParentStart="true"
+            android:textDirection="locale"
+            android:lineSpacingMultiplier="1.20029"
+            android:layout_toStartOf="@id/zen_introduction_confirm"
+            android:text="@string/zen_priority_introduction"
+            android:textAppearance="@style/TextAppearance.QS.Introduction" />
+
+        <TextView
+            android:id="@+id/zen_introduction_customize"
+            style="@style/QSBorderlessButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="12dp"
+            android:layout_below="@id/zen_introduction_message"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/zen_priority_customize_button"
+            android:textAppearance="@style/TextAppearance.QS.DetailButton.White" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_below="@id/zen_introduction_message"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/switch_container_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/title_events"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/toggle"
+            android:textAppearance="@style/TextAppearance.QS.DetailItemPrimary"
+            android:text="@string/quick_settings_alert_slider_detail_priority_events_title" />
+
+        <Switch
+            android:id="@+id/toggle_events"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="16dp"
+            android:clickable="false"
+            android:textAppearance="@style/TextAppearance.QS.DetailHeader" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/switch_container_reminders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/title_reminders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/toggle"
+            android:textAppearance="@style/TextAppearance.QS.DetailItemPrimary"
+            android:text="@string/quick_settings_alert_slider_detail_priority_reminders_title" />
+
+        <Switch
+            android:id="@+id/toggle_reminders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="16dp"
+            android:clickable="false"
+            android:textAppearance="@style/TextAppearance.QS.DetailHeader" />
+
+    </RelativeLayout>
+
+</LinearLayout>
