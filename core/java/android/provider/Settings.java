@@ -14008,6 +14008,16 @@ public final class Settings {
                 new SettingsValidators.InclusiveIntegerRangeValidator(0, 1);
 
         /**
+         * Whether applications can fake a signature.
+         * 1 = permit apps to fake signature
+         * 0 = disable this feature
+         * @hide
+         */
+        public static final String ALLOW_SIGNATURE_FAKE = "allow_signature_fake";
+
+        private static final Validator ALLOW_SIGNATURE_FAKE_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -14124,6 +14134,7 @@ public final class Settings {
             VALIDATORS.put(POWER_BUTTON_LONG_PRESS, POWER_BUTTON_LONG_PRESS_VALIDATOR);
             VALIDATORS.put(POWER_BUTTON_VERY_LONG_PRESS, POWER_BUTTON_VERY_LONG_PRESS_VALIDATOR);
             VALIDATORS.put(NOTIFICATION_BUBBLES, NOTIFICATION_BUBBLES_VALIDATOR);
+            VALIDATORS.put(ALLOW_SIGNATURE_FAKE, ALLOW_SIGNATURE_FAKE_VALIDATOR);
         }
 
         /**
