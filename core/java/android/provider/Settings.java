@@ -4415,6 +4415,12 @@ public final class Settings {
          */
         public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
 
+	/**
+         * Whether to enable the pixel navbar animation
+         * @hide
+         */
+        public static final String PIXEL_NAV_ANIMATION = "pixel_nav_animation";
+
         /**
          * 0 - fullscreen
          * 1 - partial
