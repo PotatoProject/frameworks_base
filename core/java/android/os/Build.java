@@ -913,14 +913,14 @@ public class Build {
             Slog.e(TAG, "Required ro.build.fingerprint is empty!");
             return false;
         }
-
+        /*
         if (!TextUtils.isEmpty(vendor)) {
             if (!Objects.equals(system, vendor)) {
                 Slog.e(TAG, "Mismatched fingerprints; system reported " + system
                         + " but vendor reported " + vendor);
                 return false;
             }
-        }
+        }*/
 
         /* TODO: Figure out issue with checks failing
         if (!TextUtils.isEmpty(bootimage)) {
