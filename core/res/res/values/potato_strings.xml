@@ -39,5 +39,13 @@
     <string name="ambient_recognition_notification">Now Playing</string>
     <string name="ambient_recognition_information">%1$s by %2$s</string>
 
+    <!-- Power menu -->
+    <string name="reboot_to_recovery_title" translatable="false">Recovery</string>
+    <string name="reboot_to_recovery_message" translatable="false">Restarting to recovery</string>
+    <string name="reboot_to_bootloader_title" translatable="false">Bootloader</string>
+    <string name="reboot_to_bootloader_message" translatable="false">Restarting to bootloader</string>
+    <string name="reboot_title">Restart</string>
+    <string name="reboot_message">Restarting system</string>
+
 </resources>
 
