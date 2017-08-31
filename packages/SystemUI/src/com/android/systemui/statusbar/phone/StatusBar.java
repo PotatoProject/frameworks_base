@@ -128,6 +128,7 @@ import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.ActivityIntentHelper;
 import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.DejankUtils;
+import com.android.systemui.Dependency;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.InitController;
 import com.android.systemui.Prefs;
@@ -434,6 +435,11 @@ public class StatusBar extends SystemUI implements
     /** */
     public void animateCollapsePanels(int flags, boolean force) {
         mCommandQueueCallbacks.animateCollapsePanels(flags, force);
+    }
+
+    /** */
+    public void toggleCameraFlash() {
+        mCommandQueueCallbacks.toggleCameraFlash();
     }
 
     /**
