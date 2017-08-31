@@ -229,4 +229,10 @@ interface IStatusBarService
 
     /** Shows rear display educational dialog */
     void showRearDisplayDialog(int currentBaseState);
+
+    /**
+     * @hide
+     */    
+    void toggleCameraFlash();
+
 }
