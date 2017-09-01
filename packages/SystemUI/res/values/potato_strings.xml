@@ -64,10 +64,13 @@
     <string name="global_action_restart_ui">SystemUI</string>
     <string name="global_action_restart_hot">Soft</string>
 
-
     <!-- Caffeine QS Tile -->
     <string name="quick_settings_caffeine_label">Caffeine</string>
     <string name="accessibility_quick_settings_caffeine_off">Caffeine off</string>
     <string name="accessibility_quick_settings_caffeine_on">Caffeine on</string>
+
+    <!-- Screenshot tile -->
+    <string name="screenshot_abort_title">No screenshot taken</string>
+    <string name="screenshot_abort_text">Operation aborted</string>
 
 </resources>
