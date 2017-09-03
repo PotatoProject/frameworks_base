@@ -240,7 +240,6 @@ import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceP
 import com.android.systemui.statusbar.policy.ExtensionController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.FlashlightController;
-import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
@@ -653,7 +652,6 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
 
     private FlashlightController mFlashlightController;
-    private KeyguardUserSwitcher mKeyguardUserSwitcher;
     private final UserSwitcherController mUserSwitcherController;
     private final NetworkController mNetworkController;
     private final LifecycleRegistry mLifecycle = new LifecycleRegistry(this);
@@ -814,7 +812,8 @@ public class StatusBar extends SystemUI implements DemoMode,
             FeatureFlags featureFlags,
             KeyguardUnlockAnimationController keyguardUnlockAnimationController,
             UnlockedScreenOffAnimationController unlockedScreenOffAnimationController,
-            Optional<StartingSurface> startingSurfaceOptional) {
+            Optional<StartingSurface> startingSurfaceOptional,
+            FlashlightController flashlightController) {
         super(context);
         mNotificationsController = notificationsController;
         mLightBarController = lightBarController;
@@ -900,6 +899,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         mFeatureFlags = featureFlags;
         mKeyguardUnlockAnimationController = keyguardUnlockAnimationController;
         mUnlockedScreenOffAnimationController = unlockedScreenOffAnimationController;
+
+        mFlashlightController = flashlightController;
 
         mLockscreenShadeTransitionController = lockscreenShadeTransitionController;
         mStartingSurfaceOptional = startingSurfaceOptional;
@@ -1383,8 +1384,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
-        mFlashlightController = Dependency.get(FlashlightController.class);
     }
 
 
@@ -2287,6 +2286,14 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public void toggleCameraFlash() {
+        if (!isScreenFullyOff() && mDeviceInteractive && !isPulsing() && !mDozing) {
+            toggleFlashlight();
+            return;
+        }
+        mDozeServiceHost.toggleFlashlightProximityCheck();
+    }
+
+    public void toggleFlashlight() {
         if (mFlashlightController != null) {
             mFlashlightController.initFlashLight();
             if (mFlashlightController.hasFlashlight() && mFlashlightController.isAvailable()) {
@@ -2834,9 +2841,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         pw.println("   Override package: "
                 + String.valueOf(CameraIntents.getOverrideCameraPackage(mContext)));
 
-        if (mFlashlightController != null) {
-            mFlashlightController.dump(fd, pw, args);
-        }
     }
 
     public static void dumpBarTransitions(

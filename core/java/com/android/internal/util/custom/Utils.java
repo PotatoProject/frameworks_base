@@ -20,24 +20,17 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
+import android.util.Log;
 
 import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
 
 public class Utils {
-
-    // Check to see if device is WiFi only
-    public static boolean isWifiOnly(Context context) {
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(
-                Context.CONNECTIVITY_SERVICE);
-        return (cm.isNetworkSupported(ConnectivityManager.TYPE_MOBILE) == false);
-    }
 
     // Check to see if device supports the Fingerprint scanner
     public static boolean hasFingerprintSupport(Context context) {
@@ -89,6 +82,7 @@ public class Utils {
 
     public static void toggleCameraFlash() {
         FireActions.toggleCameraFlash();
+	Log.i("FANCY", "toggle flash!");
     }
 
     private static final class FireActions {
