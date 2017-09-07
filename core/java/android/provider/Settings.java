@@ -4409,6 +4409,12 @@ public final class Settings {
         public static final String ROAMING_INDICATOR_ICON = "roaming_indicator_icon";
 
         /**
+         * Disable dashboard conditions in settings
+         * @hide
+         */
+        public static final String ENABLE_CONDITIONS = "enable_conditions";
+
+        /**
          * Control music seeking with volume up/down buttons
          *
          * @hide
