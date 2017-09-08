@@ -22,4 +22,6 @@
     <string name="accessibility_quick_settings_heads_up_changed_off">Peek notifications turned off.</string>
     <string name="accessibility_quick_settings_heads_up_changed_on">Peek notifications turned on.</string>
 
+    <string name="statusbar_items_title">Statusbar icons</string>
+
 </resources>
