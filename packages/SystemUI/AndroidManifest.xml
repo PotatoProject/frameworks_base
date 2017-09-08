@@ -372,6 +372,14 @@
                   android:process=":tuner"
                   android:parentActivityName="com.potatoproject.fries.MainActivity"
                   android:exported="true">
+        </activity>       
+
+        <activity android:name=".tuner.NavBarActivity"
+                  android:theme="@style/TunerSettings"
+                  android:label="@string/nav_bar"
+                  android:process=":tuner"
+                  android:parentActivityName="com.potatoproject.fries.MainActivity"
+                  android:exported="true">
         </activity>
 
         <activity
