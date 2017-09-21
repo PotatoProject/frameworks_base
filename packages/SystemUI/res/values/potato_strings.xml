@@ -25,4 +25,5 @@
     <!-- Content description of the data connection type HSPA+ for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_data_connection_hspap">HSPA+</string>
 
+    <string name="systemui_tuner_navbar_title">Stock settings</string>
 </resources>
