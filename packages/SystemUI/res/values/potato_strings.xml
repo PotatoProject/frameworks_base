@@ -22,6 +22,11 @@
     <string name="accessibility_quick_settings_heads_up_changed_off">Peek notifications turned off.</string>
     <string name="accessibility_quick_settings_heads_up_changed_on">Peek notifications turned on.</string>
 
+    <!-- System SB icons -->
     <string name="statusbar_items_title">Statusbar icons</string>
+
+    <!-- NavBar tuner tweaks -->
+    <string name="lockscreen_default">Default</string>
+    <string name="lockscreen_hidden">None</string>
 
 </resources>
