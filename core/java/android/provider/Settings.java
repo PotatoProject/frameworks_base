@@ -3958,6 +3958,13 @@ public final class Settings {
         public static final String CUSTOM_BUTTON_BRIGHTNESS = "custom_button_brightness";
 
         /**
+         * Indicates whether ANBI (Accidental navigation button interaction) is enabled.
+         *
+         * @hide
+         */
+        public static final String ANBI_ENABLED = "anbi_enabled";
+
+        /**
          * Whether to display the reboot option on the power menu
          *
          * @hide
