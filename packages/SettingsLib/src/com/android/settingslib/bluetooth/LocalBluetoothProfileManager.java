@@ -297,7 +297,7 @@ public class LocalBluetoothProfileManager {
 
         public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             if (device == null) {
-                Log.w(TAG, "StateChangedHandler receives state-change for invalid device");
+                if(DEBUG) Log.d(TAG, "StateChangedHandler receives state-change for invalid device");
                 return;
             }
 
