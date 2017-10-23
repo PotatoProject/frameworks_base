@@ -28,6 +28,7 @@ import android.content.res.Resources;
 import android.net.INetworkPolicyManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -410,7 +411,8 @@ public class SubscriptionManager {
      * for #onSubscriptionsChanged to be invoked.
      */
     public static class OnSubscriptionsChangedListener {
-        private final Handler mHandler  = new Handler() {
+        private final Handler mHandler  = new Handler(Looper.myLooper() == null ?
+                Looper.getMainLooper() : Looper.myLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if (DBG) {
