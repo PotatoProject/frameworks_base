@@ -45,6 +45,11 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
     }
 
     @Override
+    public DetailAdapter getDetailAdapter() {
+        return mBatteryDetail;
+    }
+
+    @Override
     public BooleanState newTileState() {
         return new BooleanState();
     }
@@ -70,7 +75,18 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
 
     @Override
     protected void handleClick() {
-        mBatteryController.setPowerSaveMode(!mPowerSave);
+        mHasDashCharger = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasDashCharger);
+        mDashCharger = mHasDashCharger && isDashCharger();
+
+        if (!mDashCharger && !mCharging) {
+            mBatteryController.setPowerSaveMode(!mPowerSave);
+        }
+    }
+
+    @Override
+    protected void handleSecondaryClick() {
+        showDetail(true);
     }
 
     @Override
@@ -80,12 +96,25 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.state = mPluggedIn ? Tile.STATE_UNAVAILABLE
-                : mPowerSave ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
-        BatterySaverIcon bsi = new BatterySaverIcon();
-        bsi.mState = state.state;
-        state.icon = bsi;
-        state.label = mContext.getString(R.string.battery_detail_switch_title);
+        state.dualTarget = true;
+        state.state = mPowerSave ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+
+        mHasDashCharger = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasDashCharger);
+        mDashCharger = mHasDashCharger && isDashCharger();
+
+        if (mCharging) {
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_battery_saver_charging);
+            state.label = mContext.getString(R.string.keyguard_plugged_in);
+        }
+        if (mDashCharger) {
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_battery_saver_charging);
+            state.label = mContext.getString(R.string.keyguard_plugged_in_dash_charging);
+        }
+        if (!mDashCharger && !mCharging) {
+            state.icon = ResourceIcon.get(R.drawable.ic_qs_battery_saver);
+            state.label = mLevel + "%";
+        }
         state.contentDescription = state.label;
         state.value = mPowerSave;
         state.expandedAccessibilityClassName = Switch.class.getName();
