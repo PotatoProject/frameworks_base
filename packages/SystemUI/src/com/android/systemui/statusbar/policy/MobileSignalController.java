@@ -253,8 +253,12 @@ public class MobileSignalController extends SignalController<
             if (mConfig.inflateSignalStrengths) {
                 level++;
             }
-            return SignalDrawable.getState(level, getNumLevels(),
+            if (mConfig.readIconsFromXml) {
+                return getIcons().mSingleSignalIcon;
+            } else {
+                return SignalDrawable.getState(level, getNumLevels(),
                     mCurrentState.inetCondition == 0);
+            }
         } else if (mCurrentState.enabled) {
             return SignalDrawable.getEmptyState(getNumLevels());
         } else {
