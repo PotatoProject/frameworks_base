@@ -68,4 +68,7 @@
   <!-- Whether device can force navbar disabling -->
   <java-symbol type="bool" name="config_canForceDisableNavigationBar" />
 
+  <!-- Device hardware keys -->
+  <java-symbol type="integer" name="config_deviceHardwareKeys" />
+  <java-symbol type="integer" name="config_deviceHardwareWakeKeys" />
 </resources>
