@@ -29,6 +29,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.os.SystemProperties;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.storage.StorageManager;
