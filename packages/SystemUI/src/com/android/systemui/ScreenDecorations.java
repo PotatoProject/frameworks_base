@@ -105,9 +105,7 @@ public class ScreenDecorations extends SystemUI implements Tunable {
 
         int padding = mContext.getResources().getDimensionPixelSize(
                 R.dimen.rounded_corner_content_padding);
-        if (padding != 0) {
-            setupPadding(padding);
-        }
+        setupPadding(padding);
 
         mDisplayListener = new DisplayManager.DisplayListener() {
             @Override
@@ -267,7 +265,8 @@ public class ScreenDecorations extends SystemUI implements Tunable {
     }
 
     private boolean hasRoundedCorners() {
-        return mRoundedDefault > 0 || mRoundedDefaultBottom > 0 || mRoundedDefaultTop > 0;
+        // return mRoundedDefault > 0 || mRoundedDefaultBottom > 0 || mRoundedDefaultTop > 0;
+        return true;
     }
 
     private boolean shouldDrawCutout() {
