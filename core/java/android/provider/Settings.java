@@ -4838,6 +4838,13 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
 
+        /**
+         * 0 - fullscreen
+         * 1 - partial
+         * @hide
+         */
+        public static final String SCREENSHOT_DEFAULT_MODE = "screenshot_default_mode";
+
         /** Whether to skip music track with volume rocker 
         /**
          * @hide
