@@ -884,6 +884,7 @@ public abstract class Connection extends Conferenceable {
         public void onRemoteRttRequest(Connection c) {}
         /** @hide */
         public void onPhoneAccountChanged(Connection c, PhoneAccountHandle pHandle) {}
+        public void onCdmaConnectionTimeReset(Connection c) {}
     }
 
     /**
@@ -2410,6 +2411,16 @@ public abstract class Connection extends Conferenceable {
             }
         }
         fireOnConferenceableConnectionsChanged();
+    }
+
+    /**
+       *@hide
+       * Resets the cdma connection time.
+       */
+    public final void resetCdmaConnectionTime() {
+        for (Listener l : mListeners) {
+            l.onCdmaConnectionTimeReset(this);
+        }
     }
 
     /**
