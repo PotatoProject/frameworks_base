@@ -311,7 +311,8 @@ public class NotificationManagerService extends SystemService {
     protected boolean mInCall = false;
     private boolean mNotificationPulseEnabled;
 
-    private boolean mSoundVibScreenOn;
+    private int mSoundVibScreenOn;
+    private boolean mIsMediaPlaying;
 
     private Uri mInCallNotificationUri;
     private AudioAttributes mInCallNotificationAudioAttributes;
@@ -1066,7 +1067,7 @@ public class NotificationManagerService extends SystemService {
             }
             if (uri == null || NOTIFICATION_SOUND_VIB_SCREEN_ON.equals(uri)) {
                 mSoundVibScreenOn = Settings.System.getIntForUser(resolver,
-                            Settings.System.NOTIFICATION_SOUND_VIB_SCREEN_ON, 1, UserHandle.USER_CURRENT) != 0;
+                            Settings.System.NOTIFICATION_SOUND_VIB_SCREEN_ON, 1, UserHandle.USER_CURRENT);
             }
         }
     }
@@ -3047,6 +3048,11 @@ public class NotificationManagerService extends SystemService {
                 throws RemoteException {
             new ShellCmd().exec(this, in, out, err, args, callback, resultReceiver);
         }
+
+        @Override
+        public void setMediaPlaying(boolean playing) {
+            mIsMediaPlaying = playing;
+        }
     };
 
     private void applyAdjustment(NotificationRecord r, Adjustment adjustment) {
@@ -4047,9 +4053,10 @@ public class NotificationManagerService extends SystemService {
         }
 
         if (aboveThreshold && isNotificationForCurrentUser(record)) {
-
-            if (mSystemReady && mAudioManager != null && !mScreenOn
-                    || (mScreenOn && mSoundVibScreenOn)) {
+            boolean beNoisy = !mScreenOn
+                    || (mScreenOn && mSoundVibScreenOn == 1)
+                    || (mScreenOn && mSoundVibScreenOn == 2 && !mIsMediaPlaying);
+            if (mSystemReady && mAudioManager != null && beNoisy) {
                 Uri soundUri = record.getSound();
                 hasValidSound = soundUri != null && !Uri.EMPTY.equals(soundUri);
                 long[] vibration = record.getVibration();
