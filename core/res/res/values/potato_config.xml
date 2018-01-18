@@ -116,4 +116,8 @@
 
     <!-- Whether device has a physical display cutout -->
     <bool name="config_physicalDisplayCutout">false</bool>
+
+    <!-- Ambient display music ticker -->
+    <bool name="config_canForceDozeNotifications">true</bool>
+
 </resources>
