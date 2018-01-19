@@ -871,6 +871,14 @@ public final class DefaultPermissionGrantPolicy {
             grantRuntimePermissions(chromiumPackage, CONTACTS_PERMISSIONS, userId);
             grantRuntimePermissions(chromiumPackage, STORAGE_PERMISSIONS, userId);
         }
+        
+        // Google dialer
+        PackageParser.Package googledialerPackage = getSystemPackage("com.google.android.dialer");
+        if (googledialerPackage != null && doesPackageSupportRuntimePermissions(googledialerPackage)) {
+            grantRuntimePermissions(googledialerPackage, PHONE_PERMISSIONS, true, userId);
+            grantRuntimePermissions(googledialerPackage, CONTACTS_PERMISSIONS, true, userId);
+            grantRuntimePermissions(googledialerPackage, SMS_PERMISSIONS, userId);
+        }
     }
 
     private String getDefaultSystemHandlerActivityPackageForCategory(String category, int userId) {
