@@ -56,4 +56,12 @@
 
     <!-- Hide FOD while Going to sleep from lockscreen to avoid HBM flicker -->
     <bool name="config_inDisplayFingerprintFlickersGoingToSleep">false</bool>
+
+    <!-- Defines the actions shown in advanced reboot submenu -->
+    <string-array name="config_restartActionsList">
+        <item>restart</item>
+        <item>restart_recovery</item>
+        <item>restart_bootloader</item>
+     </string-array>
+
 </resources>

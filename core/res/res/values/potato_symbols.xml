@@ -38,4 +38,8 @@
 
   <!-- Hide FOD while Going to sleep from lockscreen to avoid HBM flicker -->
   <java-symbol type="bool" name="config_inDisplayFingerprintFlickersGoingToSleep" />
+
+  <!-- Power menu -->
+  <java-symbol type="array" name="config_restartActionsList" />
+
 </resources>
