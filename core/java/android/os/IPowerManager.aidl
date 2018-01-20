@@ -97,4 +97,7 @@ interface IPowerManager
 
     // Forces the system to suspend even if there are held wakelocks.
     boolean forceSuspend();
+
+    // Advanced reboot
+    void rebootCustom(boolean confirm, String reason, boolean wait);
 }
