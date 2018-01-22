@@ -428,6 +428,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private boolean mExpandedVisible;
 
+    private boolean mFpDismissNotifications;
+
     private final int[] mAbsPos = new int[2];
     private final ArrayList<Runnable> mPostCollapseRunnables = new ArrayList<>();
 
@@ -1305,6 +1307,10 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void clearAllNotifications() {
+        clearAllNotifications(false);
+    }
+
+     private void clearAllNotifications(boolean forceToLeft) {
         // animate-swipe all dismissable notifications, then animate the shade closed
         int numChildren = mStackScroller.getChildCount();
 
@@ -1363,11 +1369,11 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
         });
 
-        performDismissAllAnimations(viewsToHide);
+        performDismissAllAnimations(viewsToHide, forceToLeft);
 
     }
 
-    private void performDismissAllAnimations(ArrayList<View> hideAnimatedList) {
+    private void performDismissAllAnimations(ArrayList<View> hideAnimatedList, boolean forceToLeft) {
         Runnable animationFinishAction = () -> {
             animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
         };
@@ -1392,7 +1398,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             if (i == 0) {
                 endRunnable = animationFinishAction;
             }
-            mStackScroller.dismissViewAnimated(view, endRunnable, totalDelay, 260);
+            mStackScroller.dismissViewAnimated(view, endRunnable, totalDelay, 260, forceToLeft);
             currentDelay = Math.max(50, currentDelay - rowDelayDecrement);
             totalDelay += currentDelay;
         }
@@ -2497,6 +2503,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (!mNotificationPanel.isInSettings() && !mNotificationPanel.isExpanding()){
                 mNotificationPanel.flingSettings(0 /* velocity */, true /* expand */);
                 mMetricsLogger.count(NotificationPanelView.COUNTER_PANEL_OPEN_QS, 1);
+            }
+        } else if (mFpDismissNotifications && (KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT == key
+                || KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT == key)) {
+            if (!mNotificationPanel.isFullyCollapsed() && !mNotificationPanel.isExpanding()){
+                mMetricsLogger.action(MetricsEvent.ACTION_DISMISS_ALL_NOTES);
+                clearAllNotifications(KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT == key ? true : false);
             }
         }
     }
@@ -5661,6 +5673,150 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public boolean isDeviceInVrMode() {
         return mVrMode;
+    }
+
+    private boolean mShowNavBar;
+
+    private SbSettingsObserver mSbSettingsObserver = new SbSettingsObserver(mHandler);
+    private class SbSettingsObserver extends ContentObserver {
+        SbSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_STOPLIST_VALUES), 
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES),
+                    false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_CLOCK),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_INFO),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_CLOCK_SELECTION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.FP_SWIPE_TO_DISMISS_NOTIFICATIONS),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.NAVIGATION_BAR_SHOW))) {
+                updateNavigationBar();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN))) {
+                setLockscreenDoubleTapToSleep();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.DOUBLE_TAP_SLEEP_GESTURE))) {
+                setLockscreenDoubleTapToSleep();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_STOPLIST_VALUES))) {
+                setHeadsUpStoplist();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES))) {
+                setHeadsUpBlacklist();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_CLOCK)) ||
+                   uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_INFO)) ||
+                   uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_CLOCK_SELECTION))) {
+                updateKeyguardStatusSettings();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN))) {
+                setStatusBarWindowViewOptions();
+            } else if (uri.equals(Settings.Secure.getUriFor(
+                    Settings.Secure.FP_SWIPE_TO_DISMISS_NOTIFICATIONS))) {
+                setFpToDismissNotifications();
+            }
+        }
+
+        public void update() {
+            updateNavigationBar();
+            setLockscreenDoubleTapToSleep();
+            setHeadsUpStoplist();
+            setHeadsUpBlacklist();
+            updateKeyguardStatusSettings();
+            setStatusBarWindowViewOptions();
+            setFpToDismissNotifications();
+        }
+    }
+
+    private void updateNavigationBar() {
+        int showNavBar = Settings.System.getIntForUser(
+                mContext.getContentResolver(), Settings.System.NAVIGATION_BAR_SHOW,
+                 -1, UserHandle.USER_CURRENT);
+        if (showNavBar != -1){
+            boolean showNavBarBool = showNavBar == 1;
+            if (showNavBarBool !=  mShowNavBar){
+                  mShowNavBar = NavbarUtils.isEnabled(mContext);
+                  if (DEBUG) Log.v(TAG, "updateNavigationBar=" + mShowNavBar);
+                  if (mShowNavBar) {
+                    if (mNavigationBarView == null) {
+                        createNavigationBar();
+                    }
+                  }else{
+                      if (mNavigationBarView != null){
+                          FragmentHostManager fm = FragmentHostManager.get(mNavigationBarView);
+                          mWindowManager.removeViewImmediate(mNavigationBarView);
+                          mNavigationBarView = null;
+                          fm.getFragmentManager().beginTransaction().remove(mNavigationBar).commit();
+                          mNavigationBar = null;
+                      }
+                  }
+           }
+        }
+    }
+
+    private void setLockscreenDoubleTapToSleep() {
+        if (mStatusBarWindow != null) {
+            mStatusBarWindow.setLockscreenDoubleTapToSleep();
+        }
+    }
+
+    private void setFpToDismissNotifications() {
+        mFpDismissNotifications = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.FP_SWIPE_TO_DISMISS_NOTIFICATIONS, 0,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
+    private void setHeadsUpStoplist() {
+        final String stopString = Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.HEADS_UP_STOPLIST_VALUES);
+        splitAndAddToArrayList(mStoplist, stopString, "\\|");
+    }
+
+     private void setHeadsUpBlacklist() {
+        final String blackString = Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES);
+        splitAndAddToArrayList(mBlacklist, blackString, "\\|");
+    }
+
+    private void updateKeyguardStatusSettings() {
+        mNotificationPanel.updateKeyguardStatusSettings();
+    }
+
+    private void setStatusBarWindowViewOptions() {
+        if (mStatusBarWindow != null) {
+            mStatusBarWindow.setStatusBarWindowViewOptions();
+        }
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
