@@ -139,6 +139,10 @@ public class SystemNotificationChannels {
         foregroundChannel.setBlockableSystem(true);
         channelsList.add(foregroundChannel);
 
+        for (NotificationChannel channel : channelsList) {
+            channel.setBlockableSystem(true);
+        }
+
         nm.createNotificationChannels(channelsList);
     }
 
