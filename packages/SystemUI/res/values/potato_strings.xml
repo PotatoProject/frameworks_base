@@ -116,4 +116,8 @@
     <string name="accessibility_quick_settings_cpuinfo_on">CPU Info on</string>
     <string name="accessibility_quick_settings_cpuinfo_changed_off">CPU Info turned off</string>
     <string name="accessibility_quick_settings_cpuinfo_changed_on">CPU Info turned on</string>
+
+    <!--Google sound search tile -->
+    <string name="quick_settings_sound_search">Sound search</string>
+
 </resources>
