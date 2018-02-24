@@ -67,4 +67,13 @@
     <!-- Two target preference vertical divider color -->
     <color name="list_divider_dark">#64000000</color>
 
+    <!-- Power menu -->
+    <color name="power_menu_power_off">#ff202020</color>
+    <color name="power_menu_restart">#ff202020</color>
+    <color name="power_menu_restart_advanced">#ff202020</color>
+    <color name="power_menu_advanced_bootloader">#ff202020</color>
+    <color name="power_menu_advanced_recovery">#ff202020</color>
+    <color name="power_menu_advanced_system_restart_ui">#ff202020</color>
+    <color name="power_menu_screenshot">#ff202020</color>
+
 </resources>
