@@ -25,4 +25,7 @@
     <color name="screen_pinning_bg_circ_color">#40FFFFFF</color>
     <color name="screen_pinning_nav_icon_hightlight_outer_color">@android:color/white</color>
 
+    <!-- VPN footer -->
+    <color name="quick_settings_footer_background_color">@android:color/transparent</color>
+
 </resources>
