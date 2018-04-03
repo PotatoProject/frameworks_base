@@ -60,4 +60,6 @@
     <string name="quick_settings_sound_ring">Ring</string>
     <string name="quick_settings_sound_vibrate">Vibrate</string>
     <string name="quick_settings_sound_dnd">Do not disturb</string>
+
+    <string name="tuner_brightness_position_bottom">Brightness slider on bottom</string>
 </resources>
