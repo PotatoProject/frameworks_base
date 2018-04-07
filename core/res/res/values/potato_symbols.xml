@@ -106,4 +106,8 @@
   <java-symbol type="string" name="config_rat_3g" />
   <java-symbol type="string" name="config_rat_4g" />
 
+  <!-- Button Brightness -->
+  <java-symbol type="integer" name="config_buttonBrightnessSettingMinimum" />
+  <java-symbol type="integer" name="config_buttonBrightnessSettingMaximum" />
+  <java-symbol type="integer" name="config_buttonBrightnessSettingDefault" />
 </resources>
