@@ -314,7 +314,6 @@ public final class InputDevice implements Parcelable {
      * The input source is a custom virtual key event sent programmatically to emulate different events.
      *
      * The key requested is different from the actual key's event.
-     *
      * @hide
      */
     public static final int SOURCE_CUSTOM = 0x08000000 | SOURCE_CLASS_BUTTON;
