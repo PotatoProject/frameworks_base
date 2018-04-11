@@ -6119,5 +6119,7 @@ message MetricsEvent {
     // ---- End P Constants, all P constants go above this line ----
     // Add new aosp constants above this line.
     // END OF AOSP CONSTANTS
+
+    POTATO_WEDGES = 9999;
   }
 }
