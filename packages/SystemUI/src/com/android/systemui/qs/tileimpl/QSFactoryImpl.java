@@ -27,6 +27,7 @@ import com.android.systemui.plugins.qs.QSTileView;
 import com.android.systemui.qs.QSTileHost;
 import com.android.systemui.qs.external.CustomTile;
 import com.android.systemui.qs.tiles.AirplaneModeTile;
+import com.android.systemui.qs.tiles.AODTile;
 import com.android.systemui.qs.tiles.BatterySaverTile;
 import com.android.systemui.qs.tiles.BluetoothTile;
 import com.android.systemui.qs.tiles.CastTile;
@@ -77,6 +78,8 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<NfcTile> mNfcTileProvider;
     private final Provider<GarbageMonitor.MemoryTile> mMemoryTileProvider;
     private final Provider<UiModeNightTile> mUiModeNightTileProvider;
+    // Additions
+    private final Provider<AODTile> mAODTileProvider;
 
     private QSTileHost mHost;
 
@@ -99,7 +102,8 @@ public class QSFactoryImpl implements QSFactory {
             Provider<NightDisplayTile> nightDisplayTileProvider,
             Provider<NfcTile> nfcTileProvider,
             Provider<GarbageMonitor.MemoryTile> memoryTileProvider,
-            Provider<UiModeNightTile> uiModeNightTileProvider) {
+            Provider<UiModeNightTile> uiModeNightTileProvider,
+            Provider<AODTile> aodTileProvider) {
         mWifiTileProvider = wifiTileProvider;
         mBluetoothTileProvider = bluetoothTileProvider;
         mCellularTileProvider = cellularTileProvider;
@@ -119,6 +123,8 @@ public class QSFactoryImpl implements QSFactory {
         mNfcTileProvider = nfcTileProvider;
         mMemoryTileProvider = memoryTileProvider;
         mUiModeNightTileProvider = uiModeNightTileProvider;
+        //Additions
+        mAODTileProvider = aodTileProvider;
     }
 
     public void setHost(QSTileHost host) {
@@ -176,6 +182,8 @@ public class QSFactoryImpl implements QSFactory {
                 return new HeadsUpTile(mHost);
             case "sync":
                 return new SyncTile(mHost);
+            case "aod":
+                return mAODTileProvider.get();
         }
 
         // Intent tiles.
