@@ -832,6 +832,25 @@ public class StatusBar extends SystemUI implements DemoMode,
     private View mNavigationBarView;
     private FlashlightController mFlashlightController;
 
+    private class CustomSettingsObserver extends ContentObserver {
+        CustomSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            update();
+        }
+
+        public void update() {
+        }
+    }
+
+    private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+
     @Override
     public void start() {
         mNetworkController = Dependency.get(NetworkController.class);
