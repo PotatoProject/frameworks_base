@@ -3966,11 +3966,16 @@ public final class Settings {
          */
         public static final String BUTTON_BACKLIGHT_ON_TOUCH_ONLY = "button_backlight_on_touch_only";
 
-	/** Whether to skip music track with volume rocker
-        /**
-	 * @hide
+        /** Whether to skip music track with volume rocker
+         * @hide
          */
-	public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
+        public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
+
+        /**
+         * Whether the phone volume up / down effect should be played
+         * @hide
+         */
+        public static final String VOLUME_ADJUST_SOUNDS_ENABLED = "volume_adjust_sounds_enabled";
 
         /**
          * IMPORTANT: If you add a new public settings you also have to add it to
