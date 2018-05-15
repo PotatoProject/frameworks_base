@@ -4875,6 +4875,12 @@ public final class Settings {
         public static final String DISPLAY_CUTOUT_MODE = "display_cutout_mode";
 
         /**
+         * Whether to change the color of the qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_BG_COLOR = "qs_panel_bg_color";
+
+        /**
          * Control how to handle the display cutout
          * @hide
          */
@@ -5085,6 +5091,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_AUTOHIDE);
             PRIVATE_SETTINGS.add(NETWORK_TRAFFIC_UNIT_TYPE);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_ALPHA);
+            PRIVATE_SETTINGS.add(QS_PANEL_BG_COLOR);
         }
 
         /**
