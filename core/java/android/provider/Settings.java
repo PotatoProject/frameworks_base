@@ -4289,16 +4289,28 @@ public final class Settings {
         public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
 
         /**
-         * Whether to change the transparency of the qs panel
+         * Transparency of the qs panel
          * @hide
          */
         public static final String QS_PANEL_BG_ALPHA = "qs_panel_bg_alpha";
 
         /**
-         * Whether to change the color of the qs panel
+         * Color of the qs panel
          * @hide
          */
         public static final String QS_PANEL_BG_COLOR = "qs_panel_bg_color";
+
+        /**
+         * Color of the qs panel evaluated from wallpaper
+         * @hide
+         */
+        public static final String QS_PANEL_BG_COLOR_WALL = "qs_panel_bg_color_wall";
+
+        /**
+         * Whether to change the color of the qs panel based on wallpaper
+         * @hide
+         */
+        public static final String QS_PANEL_BG_USE_WALL = "qs_panel_bg_use_wall";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

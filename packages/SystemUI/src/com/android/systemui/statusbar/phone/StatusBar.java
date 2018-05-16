@@ -75,6 +75,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -4152,6 +4153,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         updateCorners();
+        updateQSPanel();
     }
 
     private void updateCorners() {
@@ -4174,6 +4176,24 @@ public class StatusBar extends SystemUI implements DemoMode,
                 Settings.Secure.putInt(mContext.getContentResolver(),
                     Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, res.getDimensionPixelSize(resourceIdPadding));
             }
+        }
+    }
+
+    private void updateQSPanel() {
+        int userQsWallColorSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
+        boolean setQsFromWall = userQsWallColorSetting == 1;
+        if (setQsFromWall) {
+            WallpaperColors systemColors = mColorExtractor
+                    .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+            if (systemColors != null)
+            {
+                Color mColor = systemColors.getPrimaryColor();
+                int mColorInt = mColor.toArgb();
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_PANEL_BG_COLOR_WALL, mColorInt, UserHandle.USER_CURRENT);
+            }
+
         }
     }
 
@@ -4879,6 +4899,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setStatusBarWindowViewOptions();
             } else if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.SYSUI_ROUNDED_FWVALS))) {
                 updateCorners();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
+                updateQSPanel();
             }
         }
 
