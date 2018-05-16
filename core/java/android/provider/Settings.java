@@ -4073,6 +4073,12 @@ public final class Settings {
         public static final String QS_PANEL_BG_COLOR = "qs_panel_bg_color";
 
         /**
+         * Whether to change the color of the qs panel based on wallpaper
+         * @hide
+         */
+        public static final String QS_PANEL_BG_USE_WALL = "qs_panel_bg_use_wall";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

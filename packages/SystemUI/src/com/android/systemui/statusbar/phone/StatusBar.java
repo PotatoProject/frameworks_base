@@ -70,6 +70,7 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -4875,6 +4876,22 @@ public class StatusBar extends SystemUI implements DemoMode,
 
             // Make sure we have the correct navbar/statusbar colors.
             mStatusBarWindowManager.setKeyguardDark(useDarkText);
+        }
+
+        int userQsWallColorSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.QS_PANEL_BG_USE_WALL, 0, mCurrentUserId);
+        boolean setQsFromWall = userQsWallColorSetting == 1;
+        if (setQsFromWall) {
+            WallpaperColors systemColors = mColorExtractor
+                    .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+            if (systemColors != null)
+            {
+                Color mColor = systemColors.getPrimaryColor();
+                int mColorInt = mColor.toArgb();
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_PANEL_BG_COLOR, mColorInt, mCurrentUserId);
+            }
+
         }
     }
 
