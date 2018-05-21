@@ -11,4 +11,8 @@
     <!-- Qs visibility -->
     <dimen name="qs_tile_height_wo_label">48dp</dimen>
 
+	<!-- Keyguard Animation -->
+	<dimen name="keyguard_charging_indication_height">48dp</dimen>
+    <dimen name="keyguard_charging_indication_width">24dp</dimen>
+
 </resources>
