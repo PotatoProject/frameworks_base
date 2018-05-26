@@ -69,4 +69,6 @@
     <!-- Two target preference vertical divider color -->
     <color name="list_divider_dark">#64000000</color>
 
+    <!-- Color for icons/drawables in settings -->
+    <color name="settings_icon_color">#ffffffff</color>
 </resources>
