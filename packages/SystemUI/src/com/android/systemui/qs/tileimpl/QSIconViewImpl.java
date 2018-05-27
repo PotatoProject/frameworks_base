@@ -173,15 +173,19 @@ public class QSIconViewImpl extends QSIconView {
             final float fromChannel = Color.red(fromColor);
             final float toChannel = Color.red(toColor);
 
+            boolean enableQsTileTinting = getContext().getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
+
             ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
             anim.setDuration(QS_ANIM_LENGTH);
             anim.addUpdateListener(animation -> {
                 float fraction = animation.getAnimatedFraction();
                 int alpha = (int) (fromAlpha + (toAlpha - fromAlpha) * fraction);
                 int channel = (int) (fromChannel + (toChannel - fromChannel) * fraction);
+
                 boolean setQsFromResources = System.getIntForUser(getContext().getContentResolver(),
                             System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
-                if (setQsFromResources) {
+
+                if (setQsFromResources && !enableQsTileTinting) {
                     setTint(iv, Color.argb(alpha, channel, channel, channel));
                 } else {
                     setTint(iv, toColor);
