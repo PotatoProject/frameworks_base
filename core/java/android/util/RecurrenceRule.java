@@ -41,7 +41,7 @@ import java.util.Objects;
  */
 public class RecurrenceRule implements Parcelable {
     private static final String TAG = "RecurrenceRule";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final int VERSION_INIT = 0;
 

@@ -49,7 +49,7 @@ public class Tonal implements ExtractionType {
     private static final float FIT_WEIGHT_S = 1.0f;
     private static final float FIT_WEIGHT_L = 10.0f;
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public static final int THRESHOLD_COLOR_LIGHT = 0xffe0e0e0;
     public static final int MAIN_COLOR_LIGHT = 0xffe0e0e0;

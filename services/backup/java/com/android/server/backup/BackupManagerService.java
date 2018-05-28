@@ -195,9 +195,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class BackupManagerService implements BackupManagerServiceInterface {
 
     private static final String TAG = "BackupManagerService";
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
     static final boolean MORE_DEBUG = false;
-    static final boolean DEBUG_SCHEDULING = MORE_DEBUG || true;
+    static final boolean DEBUG_SCHEDULING = MORE_DEBUG || DEBUG;
 
     // File containing backup-enabled state.  Contains a single byte;
     // nonzero == enabled.  File missing or contains a zero byte == disabled.
@@ -357,7 +357,7 @@ public class BackupManagerService implements BackupManagerServiceInterface {
     volatile long mLastBackupPass;
 
     // For debugging, we maintain a progress trace of operations during backup
-    static final boolean DEBUG_BACKUP_TRACE = true;
+    static final boolean DEBUG_BACKUP_TRACE = false;
     final List<String> mBackupTrace = new ArrayList<String>();
 
     // A similar synchronization mechanism around clearing apps' data for restore

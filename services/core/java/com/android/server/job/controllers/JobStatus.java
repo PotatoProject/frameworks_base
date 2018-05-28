@@ -107,7 +107,7 @@ public final class JobStatus {
     private GrantedUriPermissions uriPerms;
     private boolean prepared;
 
-    static final boolean DEBUG_PREPARE = true;
+    static final boolean DEBUG_PREPARE = false;
     private Throwable unpreparedPoint = null;
 
     /**

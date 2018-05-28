@@ -155,9 +155,9 @@ import java.util.concurrent.CountDownLatch;
 public class RefactoredBackupManagerService implements BackupManagerServiceInterface {
 
     public static final String TAG = "BackupManagerService";
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final boolean MORE_DEBUG = false;
-    public static final boolean DEBUG_SCHEDULING = MORE_DEBUG || true;
+    public static final boolean DEBUG_SCHEDULING = MORE_DEBUG || DEBUG;
 
     // File containing backup-enabled state.  Contains a single byte;
     // nonzero == enabled.  File missing or contains a zero byte == disabled.
@@ -270,7 +270,7 @@ public class RefactoredBackupManagerService implements BackupManagerServiceInter
     private volatile long mLastBackupPass;
 
     // For debugging, we maintain a progress trace of operations during backup
-    public static final boolean DEBUG_BACKUP_TRACE = true;
+    public static final boolean DEBUG_BACKUP_TRACE = false;
     private final List<String> mBackupTrace = new ArrayList<>();
 
     // A similar synchronization mechanism around clearing apps' data for restore
