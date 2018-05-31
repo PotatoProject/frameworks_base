@@ -170,4 +170,8 @@
   <java-symbol type="bool" name="config_intrusiveBatteryLed" />
   <java-symbol type="bool" name="config_multiColorBatteryLed" />
   <java-symbol type="bool" name="config_ledCanPulse" />
+
+  <!-- Flashlight proximity check -->
+  <java-symbol type="integer" name="config_flashlightProximityTimeout" />
+
 </resources>
