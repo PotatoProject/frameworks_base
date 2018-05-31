@@ -356,9 +356,11 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     public void updateSettings(boolean animate) {
+        if (mContentResolver != null) {
         mShowCarrierLabel = Settings.System.getIntForUser(
-                getContext().getContentResolver(), Settings.System.STATUS_BAR_CARRIER, 1,
+                mContentResolver, Settings.System.STATUS_BAR_CARRIER, 1,
                 UserHandle.USER_CURRENT);
+        }
         setCarrierLabel(animate);
         ((Clock)mClock).updateSettings();
         ((Clock)mLeftClock).updateSettings();
