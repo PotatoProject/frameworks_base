@@ -22,7 +22,4 @@
     <!-- Description for the screen zoom level that makes interface elements smallest. [CHAR LIMIT=24] -->
     <string name="screen_zoom_summary_smallest">Smallest</string>
 
-    <!-- add proximity sensor check for powerbutton flashlight -->
-    <integer name="config_flashlightProximityTimeout">300</integer>
-
 </resources>
