@@ -20,12 +20,17 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Interpolator;
 import android.widget.TextView;
+
+import com.android.systemui.Interpolators;
 
 /**
  * A view to show hints on Keyguard ("Swipe up to unlock", "Tap again to open").
  */
 public class KeyguardIndicationTextView extends TextView {
+
+    private static final long ANIMATION_DURATION = 500;
 
     public KeyguardIndicationTextView(Context context) {
         super(context);
@@ -50,14 +55,37 @@ public class KeyguardIndicationTextView extends TextView {
      * @param text The text to show.
      */
     public void switchIndication(CharSequence text) {
-
-        // TODO: Animation, make sure that we will show one indication long enough.
-        if (TextUtils.isEmpty(text)) {
-            setVisibility(View.INVISIBLE);
+        // TODO: Make sure that we will show one indication long enough.
+        if (TextUtils.isEmpty(text) && getAlpha() == 1f) {
+            animateAlpha(0f, ANIMATION_DURATION, Interpolators.ALPHA_OUT, null);
+        } else if(getAlpha() == 0f) {
+            animateAlpha(1f, ANIMATION_DURATION, Interpolators.ALPHA_IN, null);
         } else {
-            setVisibility(View.VISIBLE);
-            setText(text);
+            // Fade out the current indication
+            animateAlpha(0f, ANIMATION_DURATION / 2, Interpolators.ALPHA_OUT, new Runnable() {
+                @Override
+                public void run() {
+                    // Fade in the new indication
+                    setText(text);
+                    animateAlpha(1f, ANIMATION_DURATION / 2, Interpolators.ALPHA_IN, null);
+                }
+            });
         }
+    }
+
+    private void animateAlpha(float targetAlpha, long duration, Interpolator interpolator, Runnable endAction) {
+        animate()
+        .alpha(targetAlpha)
+        .setDuration(duration)
+        .setInterpolator(interpolator)
+        .withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                if(endAction != null){
+                    endAction.run();
+                }
+            }
+        });
     }
 
     /**
