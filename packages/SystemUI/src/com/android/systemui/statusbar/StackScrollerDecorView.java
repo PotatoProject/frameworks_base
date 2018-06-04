@@ -56,11 +56,19 @@ public abstract class StackScrollerDecorView extends ExpandableView {
     }
 
     public void performVisibilityAnimation(boolean nowVisible) {
-        animateText(nowVisible, null /* onFinishedRunnable */);
+        performVisibilityAnimation(nowVisible, null /* onFinishedRunnable */);
     }
 
     public void performVisibilityAnimation(boolean nowVisible, Runnable onFinishedRunnable) {
         animateText(nowVisible, onFinishedRunnable);
+    }
+
+    public void performVisibilityAnimation(boolean nowVisible, long duration, long delay) {
+        performVisibilityAnimation(nowVisible, null /* onFinishedRunnable */, duration, delay);
+    }
+
+    public void performVisibilityAnimation(boolean nowVisible, Runnable onFinishedRunnable, long duration, long delay) {
+        animateText(nowVisible, onFinishedRunnable, duration, delay);
     }
 
     public boolean isVisible() {
@@ -75,6 +83,19 @@ public abstract class StackScrollerDecorView extends ExpandableView {
      *        finished.
      */
     private void animateText(boolean nowVisible, final Runnable onFinishedRunnable) {
+        animateText(nowVisible, onFinishedRunnable, 260, 0);
+    }
+
+    /**
+     * Animate the text to a new visibility.
+     *
+     * @param nowVisible should it now be visible
+     * @param onFinishedRunnable A runnable which should be run when the animation is
+     *        finished.
+     * @param duration the duration of the animation
+     * @param delay start delay of the animation
+     */
+    private void animateText(boolean nowVisible, final Runnable onFinishedRunnable, long duration, long delay) {
         if (nowVisible != mIsVisible) {
             // Animate text
             float endValue = nowVisible ? 1.0f : 0.0f;
@@ -88,7 +109,8 @@ public abstract class StackScrollerDecorView extends ExpandableView {
             mContent.animate()
                     .alpha(endValue)
                     .setInterpolator(interpolator)
-                    .setDuration(260)
+                    .setStartDelay(delay)
+                    .setDuration(duration)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -114,14 +136,12 @@ public abstract class StackScrollerDecorView extends ExpandableView {
     @Override
     public void performRemoveAnimation(long duration, float translationDirection,
             Runnable onFinishedRunnable) {
-        // TODO: Use duration
-        performVisibilityAnimation(false);
+        performVisibilityAnimation(false, onFinishedRunnable, duration, 0);
     }
 
     @Override
     public void performAddAnimation(long delay, long duration) {
-        // TODO: use delay and duration
-        performVisibilityAnimation(true);
+        performVisibilityAnimation(true, duration, delay);
     }
 
     @Override
