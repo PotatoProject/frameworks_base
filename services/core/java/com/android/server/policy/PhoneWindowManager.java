@@ -6525,7 +6525,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             case KeyEvent.KEYCODE_HOME:
                 if (down && !interactive) {
-                    isWakeKey = true;
+                    isWakeKey = mHomeWakeScreen;
+                    if (!isWakeKey) {
+                        useHapticFeedback = false;
+                    }
                 }
                 break;
 
