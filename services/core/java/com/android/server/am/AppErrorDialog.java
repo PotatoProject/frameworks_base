@@ -17,6 +17,8 @@
 package com.android.server.am;
 
 import android.content.BroadcastReceiver;
+import android.content.ClipboardManager;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,6 +34,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListener {
 
@@ -41,6 +51,7 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
     private final boolean mRepeating;
     private final boolean mIsRestartable;
     private CharSequence mName;
+    private String mPaste;
 
     static int CANT_SHOW = -1;
     static int BACKGROUND_USER = -2;
@@ -66,6 +77,7 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
         mResult = data.result;
         mRepeating = data.repeating;
         mIsRestartable = data.task != null || data.isRestartableForService;
+        mPaste = data.paste;
         BidiFormatter bidi = BidiFormatter.getInstance();
 
         if ((mProc.pkgList.size() == 1) &&
@@ -117,6 +129,8 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
         final TextView report = findViewById(com.android.internal.R.id.aerr_report);
         report.setOnClickListener(this);
         report.setVisibility(hasReceiver ? View.VISIBLE : View.GONE);
+        final TextView copy = findViewById(com.android.internal.R.id.aerr_copy);
+        copy.setOnClickListener(this);
         final TextView close = findViewById(com.android.internal.R.id.aerr_close);
         close.setVisibility(mRepeating ? View.VISIBLE : View.GONE);
         close.setOnClickListener(this);
@@ -180,6 +194,10 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
             case com.android.internal.R.id.aerr_report:
                 mHandler.obtainMessage(FORCE_QUIT_AND_REPORT).sendToTarget();
                 break;
+            case com.android.internal.R.id.aerr_copy:
+                postToDogbinAndCopyURL();
+                mHandler.obtainMessage(FORCE_QUIT).sendToTarget();
+                break;
             case com.android.internal.R.id.aerr_close:
                 mHandler.obtainMessage(FORCE_QUIT).sendToTarget();
                 break;
@@ -188,6 +206,34 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
                 break;
             default:
                 break;
+        }
+    }
+
+    private void postToDogbinAndCopyURL(){
+        // Post to dogbin
+        try {
+            URL url = new URL("https://del.dog/documents");
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            try {
+                urlConnection.setRequestProperty("Accept-Charset", "UTF-8");
+                urlConnection.setDoOutput(true);
+
+                try (OutputStream output = urlConnection.getOutputStream()) {
+                   output.write(mPaste.getBytes("UTF-8"));
+                }
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String dogRet = in.readLine();
+                String key = dogRet.substring(22,32); // TODO: This is not how JSON parsing works. Please never do this.
+                String logUrl = "https://del.dog/" + key;
+                ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE); 
+                clipboard.setPrimaryClip(ClipData.newPlainText("Log URL", logUrl));
+                Toast.makeText(getContext(), com.android.internal.R.string.url_copy_success , Toast.LENGTH_LONG).show();
+            } finally {
+                urlConnection.disconnect();
+            }
+        } catch(Exception e){
+            Toast.makeText(getContext(), com.android.internal.R.string.url_copy_failed , Toast.LENGTH_LONG).show();
         }
     }
 
@@ -206,5 +252,6 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
         boolean repeating;
         ProcessRecord proc;
         boolean isRestartableForService;
+        String paste;
     }
 }
