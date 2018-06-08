@@ -867,16 +867,16 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(Settings.System.SYSTEM_THEME_STYLE)) ||
-                        uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT)) ||
-                        uri.equals(Settings.Secure.getUriFor(Settings.Secure.SYSUI_ROUNDED_FWVALS)) ||
-                        uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
+            if (uri.equals(Settings.System.getUriFor(Settings.System.SYSTEM_THEME_STYLE))) {
                 updateTheme();
-                return;
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.SHOW_BATTERY_PERCENT))
-                    || uri.equals(Settings.Secure.getUriFor(
-                    Settings.Secure.STATUS_BAR_BATTERY_STYLE))) {
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT))) {
+                updateSettingsIconTint();
+            } else if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.SYSUI_ROUNDED_FWVALS))) {
+                updateCorners();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
+                updateQSPanel();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.SHOW_BATTERY_PERCENT)) ||
+                    uri.equals(Settings.Secure.getUriFor(Settings.Secure.STATUS_BAR_BATTERY_STYLE))) {
                 setStatusBarOptions();
             }
         }
@@ -4935,7 +4935,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         boolean useBlackTheme = false;
         boolean useDarkTheme = false;
         if (userThemeSetting == 0) {
-            // The system wallpaper defines if QS should be light or dark.
+            // The system wallpaper defines if system theme should be light or dark.
             WallpaperColors systemColors = mColorExtractor
                     .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
             useDarkTheme = systemColors != null
@@ -4997,6 +4997,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             mStatusBarWindowManager.setKeyguardDark(useDarkText);
         }
 
+        updateQSPanel();
+        updateCorners();
+        updateSettingsIconTint();
+    }
+
+    private void updateQSPanel() {
         int userQsWallColorSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.QS_PANEL_BG_USE_WALL, 0, mCurrentUserId);
         boolean setQsFromWall = userQsWallColorSetting == 1;
@@ -5012,18 +5018,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
 
         }
-        int userSettingsIconTint = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.SETTINGS_ICON_TINT, 0, mCurrentUserId);
-        boolean setSettingsIconTint = userSettingsIconTint == 1;
-        if(setSettingsIconTint != isUsingIconTint()) {
-             try {
-                mOverlayManager.setEnabled("com.android.system.theme.settingsicontint",
-                        setSettingsIconTint, mCurrentUserId);
-            } catch (RemoteException e) {
-                Log.w(TAG, "Can't change icon tint", e);
-            }
-        }
+    }
 
+    private void updateCorners() {
         boolean sysuiRoundedFwvals = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.SYSUI_ROUNDED_FWVALS, 1, mCurrentUserId) == 1;
         if (sysuiRoundedFwvals && !isCurrentRoundedSameAsFw()) {
@@ -5042,6 +5039,20 @@ public class StatusBar extends SystemUI implements DemoMode,
                 int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
                 Settings.Secure.putInt(mContext.getContentResolver(),
                     Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, res.getDimensionPixelSize(resourceIdPadding));
+            }
+        }
+    }
+
+    private void updateSettingsIconTint() {
+        int userSettingsIconTint = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.SETTINGS_ICON_TINT, 0, mCurrentUserId);
+        boolean setSettingsIconTint = userSettingsIconTint == 1;
+        if (setSettingsIconTint != isUsingIconTint()) {
+             try {
+                mOverlayManager.setEnabled("com.android.system.theme.settingsicontint",
+                        setSettingsIconTint, mCurrentUserId);
+            } catch (RemoteException e) {
+                Log.w(TAG, "Can't change settings icon tint", e);
             }
         }
     }
