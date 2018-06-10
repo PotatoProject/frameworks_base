@@ -31,6 +31,10 @@ import com.android.systemui.Interpolators;
 public class KeyguardIndicationTextView extends TextView {
 
     private static final long ANIMATION_DURATION = 500;
+    private static final long MIN_INDICATION_DURATION = 1500 /* 1.5s */;
+    private boolean isShowing = false;
+    private long showingSince;
+    private int queued = 0;
 
     public KeyguardIndicationTextView(Context context) {
         super(context);
@@ -49,34 +53,62 @@ public class KeyguardIndicationTextView extends TextView {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    private Runnable fadeInCallback = new Runnable(){
+        @Override
+        public void run() {
+            isShowing = true;
+            showingSince = System.currentTimeMillis();
+            queued--;
+        }
+    };
+
+
+    private Runnable fadeOutCallback = new Runnable(){
+        @Override
+        public void run() {
+            isShowing = false;
+        }
+    };
+
     /**
      * Changes the text with an animation and makes sure a single indication is shown long enough.
      *
      * @param text The text to show.
      */
     public void switchIndication(CharSequence text) {
-        // TODO: Make sure that we will show one indication long enough.
+        long delay = 0;
+        long now = System.currentTimeMillis();
+        long difference = showingSince + MIN_INDICATION_DURATION - now;
+        if(isShowing && difference > 0){
+            delay = difference;
+            if(queued > 0){
+                delay += queued * MIN_INDICATION_DURATION;
+            }
+        }
         if (TextUtils.isEmpty(text) && getAlpha() == 1f) {
-            animateAlpha(0f, ANIMATION_DURATION, Interpolators.ALPHA_OUT, null);
+            animateAlpha(0f, ANIMATION_DURATION, queued * MIN_INDICATION_DURATION, Interpolators.ALPHA_OUT, fadeOutCallback);
         } else if(getAlpha() == 0f) {
-            animateAlpha(1f, ANIMATION_DURATION, Interpolators.ALPHA_IN, null);
+            queued++;
+            animateAlpha(1f, ANIMATION_DURATION, 0, Interpolators.ALPHA_IN, fadeInCallback);
         } else {
+            queued++;
             // Fade out the current indication
-            animateAlpha(0f, ANIMATION_DURATION / 2, Interpolators.ALPHA_OUT, new Runnable() {
+            animateAlpha(0f, ANIMATION_DURATION / 2, delay, Interpolators.ALPHA_OUT, new Runnable() {
                 @Override
                 public void run() {
                     // Fade in the new indication
                     setText(text);
-                    animateAlpha(1f, ANIMATION_DURATION / 2, Interpolators.ALPHA_IN, null);
+                    animateAlpha(1f, ANIMATION_DURATION / 2, 0, Interpolators.ALPHA_IN, fadeInCallback);
                 }
             });
         }
     }
 
-    private void animateAlpha(float targetAlpha, long duration, Interpolator interpolator, Runnable endAction) {
+    private void animateAlpha(float targetAlpha, long duration, long delay, Interpolator interpolator, Runnable endAction) {
         animate()
         .alpha(targetAlpha)
         .setDuration(duration)
+        .setStartDelay(delay)
         .setInterpolator(interpolator)
         .withEndAction(new Runnable() {
             @Override
