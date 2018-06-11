@@ -70,6 +70,8 @@ static const char SYSTEM_BOOTANIMATION_FILE[] = "/system/media/bootanimation.zip
 static const char SYSTEM_ENCRYPTED_BOOTANIMATION_FILE[] = "/system/media/bootanimation-encrypted.zip";
 static const char OEM_SHUTDOWNANIMATION_FILE[] = "/oem/media/shutdownanimation.zip";
 static const char SYSTEM_SHUTDOWNANIMATION_FILE[] = "/system/media/shutdownanimation.zip";
+static const char POTATO_BOOTANIM_PROP[] = "persist.potato.accenttag";
+static const char POTATO_BOOTANIM_SEARCH_PATH[] = "/system/media/potato/";
 
 static const char SYSTEM_DATA_DIR_PATH[] = "/data/system";
 static const char SYSTEM_TIME_DIR_NAME[] = "time";
@@ -246,6 +248,37 @@ status_t BootAnimation::initTexture(FileMap* map, int* width, int* height)
     return NO_ERROR;
 }
 
+bool BootAnimation::potatoAnimationAllowed() {
+
+    char value[PROPERTY_VALUE_MAX];
+    if (property_get(POTATO_BOOTANIM_PROP, value, "") > 0) {
+        ALOGW("Accent prop value found. PREPARE ZE POTATO ANIMATIONS");
+        return true;
+    }
+    return false;
+}
+
+void BootAnimation::potatoGetAnimation(char **fname) {
+    const unsigned BUFFER_SIZE = 40;
+    char value[PROPERTY_VALUE_MAX];
+    char *_fname = (char* )malloc(BUFFER_SIZE * sizeof(char));
+    static const char ANIM_EXTENSION[] = ".zip";
+    property_get(POTATO_BOOTANIM_PROP, value, "default");
+    std::strcpy(_fname,POTATO_BOOTANIM_SEARCH_PATH);
+    std::strcat(_fname, value);
+    std::strcat(_fname,ANIM_EXTENSION);
+    if (access(_fname, R_OK) != 0) {
+        ALOGE("Failed to find animation for specified accent.");
+        std::strcpy(value,"default");
+        std::strcpy(_fname,POTATO_BOOTANIM_SEARCH_PATH);
+        std::strcat(_fname, value);
+        std::strcat(_fname,ANIM_EXTENSION);
+    }
+    ALOGI("Loading animation for \"%s\"", value);
+    ALOGI("Attempt to load file: %s", _fname);
+    *fname = _fname;
+}
+
 status_t BootAnimation::readyToRun() {
     mAssets.addDefaultAssets();
 
@@ -313,11 +346,16 @@ status_t BootAnimation::readyToRun() {
         mZipFileName = SYSTEM_ENCRYPTED_BOOTANIMATION_FILE;
         return NO_ERROR;
     }
-    static const char* bootFiles[] = {OEM_BOOTANIMATION_FILE, SYSTEM_BOOTANIMATION_FILE};
-    static const char* shutdownFiles[] =
-        {OEM_SHUTDOWNANIMATION_FILE, SYSTEM_SHUTDOWNANIMATION_FILE};
 
-    for (const char* f : (!mShuttingDown ? bootFiles : shutdownFiles)) {
+    static char* bootFiles[] = { (char*) OEM_BOOTANIMATION_FILE, (char*) SYSTEM_BOOTANIMATION_FILE};
+    if (potatoAnimationAllowed()) {
+        potatoGetAnimation(&bootFiles[1]);
+    }
+
+    static char* shutdownFiles[] =
+        {(char*) OEM_SHUTDOWNANIMATION_FILE, (char*) SYSTEM_SHUTDOWNANIMATION_FILE};
+
+    for (char* f : (!mShuttingDown ? bootFiles : shutdownFiles)) {
         if (access(f, R_OK) == 0) {
             mZipFileName = f;
             return NO_ERROR;

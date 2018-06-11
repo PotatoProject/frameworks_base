@@ -154,6 +154,8 @@ private:
     void releaseAnimation(Animation*) const;
     bool parseAnimationDesc(Animation&);
     bool preloadZip(Animation &animation);
+    bool potatoAnimationAllowed();
+    void potatoGetAnimation(char **fname);
 
     void checkExit();
 
