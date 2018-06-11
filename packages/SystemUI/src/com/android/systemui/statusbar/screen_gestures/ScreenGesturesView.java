@@ -22,7 +22,7 @@ public class ScreenGesturesView extends View {
 
     public static final boolean DEBUG = false;
 
-    public static final int SIGNIFICANT_MOVE = 10;
+    public static final int SIGNIFICANT_MOVE = 7;
 
     private static final String TAG = "ScreenGesturesView";
 
@@ -114,7 +114,7 @@ public class ScreenGesturesView extends View {
         try {
             return Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.EDGE_GESTURES_LONG_PRESS_DURATION);
         } catch (Settings.SettingNotFoundException exception) {
-            return 500;
+            return 250;
         }
     }
 

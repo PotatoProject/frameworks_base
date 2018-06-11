@@ -23,6 +23,8 @@ import android.view.WindowManager;
 
 import com.android.internal.util.gesture.EdgeGesturePosition;
 import com.android.internal.util.gesture.EdgeServiceConstants;
+import com.android.systemui.recents.RecentsImpl;
+import com.android.systemui.recents.RecentsImplProxy;
 import com.android.systemui.statusbar.phone.StatusBar;
 
 /**
@@ -99,7 +101,12 @@ public class ScreenGesturesController {
                 injectKeyCode(KeyEvent.KEYCODE_BACK);
                 break;
             case ScreenGesturesView.GestureType.RECENTS:
-                injectKeyCode(KeyEvent.KEYCODE_APP_SWITCH);
+                RecentsImplProxy recents = new RecentsImplProxy(new RecentsImpl(context));
+		try {
+	                recents.showRecents(false, true, true, true, false, -1 /* DividerView#INVALID_RECENTS_GROW_TARGET */);
+		} catch(Exception e){
+			Log.e(TAG, "Couldn't show recents");
+		}
                 break;
             default:
                 Log.e(TAG, "Unknown event");
