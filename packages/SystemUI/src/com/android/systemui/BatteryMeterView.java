@@ -53,6 +53,10 @@ import java.text.NumberFormat;
 
 public class BatteryMeterView extends LinearLayout implements
         BatteryStateChangeCallback, DarkReceiver, ConfigurationListener {
+        
+    // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
+    // to load its emoji colored variant with the uFE0E flag
+    private static final String bolt = "\u26A1\uFE0E";
 
     private BatteryMeterDrawableBase mDrawable;
     private ImageView mBatteryIconView;
@@ -189,9 +193,6 @@ public class BatteryMeterView extends LinearLayout implements
 
     private void updatePercentText() {
         if (mBatteryPercentView != null) {
-            // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
-            // to load its emoji colored variant with the uFE0E flag
-            String bolt = "\u26A1\uFE0E";
             CharSequence mChargeIndicator =
             		mCharging && mStyle == BatteryMeterDrawableBase.BATTERY_STYLE_TEXT ? (bolt + " ") : "";
             mBatteryPercentView.setText(mChargeIndicator +
