@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26bda3b8_3d5c1138",
+        "filename": "core/res/res/values/potato_config.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-16T15:44:16Z",
+      "side": 1,
+      "message": "Unnecessary whitespace",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 4
+      },
+      "revId": "5718e3f5fc899046cb1a56ef036b9a64c12622c0",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92a2c627_326a94ed",
+        "filename": "core/res/res/values/potato_symbols.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-16T15:44:16Z",
+      "side": 1,
+      "message": "Whitespace again",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 2
+      },
+      "revId": "5718e3f5fc899046cb1a56ef036b9a64c12622c0",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
