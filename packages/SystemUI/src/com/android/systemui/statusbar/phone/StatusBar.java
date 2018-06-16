@@ -5056,6 +5056,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                         Settings.System.QS_PANEL_BG_COLOR, mColorInt, mCurrentUserId);
             }
 
+        } else {
+        	Settings.System.putIntForUser(mContext.getContentResolver(),
+                        Settings.System.QS_PANEL_BG_COLOR, Color.WHITE, mCurrentUserId);
         }
     }
 
