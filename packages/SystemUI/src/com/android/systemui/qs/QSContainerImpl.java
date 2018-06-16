@@ -56,6 +56,7 @@ public class QSContainerImpl extends FrameLayout {
     private Drawable mQsBackGround;
     private int mQsBackGroundAlpha;
     private int mQsBackGroundColor;
+    private boolean setQsFromWall;
 
     private IOverlayManager mOverlayManager;
 
@@ -96,6 +97,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_COLOR), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_PANEL_BG_USE_WALL), false,
+                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -105,11 +109,17 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void updateSettings() {
+        int userQsWallColorSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
+                    Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
+        setQsFromWall = userQsWallColorSetting == 1;
         mQsBackGroundAlpha = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
                 UserHandle.USER_CURRENT);
         mQsBackGroundColor = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR, Color.WHITE,
+                UserHandle.USER_CURRENT);
+        mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
                 UserHandle.USER_CURRENT);
         setQsBackground();
         if (isColorDark(mQsBackGroundColor)) {
@@ -131,8 +141,9 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void setQsBackground() {
+        int currentColor = setQsFromWall ? mQsBackGroundColorWall : mQsBackGroundColor;
         if (mQsBackGround != null) {
-            mQsBackGround.setColorFilter(mQsBackGroundColor, PorterDuff.Mode.SRC_ATOP);
+            mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
             mQsBackGround.setAlpha(mQsBackGroundAlpha);
             setBackground(mQsBackGround);
         }
