@@ -288,8 +288,26 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         });
     }
 
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.ACTIVITY_INDICATORS), false,
+                    this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateActivityEnabled();
+        }
+    }
+
     private void updateActivityEnabled() {
-        mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+        mActivityEnabled = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.ACTIVITY_INDICATORS, 0, UserHandle.USER_CURRENT) == 1;
     }
 
     @Override
