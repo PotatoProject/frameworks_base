@@ -283,7 +283,7 @@ public class BatteryMeterView extends LinearLayout implements
         int background = getColorForDarkIntensity(intensity, mLightModeBackgroundColor,
                 mDarkModeBackgroundColor);
         mDrawable.setColors(foreground, background);
-        setTextColor(foreground);
+        setTextColor(tint);
     }
 
     public void setTextColor(int color) {
