@@ -866,6 +866,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_USE_WALL),
                     false, this, UserHandle.USER_ALL);
+            mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ACTIVITY_INDICATORS),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -881,6 +884,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.SHOW_BATTERY_PERCENT)) ||
                     uri.equals(Settings.Secure.getUriFor(Settings.Secure.STATUS_BAR_BATTERY_STYLE))) {
                 setStatusBarOptions();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.ACTIVITY_INDICATORS))) {
+                try {
+                    inflateSignalClusters();
+                } catch (Exception e) {
+                    Log.e(TAG, "Unable to inflate Signal Clusters: " + e);
+                }
             }
         }
 
@@ -1539,6 +1548,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private void inflateSignalClusters() {
         if (mKeyguardStatusBar != null) reinflateSignalCluster(mKeyguardStatusBar);
+        if (mStatusBarView != null) reinflateSignalCluster(mStatusBarView);
     }
 
     public static SignalClusterView reinflateSignalCluster(View view) {

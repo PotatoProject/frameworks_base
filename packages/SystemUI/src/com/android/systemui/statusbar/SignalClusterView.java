@@ -25,6 +25,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.util.ArraySet;
 import android.util.AttributeSet;
@@ -289,7 +291,8 @@ public class SignalClusterView extends LinearLayout implements NetworkController
     }
 
     private void updateActivityEnabled() {
-        mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+        mActivityEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ACTIVITY_INDICATORS, 0, UserHandle.USER_CURRENT) == 1;
     }
 
     @Override
