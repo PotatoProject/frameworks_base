@@ -22,9 +22,13 @@ import android.annotation.DrawableRes;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.util.ArraySet;
 import android.util.AttributeSet;
@@ -288,8 +292,26 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         });
     }
 
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.ACTIVITY_INDICATORS), false,
+                    this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateActivityEnabled();
+        }
+    }
+
     private void updateActivityEnabled() {
-        mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+        mActivityEnabled = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.ACTIVITY_INDICATORS, 0, UserHandle.USER_CURRENT) == 1;
     }
 
     @Override
