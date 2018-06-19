@@ -83,6 +83,7 @@ import static com.android.server.am.ActivityStack.ActivityState.PAUSING;
 import static com.android.server.am.ActivityStack.ActivityState.RESUMED;
 import static com.android.server.am.ActivityStack.ActivityState.STOPPED;
 import static com.android.server.am.ActivityStack.ActivityState.STOPPING;
+import static com.android.server.am.ActivityStack.REMOVE_TASK_MODE_DESTROYING;
 import static com.android.server.am.ActivityStack.REMOVE_TASK_MODE_MOVING;
 import static com.android.server.am.ActivityStack.STACK_INVISIBLE;
 import static com.android.server.am.ActivityStack.STACK_VISIBLE;
@@ -2701,7 +2702,16 @@ public class ActivityStackSupervisor extends ConfigurationContainer implements D
         final TaskRecord tr = anyTaskForIdLocked(taskId, MATCH_TASK_IN_STACKS_OR_RECENT_TASKS,
                 INVALID_STACK_ID);
         if (tr != null) {
-            tr.removeTaskActivitiesLocked(pauseImmediately);
+            if (tr.mActivities.size() > 0) {
+                tr.removeTaskActivitiesLocked(pauseImmediately);
+            } else {
+                // When the task is empty (retstored from restoreRecentTask),
+                // it will never trigger removeTask (last token), force remove it.
+                ActivityStack stack = tr.getStack();
+                if (stack != null) {
+                    stack.removeTask(tr, "force-remove-empty-task", REMOVE_TASK_MODE_DESTROYING);
+                }
+            }
             cleanUpRemovedTaskLocked(tr, killProcess, removeFromRecents);
             if (tr.isPersistable) {
                 mService.notifyTaskPersisterLocked(null, true);
