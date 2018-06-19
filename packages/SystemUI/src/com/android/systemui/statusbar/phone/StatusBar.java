@@ -523,6 +523,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private final MetricsLogger mMetricsLogger = Dependency.get(MetricsLogger.class);
 
+    private ArrayList<String> mBlacklist = new ArrayList<String>();
+
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private DeviceProvisionedListener mUserSetupObserver = new DeviceProvisionedListener() {
@@ -869,6 +871,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ACTIVITY_INDICATORS),
                     false, this, UserHandle.USER_ALL);
+            mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -890,6 +895,11 @@ public class StatusBar extends SystemUI implements DemoMode,
                 } catch (Exception e) {
                     Log.e(TAG, "Unable to inflate Signal Clusters: " + e);
                 }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES))) {
+                final String blackString = Settings.System.getString(mContext.getContentResolver(),
+                        Settings.System.HEADS_UP_BLACKLIST_VALUES);
+                splitAndAddToArrayList(mBlacklist, blackString, "\\|");
             }
         }
 
@@ -901,6 +911,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         public void update() {
             updateTheme();
             setStatusBarOptions();
+            setHeadsUpBlacklist();
         }
 
         private void setStatusBarOptions() {
@@ -6263,6 +6274,12 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     };
 
+    private void setHeadsUpBlacklist() {
+        final String blackString = Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES);
+        splitAndAddToArrayList(mBlacklist, blackString, "\\|");
+    }
+
     private RemoteViews.OnClickHandler mOnClickHandler = new RemoteViews.OnClickHandler() {
 
         @Override
@@ -7859,6 +7876,10 @@ public class StatusBar extends SystemUI implements DemoMode,
             return false;
         }
 
+        if(isPackageInBlacklist(sbn.getPackageName())) {
+            return false;
+        }
+
         if (mNotificationData.shouldFilterOut(sbn)) {
             if (DEBUG) Log.d(TAG, "No peeking: filtered notification: " + sbn.getKey());
             return false;
@@ -7922,6 +7943,22 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         return true;
+    }
+
+    private boolean isPackageInBlacklist(String packageName) {
+        return mBlacklist.contains(packageName);
+    }
+
+    private void splitAndAddToArrayList(ArrayList<String> arrayList,
+            String baseString, String separator) {
+        // clear first
+        arrayList.clear();
+        if (baseString != null) {
+            final String[] array = TextUtils.split(baseString, separator);
+            for (String item : array) {
+                arrayList.add(item.trim());
+            }
+        }
     }
 
     /**
