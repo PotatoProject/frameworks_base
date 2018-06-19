@@ -66,6 +66,10 @@ public class KeyguardIndicationController {
     private static final int MSG_CLEAR_FP_MSG = 2;
     private static final long TRANSIENT_FP_ERROR_TIMEOUT = 1300;
 
+    // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
+    // to load its emoji colored variant with the uFE0E flag
+    private static final String bolt = "\u26A1\uFE0E";
+
     private final Context mContext;
     private ViewGroup mIndicationArea;
     private KeyguardIndicationTextView mTextView;
@@ -295,9 +299,6 @@ public class KeyguardIndicationController {
                     mTextView.setTextColor(Color.WHITE);
                     mTextView.switchIndication(mTransientIndication);
                 } else {
-                    // Use the high voltage symbol ⚡ (u26A1 unicode) but prevent the system
-                    // to load its emoji colored variant with the uFE0E flag
-                    String bolt = "\u26A1\uFE0E";
                     CharSequence chargeIndicator = (mPowerPluggedIn ? (bolt + " ") : "") +
                             NumberFormat.getPercentInstance().format(mLevel / 100f);
                     mTextView.switchIndication(chargeIndicator);
