@@ -29,6 +29,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.BidiFormatter;
+import android.util.JsonReader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,14 +38,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import java.io.OutputStream;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
 final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListener {
+
+    private static final String TAG = "AppErrorDialog";
 
     private final ActivityManagerService mService;
     private final AppErrorResult mResult;
@@ -221,10 +224,20 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
                 try (OutputStream output = urlConnection.getOutputStream()) {
                    output.write(mPaste.getBytes("UTF-8"));
                 }
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String dogRet = in.readLine();
-                String key = dogRet.substring(22,32); // TODO: This is not how JSON parsing works. Please never do this.
+                String key = "";
+                try(JsonReader reader = new JsonReader(urlConnection.getInputStream())) {
+                    reader.beginObject();
+                    while(reader.hasNext()){
+                        String name = reader.nextName();
+                        if(name.equals("key")){
+                            key = reader.nextString();
+                            break;
+                        } else {
+                            reader.skipValue();
+                        }
+                    }
+                    reader.endObject();
+                }
                 String logUrl = "https://del.dog/" + key;
                 ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE); 
                 clipboard.setPrimaryClip(ClipData.newPlainText("Log URL", logUrl));
@@ -234,6 +247,7 @@ final class AppErrorDialog extends BaseErrorDialog implements View.OnClickListen
             }
         } catch(Exception e){
             Toast.makeText(getContext(), com.android.internal.R.string.url_copy_failed , Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Failed to upload log to dogbin", e);
         }
     }
 
