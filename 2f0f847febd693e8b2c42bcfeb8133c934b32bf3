@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9db8cff_93aaae08",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4029,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 4029,
+        "startChar": 0,
+        "endLine": 4029,
+        "endChar": 2
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cb35d41_8b361083",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 526,
+        "startChar": 0,
+        "endLine": 526,
+        "endChar": 1
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14dfdf35_870de1f2",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Whitespace;",
+      "range": {
+        "startLine": 526,
+        "startChar": 64,
+        "endLine": 526,
+        "endChar": 65
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85daf4cd_a5bab659",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 874,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 874,
+        "startChar": 0,
+        "endLine": 874,
+        "endChar": 3
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5018e082_8eafe286",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 903,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 903,
+        "startChar": 0,
+        "endLine": 903,
+        "endChar": 3
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0482a441_5f4f2041",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 914,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 914,
+        "startChar": 0,
+        "endLine": 914,
+        "endChar": 3
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "918c4e97_e68fbe6c",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 6277,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 6277,
+        "startChar": 0,
+        "endLine": 6277,
+        "endChar": 1
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c6626f2_de106ef4",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7948,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Convert to spaces.",
+      "range": {
+        "startLine": 7948,
+        "startChar": 0,
+        "endLine": 7948,
+        "endChar": 1
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36eccb3b_bfdb8e1f",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 7951,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-06-19T09:46:54Z",
+      "side": 1,
+      "message": "Whitespace",
+      "range": {
+        "startLine": 7951,
+        "startChar": 0,
+        "endLine": 7951,
+        "endChar": 1
+      },
+      "revId": "2f0f847febd693e8b2c42bcfeb8133c934b32bf3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
