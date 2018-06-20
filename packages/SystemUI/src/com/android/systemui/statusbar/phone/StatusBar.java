@@ -3126,13 +3126,15 @@ public class StatusBar extends SystemUI implements DemoMode,
             return true;
         }
 
+        float displayDensity = res.getDisplayMetrics().density;
+
         // Resource IDs for framework properties
         int resourceIdRadius = res.getIdentifier("com.android.systemui:dimen/rounded_corner_radius", null, null);
         int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
 
         // Values on framework resources
-        int cornerRadiusRes = res.getDimensionPixelSize(resourceIdRadius);
-        int contentPaddingRes = res.getDimensionPixelSize(resourceIdPadding);
+        int cornerRadiusRes = (int) (res.getDimension(resourceIdRadius)/displayDensity);
+        int contentPaddingRes = (int) (res.getDimension(resourceIdPadding)/displayDensity);
 
         // Values in Settings DBs
         int cornerRadius = Settings.Secure.getInt(mContext.getContentResolver(),
@@ -5098,13 +5100,14 @@ public class StatusBar extends SystemUI implements DemoMode,
                 e.printStackTrace();
             }
 
+            float displayDensity = res.getDisplayMetrics().density;
             if (res != null) {
                 int resourceIdRadius = res.getIdentifier("com.android.systemui:dimen/rounded_corner_radius", null, null);
                 Settings.Secure.putInt(mContext.getContentResolver(),
-                    Settings.Secure.SYSUI_ROUNDED_SIZE, res.getDimensionPixelSize(resourceIdRadius));
+                    Settings.Secure.SYSUI_ROUNDED_SIZE, (int) (res.getDimension(resourceIdRadius)/displayDensity));
                 int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
                 Settings.Secure.putInt(mContext.getContentResolver(),
-                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, res.getDimensionPixelSize(resourceIdPadding));
+                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, (int) (res.getDimension(resourceIdPadding)/displayDensity));
             }
         }
     }
