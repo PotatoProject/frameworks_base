@@ -889,10 +889,9 @@ public class AudioTrack extends PlayerBase
                     .build();
                 break;
             case PERFORMANCE_MODE_NONE:
-                if (!shouldEnablePowerSaving(mAttributes, mFormat, mBufferSizeInBytes, mMode)) {
-                    break; // do not enable deep buffer mode.
-                }
-                // permitted to fall through to enable deep buffer
+                // Let shouldEnablePowerSaving in the class constructor
+                // decide whether to enable deep buffer mode or not.
+                break;
             case PERFORMANCE_MODE_POWER_SAVING:
                 mAttributes = new AudioAttributes.Builder(mAttributes)
                 .replaceFlags((mAttributes.getAllFlags()
