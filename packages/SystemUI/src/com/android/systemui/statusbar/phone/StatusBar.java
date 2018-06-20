@@ -3116,6 +3116,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public boolean isCurrentRoundedSameAsFw() {
+
+        float displayDensity = getResources().getDisplayMetrics().density;
         Resources res = null;
         try {
             res = mContext.getPackageManager().getResourcesForApplication("com.android.systemui");
@@ -3131,8 +3133,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
 
         // Values on framework resources
-        int cornerRadiusRes = res.getDimensionPixelSize(resourceIdRadius);
-        int contentPaddingRes = res.getDimensionPixelSize(resourceIdPadding);
+        int cornerRadiusRes = res.getDimension(resourceIdRadius)/displayDensity;
+        int contentPaddingRes = res.getDimension(resourceIdPadding)/displayDensity;
 
         // Values in Settings DBs
         int cornerRadius = Settings.Secure.getInt(mContext.getContentResolver(),
@@ -5091,6 +5093,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.Secure.SYSUI_ROUNDED_FWVALS, 1, mCurrentUserId) == 1;
         if (sysuiRoundedFwvals && !isCurrentRoundedSameAsFw()) {
 
+            float displayDensity = getResources().getDisplayMetrics().density;
             Resources res = null;
             try {
                 res = mContext.getPackageManager().getResourcesForApplication("com.android.systemui");
@@ -5101,10 +5104,10 @@ public class StatusBar extends SystemUI implements DemoMode,
             if (res != null) {
                 int resourceIdRadius = res.getIdentifier("com.android.systemui:dimen/rounded_corner_radius", null, null);
                 Settings.Secure.putInt(mContext.getContentResolver(),
-                    Settings.Secure.SYSUI_ROUNDED_SIZE, res.getDimensionPixelSize(resourceIdRadius));
+                    Settings.Secure.SYSUI_ROUNDED_SIZE, res.getDimension(resourceIdRadius)/displayDensity);
                 int resourceIdPadding = res.getIdentifier("com.android.systemui:dimen/rounded_corner_content_padding", null, null);
                 Settings.Secure.putInt(mContext.getContentResolver(),
-                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, res.getDimensionPixelSize(resourceIdPadding));
+                    Settings.Secure.SYSUI_ROUNDED_CONTENT_PADDING, res.getDimension(resourceIdPadding)/displayDensity);
             }
         }
     }
