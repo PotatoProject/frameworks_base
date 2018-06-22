@@ -4932,6 +4932,12 @@ public final class Settings {
         public static final String NAVIGATION_HANDLE_WIDTH = "navigation_handle_width";
 
         /**
+         * Whether to use framework styles and resources on qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_BG_USE_FW = "qs_panel_bg_use_fw";
+
+        /**
          * Three Finger Gesture from Oppo
          * @hide
          */
@@ -5102,6 +5108,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(POCKET_JUDGE);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_ALPHA);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_COLOR);
+            PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
         }
 
         /**
