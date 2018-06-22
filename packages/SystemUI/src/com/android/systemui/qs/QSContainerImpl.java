@@ -58,6 +58,7 @@ public class QSContainerImpl extends FrameLayout {
     private int mQsBackGroundColor;
     private int mQsBackGroundColorWall;
     private boolean setQsFromWall;
+    private boolean setQsFromResources;
 
     private IOverlayManager mOverlayManager;
 
@@ -104,6 +105,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_USE_WALL), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
+                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -116,6 +120,9 @@ public class QSContainerImpl extends FrameLayout {
         int userQsWallColorSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
                     Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
         setQsFromWall = userQsWallColorSetting == 1;
+        int userQsFwSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
+                    Settings.System.QS_PANEL_BG_USE_FW, 0, UserHandle.USER_CURRENT);
+        setQsFromResources = userQsFwSetting == 1;
         mQsBackGroundAlpha = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
                 UserHandle.USER_CURRENT);
@@ -131,25 +138,34 @@ public class QSContainerImpl extends FrameLayout {
     private void setQsBackground() {
         int currentColor = setQsFromWall ? mQsBackGroundColorWall : mQsBackGroundColor;
 
-        if (isColorDark(currentColor)) {
-            try {
-                mOverlayManager.setEnabled("com.android.systemui.qstheme.dark",
-                        true, ActivityManager.getCurrentUser());
-            } catch (RemoteException e) {
-                Log.w("QSContainerImpl", "Can't change qs theme", e);
-            }
-        } else {
+        if (setQsFromResources) {
+            mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
             try {
                 mOverlayManager.setEnabled("com.android.systemui.qstheme.dark",
                         false, ActivityManager.getCurrentUser());
             } catch (RemoteException e) {
                 Log.w("QSContainerImpl", "Can't change qs theme", e);
             }
-        }
-
-        if (mQsBackGround != null) {
+        } else {
             mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
             mQsBackGround.setAlpha(mQsBackGroundAlpha);
+            if (isColorDark(currentColor)) {
+                try {
+                    mOverlayManager.setEnabled("com.android.systemui.qstheme.dark",
+                            true, ActivityManager.getCurrentUser());
+                } catch (RemoteException e) {
+                    Log.w("QSContainerImpl", "Can't change qs theme", e);
+                }
+            } else {
+                try {
+                    mOverlayManager.setEnabled("com.android.systemui.qstheme.dark",
+                            false, ActivityManager.getCurrentUser());
+                } catch (RemoteException e) {
+                    Log.w("QSContainerImpl", "Can't change qs theme", e);
+                }
+            }
+        }
+        if (mQsBackGround != null) {
             setBackground(mQsBackGround);
         }
     }
