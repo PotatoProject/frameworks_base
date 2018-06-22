@@ -4313,6 +4313,12 @@ public final class Settings {
         public static final String QS_PANEL_BG_USE_WALL = "qs_panel_bg_use_wall";
 
         /**
+         * Whether to use framework styles and resources on qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_BG_USE_FW = "qs_panel_bg_use_fw";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
