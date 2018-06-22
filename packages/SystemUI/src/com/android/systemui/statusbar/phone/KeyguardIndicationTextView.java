@@ -50,6 +50,23 @@ public class KeyguardIndicationTextView extends TextView {
     }
 
     /**
+     * Changes the text, optionally with an animation.
+     *
+     * @param text The text to show.
+     * @param animate Whether or not the change should be animated.
+     */
+    public void switchIndication(CharSequence text, boolean animate) {
+	if(animate) {
+	    switchIndication(text);
+	} else if(TextUtils.isEmpty(text)) {
+	    setAlpha(0f);
+	} else {
+	    setText(text);
+	    setAlpha(1f); // alpha might already be 1 when we are here, but setting it again won't hurt in that case
+	}
+    }
+
+    /**
      * Changes the text with an animation and makes sure a single indication is shown long enough.
      *
      * @param text The text to show.

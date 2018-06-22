@@ -297,11 +297,11 @@ public class KeyguardIndicationController {
                     // When dozing we ignore any text color and use white instead, because
                     // colors can be hard to read in low brightness.
                     mTextView.setTextColor(Color.WHITE);
-                    mTextView.switchIndication(mTransientIndication);
+                    mTextView.switchIndication(mTransientIndication, false /* animate */);
                 } else {
                     CharSequence chargeIndicator = (mPowerPluggedIn ? (bolt + " ") : "") +
                             NumberFormat.getPercentInstance().format(mLevel / 100f);
-                    mTextView.switchIndication(chargeIndicator);
+                    mTextView.switchIndication(chargeIndicator, false /* animate */);
                 }
                 return;
             }
