@@ -851,8 +851,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         void observe() {
-            mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.SYSTEM_THEME_STYLE),
+            mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SYSTEM_THEME_STYLE),
                     false, this, UserHandle.USER_ALL);
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SHOW_BATTERY_PERCENT),
@@ -879,7 +879,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            if (uri.equals(Settings.System.getUriFor(Settings.System.SYSTEM_THEME_STYLE))) {
+            if (uri.equals(Settings.Secure.getUriFor(Settings.Secure.SYSTEM_THEME_STYLE))) {
                 updateTheme();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT))) {
                 updateSettingsIconTint();
@@ -5023,8 +5023,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void updateTheme() {
         final boolean inflated = mStackScroller != null;
 
-        int userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SYSTEM_THEME_STYLE, 2, mCurrentUserId);
+        int userThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.SYSTEM_THEME_STYLE, 2, mCurrentUserId);
         boolean useBlackTheme = false;
         boolean useDarkTheme = false;
         if (userThemeSetting == 0) {
