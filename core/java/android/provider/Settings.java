@@ -4084,15 +4084,6 @@ public final class Settings {
          */
 
         /**
-         * 0 - wallpaper based
-         * 1 - force light
-         * 2 - force dark
-         * 3 - force black
-         * @hide
-         */
-        public static final String SYSTEM_THEME_STYLE = "system_theme_style";
-
-        /**
          * Whether to show Brightness Icon On Brightness Slider
          * @hide
          */
@@ -4437,7 +4428,6 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BUTTON_BACKLIGHT_TIMEOUT);
             PRIVATE_SETTINGS.add(BUTTON_BACKLIGHT_ON_TOUCH_ONLY);
             PRIVATE_SETTINGS.add(VOLUME_BUTTON_MUSIC_CONTROL);
-            PRIVATE_SETTINGS.add(SYSTEM_THEME_STYLE);
             PRIVATE_SETTINGS.add(STATUS_BAR_CLOCK);
             PRIVATE_SETTINGS.add(STATUSBAR_CLOCK_STYLE);
             PRIVATE_SETTINGS.add(STATUS_BAR_CLOCK_SECONDS);
@@ -7833,6 +7823,15 @@ public final class Settings {
          * @hide
          */
         public static final String FACE_AUTO_UNLOCK = "face_auto_unlock";
+
+        /**
+         * 0 - wallpaper based
+         * 1 - force light
+         * 2 - force dark
+         * 3 - force black
+         * @hide
+         */
+        public static final String SYSTEM_THEME_STYLE = "system_theme_style";
 
         /**
          * Display style of the status bar battery information
