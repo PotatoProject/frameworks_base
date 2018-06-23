@@ -25,11 +25,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.net.Uri;
 import android.os.UserManager;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
@@ -37,6 +41,7 @@ import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,8 +75,8 @@ import com.android.systemui.statusbar.policy.UserInfoController.OnUserInfoChange
 import com.android.systemui.tuner.TunerService;
 
 public class QSFooterImpl extends FrameLayout implements QSFooter,
-        NextAlarmChangeCallback, OnClickListener, OnUserInfoChangedListener, EmergencyListener,
-        SignalCallback {
+        NextAlarmChangeCallback, OnClickListener, OnLongClickListener, OnUserInfoChangedListener,
+        EmergencyListener, SignalCallback {
     private static final float EXPAND_INDICATOR_THRESHOLD = .93f;
 
     private ActivityStarter mActivityStarter;
@@ -107,8 +112,13 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     private boolean mKeyguardShowing;
     private TouchAnimator mAlarmAnimator;
 
+	private final Vibrator mVibrator;
+
     public QSFooterImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
+		mContext = context;
+        ContentResolver resolver = context.getContentResolver();
+		mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -132,6 +142,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         mAlarmStatusCollapsed = findViewById(R.id.alarm_status_collapsed);
         mAlarmStatus = findViewById(R.id.alarm_status);
         mDateTimeGroup.setOnClickListener(this);
+        mDateTimeGroup.setOnLongClickListener(this);
 
         mMultiUserSwitch = findViewById(R.id.multi_user_switch);
         mMultiUserAvatar = mMultiUserSwitch.findViewById(R.id.multi_user_avatar);
@@ -388,6 +399,24 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                 mActivityStarter.postStartActivityDismissingKeyguard(todayIntent, 0);
             }
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v == mDateTimeGroup) {
+            if (mAlarmShowing) {
+                Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+                builder.appendPath("time");
+                builder.appendPath(Long.toString(System.currentTimeMillis()));
+                Intent todayIntent = new Intent(Intent.ACTION_VIEW, builder.build());
+                mActivityStarter.postStartActivityDismissingKeyguard(todayIntent, 0);
+            } else {
+                mActivityStarter.postStartActivityDismissingKeyguard(new Intent(
+                        AlarmClock.ACTION_SHOW_ALARMS), 0);
+            }
+        }
+        mVibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+        return false;
     }
 
     private void startSettingsActivity() {
