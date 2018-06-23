@@ -119,8 +119,8 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
                     this, UserHandle.USER_ALL);
-            getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.SYSTEM_THEME_STYLE), false,
+            getContext().getContentResolver().registerContentObserver(Settings.Secure
+                    .getUriFor(Settings.Secure.SYSTEM_THEME_STYLE), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -146,8 +146,8 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
                 UserHandle.USER_CURRENT);
-        userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SYSTEM_THEME_STYLE, 2, ActivityManager.getCurrentUser());
+        userThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.SYSTEM_THEME_STYLE, 2, ActivityManager.getCurrentUser());
         if (userThemeSetting == 0) {
             // The system wallpaper defines if system theme should be light or dark.
             WallpaperColors systemColors = mColorExtractor
