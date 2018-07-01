@@ -22,12 +22,5 @@
     <!-- Recents task locking button -->
     <dimen name="recents_task_view_header_lock_button_padding">44dp</dimen>
 
-    <!-- QS Brightness control padding -->
-    <dimen name="qs_brightness_footer_padding">12dp</dimen>
-    <dimen name="qs_footer_padding_top">7dp</dimen>
-    <dimen name="qs_footer_padding_bottom">7dp</dimen>
-    <dimen name="qs_page_indicator_margin_bottom">12dp</dimen>
-    <dimen name="qs_paged_tile_layout_padding_bottom">4dp</dimen>
-
     <dimen name="status_bar_left_clock_end_padding">5dp</dimen>
 </resources>
