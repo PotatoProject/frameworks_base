@@ -27,5 +27,18 @@
     <string name="global_action_restart_ui">系统界面</string>
     <string name="global_action_restart_hot">热重启</string>
     <string name="global_action_screenshot">屏幕截图</string>
+    
+    <!-- Kill button in notification guts -->
+    <string name="force_stop_dlg_title">强行停止?</string>
+    <string name="force_stop_dlg_text">如果你强行停止这个应用, 它可能会出错.</string>
+    <string name="dlg_ok">@android:string/ok</string>
+    <string name="dlg_cancel">@android:string/cancel</string>
+    <string name="kill">强行停止</string>
+        
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">声音</string>
+    <string name="quick_settings_sound_ring">铃声</string>
+    <string name="quick_settings_sound_vibrate">振动</string>
+    <string name="quick_settings_sound_dnd">勿扰</string>
 
    </resources>
