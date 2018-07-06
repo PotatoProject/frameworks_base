@@ -40,7 +40,6 @@ import com.android.systemui.DejankUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.SystemUIFactory;
 import com.android.systemui.keyguard.DismissCallbackRegistry;
-import com.android.systemui.navigation.Navigator;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.RemoteInputController;
 
@@ -565,7 +564,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     private Runnable mMakeNavigationBarVisibleRunnable = new Runnable() {
         @Override
         public void run() {
-            mStatusBar.getNavigationBarView().getBaseView().getRootView().setVisibility(View.VISIBLE);
+            mStatusBar.getNavigationBarView().getRootView().setVisibility(View.VISIBLE);
         }
     };
 
@@ -590,8 +589,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         boolean navBarVisible = isNavBarVisible();
         boolean lastNavBarVisible = getLastNavBarVisible();
         if (navBarVisible != lastNavBarVisible || mFirstUpdate) {
-            Navigator navbar = mStatusBar.getNavigationBarView();
-            if (navbar != null) {
+            if (mStatusBar.getNavigationBarView() != null) {
                 if (navBarVisible) {
                     long delay = getNavBarShowDelay();
                     if (delay == 0) {
@@ -602,7 +600,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
                     }
                 } else {
                     mContainer.removeCallbacks(mMakeNavigationBarVisibleRunnable);
-                    navbar.getBaseView().getRootView().setVisibility(View.GONE);
+                    mStatusBar.getNavigationBarView().getRootView().setVisibility(View.GONE);
                 }
             }
         }
