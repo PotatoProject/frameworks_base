@@ -29,7 +29,6 @@ import com.android.systemui.statusbar.policy.DeadZone;
 public class NavigationBarFrame extends FrameLayout {
 
     private DeadZone mDeadZone = null;
-    private boolean mEnabled = false;
 
     public NavigationBarFrame(@NonNull Context context) {
         super(context);
@@ -46,17 +45,12 @@ public class NavigationBarFrame extends FrameLayout {
 
     public void setDeadZone(@NonNull DeadZone deadZone) {
         mDeadZone = deadZone;
-        mEnabled = true;
-    }
-
-    public void disableDeadZone() {
-        mEnabled = false;
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == ACTION_OUTSIDE) {
-            if (mDeadZone != null && mEnabled) {
+            if (mDeadZone != null) {
                 return mDeadZone.onTouchEvent(event);
             }
         }
