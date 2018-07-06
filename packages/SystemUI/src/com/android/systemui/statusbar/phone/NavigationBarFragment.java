@@ -36,13 +36,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,13 +64,9 @@ import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityManager.AccessibilityServicesStateChangeListener;
-import android.widget.FrameLayout;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
-import com.android.internal.utils.du.DUActionUtils;
-import com.android.internal.utils.du.UserContentObserver;
-import com.android.internal.utils.du.ActionHandler.ActionIconResources;
 import com.android.keyguard.LatencyTracker;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
@@ -81,19 +74,12 @@ import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.fragments.FragmentHostManager;
 import com.android.systemui.fragments.FragmentHostManager.FragmentListener;
-import com.android.systemui.navigation.NavbarOverlayResources;
-import com.android.systemui.navigation.Editor;
-import com.android.systemui.navigation.Navigator;
-import com.android.systemui.navigation.pulse.PulseController;
-import com.android.systemui.navigation.smartbar.SmartBarView;
 import com.android.systemui.recents.Recents;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.statusbar.policy.AccessibilityManagerWrapper;
 import com.android.systemui.statusbar.policy.KeyButtonView;
-import com.android.systemui.statusbar.policy.KeyguardMonitor;
-import com.android.systemui.statusbar.policy.KeyguardMonitor.Callback;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
 
 import java.io.FileDescriptor;
@@ -105,7 +91,7 @@ import java.util.Locale;
  * Fragment containing the NavigationBarFragment. Contains logic for what happens
  * on clicks and view states of the nav bar.
  */
-public class NavigationBarFragment extends Fragment implements Callbacks, Navigator.OnVerticalChangedListener, KeyguardMonitor.Callback {
+public class NavigationBarFragment extends Fragment implements Callbacks {
 
     public static final String TAG = "NavigationBar";
     private static final boolean DEBUG = false;
@@ -114,11 +100,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
     /** Allow some time inbetween the long press for back and recents. */
     private static final int LOCK_TO_APP_GESTURE_TOLERENCE = 200;
 
-    public static final int NAVIGATION_MODE_DEFAULT = 0;
-    public static final int NAVIGATION_MODE_SMARTBAR = 1;
-    public static final int NAVIGATION_MODE_FLING = 2;
-
-    protected Navigator mNavigationBarView = null;
+    protected NavigationBarView mNavigationBarView = null;
     protected AssistManager mAssistManager;
 
     private int mNavigationBarWindowState = WINDOW_STATE_SHOWING;
@@ -145,19 +127,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
 
     public boolean mHomeBlockedThisTouch;
 
-    private PulseController mPulseController;
-    private NavbarOverlayResources mResourceMap;
-    private NavbarObserver mNavbarObserver;
-    private KeyguardMonitor mKeyguardMonitor;
-    private boolean mScreenPinningEnabled;
-    private Configuration mConfiguration;
-    private Resources mResources;
-    private boolean mLeftInLandscape;
-    private int mBarMode;
-
-    private boolean needsBarRefresh = false;
-    private boolean mIsAttached;
-
     // ----- Fragment Lifecycle Callbacks -----
 
     @Override
@@ -168,7 +137,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         mStatusBar = SysUiServiceProvider.getComponent(getContext(), StatusBar.class);
         mRecents = SysUiServiceProvider.getComponent(getContext(), Recents.class);
         mDivider = SysUiServiceProvider.getComponent(getContext(), Divider.class);
-        mKeyguardMonitor = Dependency.get(KeyguardMonitor.class);
         mWindowManager = getContext().getSystemService(WindowManager.class);
         mAccessibilityManager = getContext().getSystemService(AccessibilityManager.class);
         Dependency.get(AccessibilityManagerWrapper.class).addCallback(
@@ -191,23 +159,12 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         } catch (RemoteException e) {
             throw e.rethrowFromSystemServer();
         }
-        mConfiguration = new Configuration();
-        mConfiguration.updateFrom(getContext().getResources().getConfiguration());
-        mPulseController = new PulseController(getContext(), new Handler());
-        mResourceMap = new NavbarOverlayResources(getContext(), getContext().getResources());
-        mBarMode = Settings.Secure.getIntForUser(mContentResolver,
-                Settings.Secure.NAVIGATION_BAR_MODE, NAVIGATION_MODE_DEFAULT,
-                UserHandle.USER_CURRENT);
-        mNavbarObserver = new NavbarObserver(new Handler());
-        mNavbarObserver.observe();
-        mKeyguardMonitor.addCallback(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mCommandQueue.removeCallbacks(this);
-        mKeyguardMonitor.removeCallback(this);
         Dependency.get(AccessibilityManagerWrapper.class).removeCallback(
                 mAccessibilityListener);
         mContentResolver.unregisterContentObserver(mMagnificationObserver);
@@ -222,23 +179,18 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
             Bundle savedInstanceState) {
-        return createNavigator().getBaseView();
+        return inflater.inflate(R.layout.navigation_bar, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mNavigationBarView = (Navigator) view;
+        mNavigationBarView = (NavigationBarView) view;
 
-        mNavigationBarView.setResourceMap(mResourceMap);
-        mNavigationBarView.setControllers(mPulseController);
-        mNavigationBarView.setLeftInLandscape(mLeftInLandscape);
         mNavigationBarView.setDisabledFlags(mDisabledFlags1);
         mNavigationBarView.setComponents(mRecents, mDivider);
         mNavigationBarView.setOnVerticalChangedListener(this::onVerticalChanged);
-        if (isUsingStockNav()) {
-            mNavigationBarView.getBaseView().setOnTouchListener(this::onNavigationTouch);
-        }
+        mNavigationBarView.setOnTouchListener(this::onNavigationTouch);
         if (savedInstanceState != null) {
             mNavigationBarView.getLightTransitionsController().restoreState(savedInstanceState);
         }
@@ -250,7 +202,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         filter.addAction(Intent.ACTION_SCREEN_ON);
         getContext().registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         notifyNavigationBarScreenOn();
-        mNavigationBarView.notifyInflateFromUser();
     }
 
     @Override
@@ -274,21 +225,15 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         super.onConfigurationChanged(newConfig);
         final Locale locale = getContext().getResources().getConfiguration().locale;
         final int ld = TextUtils.getLayoutDirectionFromLocale(locale);
-        mConfiguration.updateFrom(newConfig);
         if (!locale.equals(mLocale) || ld != mLayoutDirection) {
             if (DEBUG) {
                 Log.v(TAG, String.format(
-                        "config changed locale/LD: %s (%d) -> %s (%d)", mLocale,
-                        mLayoutDirection,
+                        "config changed locale/LD: %s (%d) -> %s (%d)", mLocale, mLayoutDirection,
                         locale, ld));
             }
             mLocale = locale;
             mLayoutDirection = ld;
             refreshLayout(ld);
-        }
-        if (mConfiguration.densityDpi != newConfig.densityDpi) {
-            // changeNavigator() will be triggered by onAttach later
-            needsBarRefresh = true;
         }
         repositionNavigationBar();
     }
@@ -309,18 +254,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         } else {
             mNavigationBarView.dump(fd, pw, args);
         }
-    }
-
-    @Override
-    public View getView() {
-        return mNavigationBarView != null ? mNavigationBarView.getBaseView() : null;
-    }
-
-    @Override
-    public void onKeyguardShowingChanged() {
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setKeyguardShowing(mKeyguardMonitor.isShowing());
-        } 
     }
 
     // ----- CommandQueue Callbacks -----
@@ -421,53 +354,11 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         }
     }
 
-    @Override
-    public void dispatchNavigationEditorResults(Intent intent) {
-        if (mNavigationBarView != null) {
-            Editor editor = mNavigationBarView.getEditor();
-            if (editor != null) {
-                editor.dispatchNavigationEditorResults(intent);
-            }
-        }
-    }
-
-    @Override
-    public void toggleNavigationEditor() {
-        if (mNavigationBarView != null) {
-            Editor editor = mNavigationBarView.getEditor();
-            if (editor != null) {
-                editor.toggleNavigationEditor();
-            }
-        }
-    }
-
-    @Override
-    public void leftInLandscapeChanged(boolean isLeft) {
-        mLeftInLandscape = isLeft;
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setLeftInLandscape(isLeft);
-        }
-    }
-
-    @Override
-    public void screenPinningStateChanged(boolean enabled) {
-        mScreenPinningEnabled = enabled;
-        changeNavigator();
-    }
-
-    public void updateNavbarOverlay(Resources res) {
-        if (res == null) return;
-        mResourceMap.updateResources(res);
-        if (mNavigationBarView != null) {
-            mNavigationBarView.updateNavbarThemedResources(res);
-        }
-    }
-
     // ----- Internal stuffz -----
 
     private void refreshLayout(int layoutDirection) {
         if (mNavigationBarView != null) {
-            mNavigationBarView.getBaseView().setLayoutDirection(layoutDirection);
+            mNavigationBarView.setLayoutDirection(layoutDirection);
         }
     }
 
@@ -477,12 +368,12 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
     }
 
     private void repositionNavigationBar() {
-        if (mNavigationBarView == null || !mNavigationBarView.getBaseView().isAttachedToWindow()) return;
+        if (mNavigationBarView == null || !mNavigationBarView.isAttachedToWindow()) return;
 
         prepareNavigationBarView();
 
-        mWindowManager.updateViewLayout((View) mNavigationBarView.getBaseView().getParent(),
-                (((View) mNavigationBarView.getBaseView().getParent()).getLayoutParams()));
+        mWindowManager.updateViewLayout((View) mNavigationBarView.getParent(),
+                ((View) mNavigationBarView.getParent()).getLayoutParams());
     }
 
     private void notifyNavigationBarScreenOn() {
@@ -493,37 +384,26 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         mNavigationBarView.reorient();
 
         ButtonDispatcher recentsButton = mNavigationBarView.getRecentsButton();
-        if (recentsButton != null) {
-            recentsButton.setOnClickListener(this::onRecentsClick);
-            recentsButton.setOnTouchListener(this::onRecentsTouch);
-            recentsButton.setLongClickable(true);
-            recentsButton.setOnLongClickListener(this::onLongPressBackRecents);
-        }
+        recentsButton.setOnClickListener(this::onRecentsClick);
+        recentsButton.setOnTouchListener(this::onRecentsTouch);
+        recentsButton.setLongClickable(true);
+        recentsButton.setOnLongClickListener(this::onLongPressBackRecents);
 
         ButtonDispatcher backButton = mNavigationBarView.getBackButton();
-        if (backButton != null) {
-            backButton.setLongClickable(true);
-            backButton.setOnLongClickListener(this::onLongPressBackRecents);
-        }
+        backButton.setLongClickable(true);
+        backButton.setOnLongClickListener(this::onLongPressBackRecents);
 
         ButtonDispatcher homeButton = mNavigationBarView.getHomeButton();
-        if (homeButton != null) {
-            homeButton.setOnTouchListener(this::onHomeTouch);
-            homeButton.setOnLongClickListener(this::onHomeLongClick);
-        }
+        homeButton.setOnTouchListener(this::onHomeTouch);
+        homeButton.setOnLongClickListener(this::onHomeLongClick);
 
         ButtonDispatcher accessibilityButton = mNavigationBarView.getAccessibilityButton();
-        if (accessibilityButton != null) {
-            accessibilityButton.setOnClickListener(this::onAccessibilityClick);
-            accessibilityButton.setOnLongClickListener(this::onAccessibilityLongClick);
-            updateAccessibilityServicesState(mAccessibilityManager);
-        }
+        accessibilityButton.setOnClickListener(this::onAccessibilityClick);
+        accessibilityButton.setOnLongClickListener(this::onAccessibilityLongClick);
+        updateAccessibilityServicesState(mAccessibilityManager);
     }
 
     private boolean onHomeTouch(View v, MotionEvent event) {
-        if (!isUsingStockNav()) {
-            return false;
-        }
         if (mHomeBlockedThisTouch && event.getActionMasked() != MotionEvent.ACTION_DOWN) {
             return true;
         }
@@ -552,7 +432,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         return false;
     }
 
-    public void onVerticalChanged(boolean isVertical) {
+    private void onVerticalChanged(boolean isVertical) {
         mStatusBar.setQsScrimEnabled(!isVertical);
     }
 
@@ -563,9 +443,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
 
     @VisibleForTesting
     boolean onHomeLongClick(View v) {
-        if (!isUsingStockNav()) {
-            return false;
-        }
         if (shouldDisableNavbarGestures()) {
             return false;
         }
@@ -581,9 +458,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
     // additional optimization when we have software system buttons - start loading the recent
     // tasks on touch down
     private boolean onRecentsTouch(View v, MotionEvent event) {
-        if (!isUsingStockNav()) {
-            return false;
-        }
         int action = event.getAction() & MotionEvent.ACTION_MASK;
         if (action == MotionEvent.ACTION_DOWN) {
             mCommandQueue.preloadRecentApps();
@@ -620,9 +494,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
      * 2) Back is long-pressed without recents.
      */
     private boolean onLongPressBackRecents(View v) {
-        if (!isUsingStockNav()) {
-            return false;
-        }
         try {
             boolean sendBackLongPress = false;
             IActivityManager activityManager = ActivityManagerNative.getDefault();
@@ -734,7 +605,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
 
     public void disableAnimationsDuringHide(long delay) {
         mNavigationBarView.setLayoutTransitionsEnabled(false);
-        mNavigationBarView.getBaseView().postDelayed(() -> mNavigationBarView.setLayoutTransitionsEnabled(true),
+        mNavigationBarView.postDelayed(() -> mNavigationBarView.setLayoutTransitionsEnabled(true),
                 delay + StackStateAnimator.ANIMATION_DURATION_GO_TO_FULL_SHADE);
     }
 
@@ -794,105 +665,6 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
         }
     };
 
-    public boolean isUsingStockNav() {
-        return mBarMode == NAVIGATION_MODE_DEFAULT || mScreenPinningEnabled;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mIsAttached = true;
-        if (needsBarRefresh) {
-            changeNavigator();
-            needsBarRefresh = false;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        mIsAttached = false;
-        mNavigationBarView.dispose();
-        super.onDetach();
-    }
- 
-    /**
-     * Change bar implementation to the root fragment view
-     */
-    public void changeNavigator() {
-        if (mNavigationBarView == null)
-            return;
-        if (mIsAttached) {
-            ViewGroup vg = (ViewGroup)mNavigationBarView.getBaseView().getParent();
-            vg.removeAllViews();
-            mNavigationBarView.dispose();
-            mNavigationBarView = null;
-            mNavigationBarView = createNavigator();
-            mNavigationBarView.setResourceMap(mResourceMap);
-            mNavigationBarView.setControllers(mPulseController);
-            mNavigationBarView.setLeftInLandscape(mLeftInLandscape);
-            mNavigationBarView.setDisabledFlags(mDisabledFlags1);
-            mNavigationBarView.setComponents(mRecents, mDivider);
-            mNavigationBarView.setOnVerticalChangedListener(this::onVerticalChanged);
-            mNavigationBarView.notifyInflateFromUser();
-            mLightBarController.setNavigationBar(mNavigationBarView.getLightTransitionsController());
-            if (isUsingStockNav()) {
-                mNavigationBarView.getBaseView().setOnTouchListener(this::onNavigationTouch);
-            } else {
-                ((NavigationBarFrame)vg).disableDeadZone();
-                mStatusBar.setMediaPlaying();
-            }
-            vg.addView(mNavigationBarView.getBaseView());
-            prepareNavigationBarView();
-            checkNavBarModes();
-            notifyNavigationBarScreenOn();
-        }
-    }
-
-    private Navigator createNavigator() {
-        Navigator navigator;
-        if (isUsingStockNav()) {
-            navigator = (Navigator) View.inflate(getContext(), R.layout.navigation_bar, null);
-        } else if (mBarMode == NAVIGATION_MODE_SMARTBAR) {
-            navigator = (Navigator) new SmartBarView(getContext());
-        } else if (mBarMode == NAVIGATION_MODE_FLING) {
-            navigator = (Navigator) View.inflate(getContext(), R.layout.fling_bar, null);
-        } else {
-            navigator = (Navigator) View.inflate(getContext(), R.layout.navigation_bar, null);
-        }
-        return navigator;
-    }
-
-    public Navigator getNavigator() {
-        return mNavigationBarView;
-    }
-
-    class NavbarObserver extends UserContentObserver {
-
-        NavbarObserver(Handler handler) {
-            super(handler);
-        }
-
-        protected void unobserve() {
-            super.unobserve();
-            getContext().getContentResolver().unregisterContentObserver(this);
-        }
-
-        protected void observe() {
-            super.observe();
-            getContext().getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.NAVIGATION_BAR_MODE), false, this,
-                    UserHandle.USER_ALL);
-        }
-
-        @Override
-        protected void update() {
-            mBarMode = Settings.Secure.getIntForUser(mContentResolver,
-                    Settings.Secure.NAVIGATION_BAR_MODE, NAVIGATION_MODE_DEFAULT,
-                    UserHandle.USER_CURRENT);
-            changeNavigator();
-        }
-    }
-
     public static View create(Context context, FragmentListener listener) {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,
@@ -922,17 +694,5 @@ public class NavigationBarFragment extends Fragment implements Callbacks, Naviga
                 .commit();
         fragmentHost.addTagListener(TAG, listener);
         return navigationBarView;
-    }
-
-    public void setMediaPlaying(boolean playing) {
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setMediaPlaying(playing);
-        }
-    }
-
-    public void setPanelExpanded(boolean expanded) {
-        if (mNavigationBarView != null) {
-            mNavigationBarView.setNotificationPanelExpanded(expanded);
-        }
     }
 }

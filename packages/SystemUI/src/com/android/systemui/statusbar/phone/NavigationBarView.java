@@ -49,7 +49,6 @@ import com.android.systemui.Dependency;
 import com.android.systemui.DockedStackExistsListener;
 import com.android.systemui.R;
 import com.android.systemui.RecentsComponent;
-import com.android.systemui.navigation.Navigator;
 import com.android.systemui.plugins.PluginListener;
 import com.android.systemui.plugins.PluginManager;
 import com.android.systemui.plugins.statusbar.phone.NavGesture;
@@ -62,7 +61,7 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.function.Consumer;
 
-public class NavigationBarView extends FrameLayout implements Navigator {
+public class NavigationBarView extends FrameLayout implements PluginListener<NavGesture> {
     final static boolean DEBUG = false;
     final static String TAG = "StatusBar/NavBarView";
 
@@ -828,18 +827,12 @@ public class NavigationBarView extends FrameLayout implements Navigator {
         pw.println();
     }
 
-    @Override
-    public View getBaseView() {
-        return this;
+    public interface OnVerticalChangedListener {
+        void onVerticalChanged(boolean isVertical);
     }
 
     private final Consumer<Boolean> mDockedListener = exists -> mHandler.post(() -> {
         mDockedStackExists = exists;
         updateRecentsIcon();
     });
-
-    @Override
-    public void dispose() {
-        removeAllViews();
-    }
 }
