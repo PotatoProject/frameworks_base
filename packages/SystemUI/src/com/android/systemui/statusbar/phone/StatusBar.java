@@ -524,7 +524,9 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private final MetricsLogger mMetricsLogger = Dependency.get(MetricsLogger.class);
 
+    private ActivityManager mAm;
     private ArrayList<String> mBlacklist = new ArrayList<String>();
+    private ArrayList<String> mStoplist = new ArrayList<String>();
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -875,6 +877,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BLACKLIST_VALUES),
                     false, this, UserHandle.USER_ALL);
+             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_STOPLIST_VALUES),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -912,6 +917,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         public void update() {
             updateTheme();
             setStatusBarOptions();
+            setHeadsUpStoplist();
             setHeadsUpBlacklist();
         }
 
@@ -986,6 +992,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mContext.getSystemService(Context.ACCESSIBILITY_SERVICE);
 
         mPowerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+
+        mAm = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         mDeviceProvisionedController = Dependency.get(DeviceProvisionedController.class);
         mDeviceProvisionedController.addCallback(mDeviceProvisionedListener);
@@ -6308,6 +6316,12 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     };
 
+    private void setHeadsUpStoplist() {
+        final String stopString = Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.HEADS_UP_STOPLIST_VALUES);
+        splitAndAddToArrayList(mStoplist, stopString, "\\|");
+    }
+
     private void setHeadsUpBlacklist() {
         final String blackString = Settings.System.getString(mContext.getContentResolver(),
                     Settings.System.HEADS_UP_BLACKLIST_VALUES);
@@ -7905,12 +7919,27 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     protected boolean shouldPeek(Entry entry, StatusBarNotification sbn) {
+
+        // get the info from the currently running task
+        List<ActivityManager.RunningTaskInfo> taskInfo = mAm.getRunningTasks(1);
+        if(taskInfo != null && !taskInfo.isEmpty()) {
+            ComponentName componentInfo = taskInfo.get(0).topActivity;
+            if(isPackageInStoplist(componentInfo.getPackageName())
+                && !isDialerApp(sbn.getPackageName())) {
+                return false;
+            }
+        }
+
+        if(isPackageBlacklisted(sbn.getPackageName())) {
+            return false;
+        }
+
         if (!mUseHeadsUp || isDeviceInVrMode()) {
             if (DEBUG) Log.d(TAG, "No peeking: no huns or vr mode");
             return false;
         }
 
-        if(isPackageInBlacklist(sbn.getPackageName())) {
+        if(isPackageBlacklisted(sbn.getPackageName())) {
             return false;
         }
 
@@ -7979,8 +8008,17 @@ public class StatusBar extends SystemUI implements DemoMode,
         return true;
     }
 
-    private boolean isPackageInBlacklist(String packageName) {
+    private boolean isPackageInStoplist(String packageName) {
+        return mStoplist.contains(packageName);
+    }
+
+    private boolean isPackageBlacklisted(String packageName) {
         return mBlacklist.contains(packageName);
+    }
+
+    private boolean isDialerApp(String packageName) {
+        return packageName.equals("com.android.dialer")
+            || packageName.equals("com.google.android.dialer");
     }
 
     private void splitAndAddToArrayList(ArrayList<String> arrayList,
