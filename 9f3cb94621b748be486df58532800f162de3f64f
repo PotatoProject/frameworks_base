@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "533397cd_a7f2f943",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/BurnInProtectionController.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-07-09T06:53:46Z",
+      "side": 1,
+      "message": "Do we really have to reinit this every time this task runs?",
+      "range": {
+        "startLine": 83,
+        "startChar": 16,
+        "endLine": 83,
+        "endChar": 79
+      },
+      "revId": "9f3cb94621b748be486df58532800f162de3f64f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
