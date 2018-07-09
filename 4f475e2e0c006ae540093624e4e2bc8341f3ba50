@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26e3cd61_f0e2a6b5",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7933,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-07-09T07:03:10Z",
+      "side": 1,
+      "message": "we are checking this exact same thing again on #7942, please remove one of the checks.",
+      "range": {
+        "startLine": 7933,
+        "startChar": 8,
+        "endLine": 7933,
+        "endChar": 56
+      },
+      "revId": "4f475e2e0c006ae540093624e4e2bc8341f3ba50",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a3b780f_f07db735",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 8021,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-07-09T07:03:10Z",
+      "side": 1,
+      "message": "This really doesn\u0027t seem like the ideal way to check this to me, people might be using some weird 3rd party dialers. This should be fine for now as I can\u0027t think of a better way to check for dialer rn (apart from potentially checking for the \"android.intent.action.DIAL\" intent on the package)",
+      "range": {
+        "startLine": 8020,
+        "startChar": 8,
+        "endLine": 8021,
+        "endChar": 63
+      },
+      "revId": "4f475e2e0c006ae540093624e4e2bc8341f3ba50",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
