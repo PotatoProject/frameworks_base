@@ -4888,7 +4888,11 @@ public class Notification implements Parcelable
         }
 
         int getSenderTextColor() {
-            return mThemeContext.getColor(R.color.sender_text_color);
+            if (!mAllowIconTextTint) {
+                return mThemeContext.getColor(R.color.sender_text_color);
+            } else {
+                return resolveContrastColor();
+            }
         }
 
         int resolveIconContrastColor() {
