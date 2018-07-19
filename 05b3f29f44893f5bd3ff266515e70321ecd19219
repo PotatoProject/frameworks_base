@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b87795a_fb21deb3",
+        "filename": "packages/SettingsLib/tests/robotests/src/com/android/settingslib/RestrictedLockUtilsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-07-19T15:06:35Z",
+      "side": 1,
+      "message": "whitespaces",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 4
+      },
+      "revId": "05b3f29f44893f5bd3ff266515e70321ecd19219",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
