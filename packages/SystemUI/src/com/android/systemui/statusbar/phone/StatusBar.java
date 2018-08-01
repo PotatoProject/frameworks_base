@@ -875,6 +875,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BLACKLIST_VALUES),
                     false, this, UserHandle.USER_ALL);
+            mContext.getContentResolver().registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.ALBUMART_LOCKSCREEN),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -901,6 +904,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 final String blackString = Settings.System.getString(mContext.getContentResolver(),
                         Settings.System.HEADS_UP_BLACKLIST_VALUES);
                 splitAndAddToArrayList(mBlacklist, blackString, "\\|");
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.ALBUMART_LOCKSCREEN))) {
+                setAlbumartLockscreen();
             }
         }
 
@@ -913,6 +918,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             updateTheme();
             setStatusBarOptions();
             setHeadsUpBlacklist();
+            setAlbumartLockscreen();
         }
 
         private void setStatusBarOptions() {
@@ -935,6 +941,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+
+    private boolean mAlbumartLockscreen;
 
     @Override
     public void start() {
@@ -2660,7 +2668,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         Drawable artworkDrawable = null;
-        if (mMediaMetadata != null) {
+        if (mMediaMetadata != null && mAlbumartLockscreen) {
             Bitmap artworkBitmap = null;
             artworkBitmap = mMediaMetadata.getBitmap(MediaMetadata.METADATA_KEY_ART);
             if (artworkBitmap == null) {
@@ -6312,6 +6320,11 @@ public class StatusBar extends SystemUI implements DemoMode,
         final String blackString = Settings.System.getString(mContext.getContentResolver(),
                     Settings.System.HEADS_UP_BLACKLIST_VALUES);
         splitAndAddToArrayList(mBlacklist, blackString, "\\|");
+    };
+
+    private void setAlbumartLockscreen() {
+        mAlbumartLockscreen = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ALBUMART_LOCKSCREEN, 1, UserHandle.USER_CURRENT) == 1;
     }
 
     private RemoteViews.OnClickHandler mOnClickHandler = new RemoteViews.OnClickHandler() {

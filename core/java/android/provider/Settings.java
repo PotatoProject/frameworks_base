@@ -4033,6 +4033,14 @@ public final class Settings {
          */
         public static final String POWERMENU_LOCKSCREEN = "powermenu_lockscreen";
 
+
+        /**
+         * Whether to display album art on the lockscreen
+         * @hide
+         */
+        public static final String ALBUMART_LOCKSCREEN = "albumart_lockscreen";
+
+
         /**
          * Which applications to disable heads up notifications for
          *
