@@ -83,6 +83,9 @@ import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.ContentResolver;
+import android.provider.Settings;
+
 /**
  * Provides access to information about the telephony services on
  * the device. Applications can use the methods in this class to
