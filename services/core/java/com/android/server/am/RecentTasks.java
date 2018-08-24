@@ -44,6 +44,7 @@ import android.app.ActivityManager;
 import android.app.AppGlobals;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
@@ -72,6 +73,7 @@ import com.google.android.collect.Sets;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -256,7 +258,26 @@ class RecentTasks {
             try {
                 final ApplicationInfo appInfo = AppGlobals.getPackageManager()
                         .getApplicationInfo(cn.getPackageName(), 0, mService.mContext.getUserId());
-                if (appInfo != null) {
+
+                boolean isDefaultOrSysui = "com.android.systemui".equals(cn.getPackageName());
+                if (!isDefaultOrSysui) {
+                    final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+                    filter.addCategory(Intent.CATEGORY_HOME);
+
+                    List<IntentFilter> filters = new ArrayList<IntentFilter>();
+                    filters.add(filter);
+
+                    List<ComponentName> activities = new ArrayList<ComponentName>();
+                    AppGlobals.getPackageManager().getPreferredActivities(filters, activities, null);
+
+                    for (ComponentName activity : activities) {
+                        if (activity.getPackageName().equals(cn.getPackageName())) {
+                            isDefaultOrSysui = true;
+                        }
+                    }
+                }
+
+                if (isDefaultOrSysui && appInfo != null) {
                     mRecentsUid = appInfo.uid;
                     mRecentsComponent = cn;
                 }
