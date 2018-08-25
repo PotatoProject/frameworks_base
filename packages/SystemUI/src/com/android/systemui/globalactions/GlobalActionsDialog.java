@@ -85,6 +85,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
+import com.android.internal.util.potato.PotatoUtils;
 import com.android.internal.util.EmergencyAffordanceManager;
 import com.android.internal.util.ScreenshotHelper;
 import com.android.internal.widget.LockPatternUtils;
@@ -611,7 +612,7 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
         }
     }
 
-    private class ScreenshotAction extends SinglePressAction {
+    private class ScreenshotAction extends SinglePressAction implements LongPressAction {
         public ScreenshotAction() {
             super(com.android.systemui.R.drawable.ic_screenshot, R.string.global_action_screenshot);
         }
@@ -625,11 +626,21 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener,
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mScreenshotHelper.takeScreenshot(1, true, true, mHandler);
-                    MetricsLogger.action(mContext,
-                            MetricsEvent.ACTION_SCREENSHOT_POWER_MENU);
+                    PotatoUtils.takeScreenshot(true);
                 }
             }, 500);
+        }
+
+        @Override
+        public boolean onLongPress() {
+            mHandler.sendEmptyMessage(MESSAGE_DISMISS);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PotatoUtils.takeScreenshot(false);
+                }
+            }, 500);
+            return true;
         }
 
         @Override
