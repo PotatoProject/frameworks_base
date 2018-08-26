@@ -258,8 +258,7 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
         mContext = context;
         mHandler = new Handler();
         mConnectionBackoffAttempts = 0;
-        mRecentsComponentName = ComponentName.unflattenFromString(context.getString(
-                com.android.internal.R.string.config_recentsComponentName));
+        mRecentsComponentName = getRecentsComponentName();
         mQuickStepIntent = new Intent(ACTION_QUICKSTEP)
                 .setPackage(mRecentsComponentName.getPackageName());
         mInteractionFlags = Prefs.getInt(mContext, Prefs.Key.QUICK_STEP_INTERACTION_FLAGS, 0);
@@ -276,6 +275,38 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
             filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
             mContext.registerReceiver(mLauncherStateChangedReceiver, filter);
         }
+    }
+
+    private ComponentName getRecentsComponentName() {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        filter.addCategory(Intent.CATEGORY_HOME);
+
+        List<IntentFilter> filters = new ArrayList<IntentFilter>();
+        filters.add(filter);
+
+        List<ComponentName> activities = new ArrayList<ComponentName>();
+        try {
+            mContext.getPackageManager().getPreferredActivities(filters, activities, null);
+        } catch (Exception e) {
+            Log.d(TAG_OPS, "Couldn't get default launcher", e);
+        }
+
+        String defaultLauncher = "";
+        for (ComponentName activity : activities) {
+            defaultLauncher = activity.getPackageName();
+        }
+
+        String[] components = mContext.getResources().getStringArray(
+            com.android.internal.R.array.config_recentsComponentNames);
+        for (String comp : components) {
+            ComponentName component = ComponentName.unflattenFromString(comp);
+            if (component.getPackageName().equals(defaultLauncher)) {
+                return component;
+            }
+        }
+        
+        return ComponentName.unflattenFromString(mContext.getString(
+            com.android.internal.R.string.config_recentsComponentNameFallback));
     }
 
     public void startConnectionToCurrentUser() {

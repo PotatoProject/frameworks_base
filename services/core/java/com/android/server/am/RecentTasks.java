@@ -44,6 +44,7 @@ import android.app.ActivityManager;
 import android.app.AppGlobals;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
@@ -72,6 +73,7 @@ import com.google.android.collect.Sets;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -245,13 +247,7 @@ class RecentTasks {
      * any dependent services (like SystemUI) is started.
      */
     void loadRecentsComponent(Resources res) {
-        final String rawRecentsComponent = res.getString(
-                com.android.internal.R.string.config_recentsComponentName);
-        if (TextUtils.isEmpty(rawRecentsComponent)) {
-            return;
-        }
-
-        final ComponentName cn = ComponentName.unflattenFromString(rawRecentsComponent);
+        final ComponentName cn = getRecentsComponentName();
         if (cn != null) {
             try {
                 final ApplicationInfo appInfo = AppGlobals.getPackageManager()
@@ -264,6 +260,38 @@ class RecentTasks {
                 Slog.w(TAG, "Could not load application info for recents component: " + cn);
             }
         }
+    }
+
+    private ComponentName getRecentsComponentName() {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        filter.addCategory(Intent.CATEGORY_HOME);
+
+        List<IntentFilter> filters = new ArrayList<IntentFilter>();
+        filters.add(filter);
+
+        List<ComponentName> activities = new ArrayList<ComponentName>();
+        try {
+            AppGlobals.getPackageManager().getPreferredActivities(filters, activities, null);
+        } catch (Exception e) {
+            Slog.d(TAG, "Couldn't get default launcher", e);
+        }
+
+        String defaultLauncher = "";
+        for (ComponentName activity : activities) {
+            defaultLauncher = activity.getPackageName();
+        }
+
+        String[] components = mService.mContext.getResources().getStringArray(
+            com.android.internal.R.array.config_recentsComponentNames);
+        for (String comp : components) {
+            ComponentName component = ComponentName.unflattenFromString(comp);
+            if (component.getPackageName().equals(defaultLauncher)) {
+                return component;
+            }
+        }
+        
+        return ComponentName.unflattenFromString(mService.mContext.getString(
+            com.android.internal.R.string.config_recentsComponentNameFallback));
     }
 
     /**

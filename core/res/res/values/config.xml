@@ -2527,6 +2527,17 @@
           the corresponding recents component. When using a different default launcher, change this appropriately or use the default
           systemui implementation: com.android.systemui/.recents.RecentsActivity -->
     <string name="config_recentsComponentName" translatable="false">com.android.launcher3/com.android.quickstep.RecentsActivity</string>
+    <!-- List of component names for the activity that will be presenting the Recents UI, will be chosen based on the current launcher -->
+    <string-array name="config_recentsComponentNames" translatable="false">
+        <item>@string/config_recentsComponentName</item>
+        <item>ch.deletescape.lawnchair/com.android.quickstep.RecentsActivity</item>
+        <item>ch.deletescape.lawnchair.ci/com.android.quickstep.RecentsActivity</item>
+        <item>ch.deletescape.lawnchair.dev/com.android.quickstep.RecentsActivity</item>
+        <item>ch.deletescape.lawnchair.plah/com.android.quickstep.RecentsActivity</item>
+        <item>com.google.android.apps.nexuslauncher/com.android.quickstep.RecentsActivity</item>
+    </string-array>
+    <!-- Component name for the activity that will be presenting the Recents UI if the current default Launcher doesn't support this feature -->
+    <string name="config_recentsComponentNameFallback" translatable="false">com.android.systemui/.recents.RecentsActivity</string>
 
     <!-- The minimum number of visible recent tasks to be presented to the user through the
          SystemUI. Can be -1 if there is no minimum limit. -->
