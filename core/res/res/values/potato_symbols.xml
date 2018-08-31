@@ -65,4 +65,7 @@
   <!-- Bluetooth service -->
   <java-symbol type="string" name="bluetooth_airplane_mode_toast" />
 
+  <!-- Whether to allow process with media UID to access CameraServiceProxy -->
+  <java-symbol type="bool" name="config_allowMediaUidForCameraServiceProxy" />
+
 </resources>
