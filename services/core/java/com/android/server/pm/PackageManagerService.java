@@ -4070,6 +4070,24 @@ public class PackageManagerService extends IPackageManager.Stub
         return pi;
     }
 
+    private PackageInfo mayFakeSignature(PackageParser.Package p, PackageInfo pi,
+            Set<String> permissions) {
+        try {
+            if (permissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
+                    && p.applicationInfo.targetSdkVersion > Build.VERSION_CODES.LOLLIPOP_MR1
+                    && p.mAppMetaData != null) {
+                String sig = p.mAppMetaData.getString("fake-signature");
+                if (sig != null) {
+                    pi.signatures = new Signature[] {new Signature(sig)};
+                }
+            }
+        } catch (Throwable t) {
+            // We should never die because of any failures, this is system code!
+            Log.w("PackageManagerService.FAKE_PACKAGE_SIGNATURE", t);
+	}
+        return pi;
+    }
+
     @Override
     public void checkPackageStartable(String packageName, int userId) {
         final int callingUid = Binder.getCallingUid();
