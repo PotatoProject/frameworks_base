@@ -11203,7 +11203,6 @@ public class PackageManagerService extends IPackageManager.Stub
                 }
             }
 
-/*
             // Apply policies specific for runtime resource overlays (RROs).
             if (pkg.mOverlayTarget != null) {
                 // System overlays have some restrictions on their use of the 'static' state.
@@ -11262,7 +11261,6 @@ public class PackageManagerService extends IPackageManager.Stub
                     }
                 }
             }
-*/
         }
     }
 
