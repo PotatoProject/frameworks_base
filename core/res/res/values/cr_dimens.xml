@@ -16,5 +16,5 @@
 -->
 
 <resources>
-    <dimen name="toast_elevation">2dp</dimen>
+    <dimen name="toast_elevation">4dp</dimen>
 </resources>
