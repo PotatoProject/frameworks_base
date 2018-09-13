@@ -4737,6 +4737,14 @@ public final class Settings {
         private static final Validator STATUSBAR_PRIVACY_INDICATORS_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * @hide
+         */
+        public static final String USE_OLD_MOBILETYPE = "use_old_mobiletype";
+
+        /** @hide */
+        private static final Validator USE_OLD_MOBILETYPE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4813,6 +4821,7 @@ public final class Settings {
             CUSTOM_BACK_GESTURE_HEIGHT,
             CUSTOM_FP_ICON,
             STATUSBAR_PRIVACY_INDICATORS,
+            USE_OLD_MOBILETYPE,
         };
 
         /**
@@ -4948,6 +4957,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
             PRIVATE_SETTINGS.add(CUSTOM_FP_ICON);
             PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
+            PRIVATE_SETTINGS.add(USE_OLD_MOBILETYPE);
         }
 
         /**
@@ -5057,6 +5067,7 @@ public final class Settings {
             VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
             VALIDATORS.put(CUSTOM_FP_ICON, CUSTOM_FP_ICON_VALIDATOR);
             VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
+            VALIDATORS.put(USE_OLD_MOBILETYPE, USE_OLD_MOBILETYPE_VALIDATOR);
         }
 
         /**
