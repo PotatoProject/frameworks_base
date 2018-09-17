@@ -113,6 +113,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.android.internal.util.potato.NavbarUtils;
+
 /**
  * The power manager service is responsible for coordinating power management
  * functions on the device.
@@ -759,6 +761,8 @@ public final class PowerManagerService extends SystemService
     private SensorEventListener mProximityListener;
     private android.os.PowerManager.WakeLock mProximityWakeLock;
 
+    private boolean mNavbarEnabled;
+
     public PowerManagerService(Context context) {
         this(context, new Injector());
     }
@@ -941,6 +945,10 @@ public final class PowerManagerService extends SystemService
         resolver.registerContentObserver(Settings.System.getUriFor(
                 Settings.System.PROXIMITY_ON_WAKE),
                 false, mSettingsObserver, UserHandle.USER_ALL);
+        resolver.registerContentObserver(Settings.System.getUriFor(
+                Settings.System.NAVIGATION_BAR_SHOW),
+                false, mSettingsObserver, UserHandle.USER_ALL);
+
         IVrManager vrManager = IVrManager.Stub.asInterface(getBinderService(Context.VR_SERVICE));
         if (vrManager != null) {
             try {
@@ -1071,6 +1079,9 @@ public final class PowerManagerService extends SystemService
         mProximityWakeEnabled = Settings.System.getInt(resolver,
                 Settings.System.PROXIMITY_ON_WAKE,
                 mProximityWakeEnabledByDefaultConfig ? 1 : 0) == 1;
+
+        mNavbarEnabled = NavbarUtils.isEnabled(mContext);
+
         mDirty |= DIRTY_SETTINGS;
     }
 
