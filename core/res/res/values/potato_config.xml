@@ -67,4 +67,7 @@
     <!-- Whether notify fingerprint client of successful cancelled authentication -->
     <bool name="config_notifyClientOnFingerprintCancelSuccess">false</bool>
 
+    <!-- Whether device can force navbar disabling -->
+    <bool name="config_canForceDisableNavigationBar">false</bool>
+
 </resources>
