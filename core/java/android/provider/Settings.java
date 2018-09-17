@@ -4847,6 +4847,16 @@ public final class Settings {
         public static final String COLOR_BUCKET_OVERLAY = "color_bucket_overlay";
 
         /**
+         * Force show navigation bar setting.
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+
+         /** @hide */
+        public static final Validator NAVIGATION_BAR_SHOW_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4926,6 +4936,7 @@ public final class Settings {
             STATUSBAR_PRIVACY_INDICATORS,
             DISPLAY_CUTOUT_MODE,
             STOCK_STATUSBAR_IN_HIDE,
+            NAVIGATION_BAR_SHOW,
         };
 
         /**
@@ -5065,6 +5076,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_MODE);
             PRIVATE_SETTINGS.add(STOCK_STATUSBAR_IN_HIDE);
             PRIVATE_SETTINGS.add(COLOR_BUCKET_OVERLAY);
+            PRIVATE_SETTINGS.add(NAVIGATION_BAR_SHOW);
         }
 
         /**
@@ -5177,6 +5189,7 @@ public final class Settings {
             VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
             VALIDATORS.put(DISPLAY_CUTOUT_MODE, DISPLAY_CUTOUT_MODE_VALIDATOR);
             VALIDATORS.put(STOCK_STATUSBAR_IN_HIDE, STOCK_STATUSBAR_IN_HIDE_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_BAR_SHOW, NAVIGATION_BAR_SHOW_VALIDATOR);
         }
 
         /**
