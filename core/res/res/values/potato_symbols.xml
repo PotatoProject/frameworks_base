@@ -65,4 +65,7 @@
   <!-- Bluetooth service -->
   <java-symbol type="string" name="bluetooth_airplane_mode_toast" />
 
+  <!-- Whether device can force navbar disabling -->
+  <java-symbol type="bool" name="config_canForceDisableNavigationBar" />
+
 </resources>
