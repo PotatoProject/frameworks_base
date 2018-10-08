@@ -6246,8 +6246,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (!virtualKey) {
             if (isHwKeysDisabled() || keyguardOn()) {
                 useHapticFeedback = false;
-            }
-        }
+            } else {
+				useHapticFeedback = true;
+			}
+        } else {
+			useHapticFeedback = true;
+		}
 
         // Specific device key handling
         if (mDeviceKeyHandler != null) {
