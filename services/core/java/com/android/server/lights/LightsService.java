@@ -27,7 +27,7 @@ import android.util.Slog;
 
 public class LightsService extends SystemService {
     static final String TAG = "LightsService";
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
 
     final LightImpl mLights[] = new LightImpl[LightsManager.LIGHT_ID_COUNT];
 
@@ -51,9 +51,10 @@ public class LightsService extends SystemService {
                             ": brightness=0x" + Integer.toHexString(brightness));
                     return;
                 }
-
+                Slog.e("LIGHTSSERVICE_DEBUG", "Requested brightness = " + brightness);
                 int color = brightness & 0x000000ff;
                 color = 0xff000000 | (color << 16) | (color << 8) | color;
+                Slog.e("LIGHTSSERVICE_DEBUG", "Requested evaluated color = " + color);
                 setLightLocked(color, LIGHT_FLASH_NONE, 0, 0, brightnessMode);
             }
         }
