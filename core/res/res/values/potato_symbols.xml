@@ -122,4 +122,7 @@
   <java-symbol type="array" name="config_custom_globalActionsList" />
   <java-symbol type="color" name="power_menu_hot_reboot" />
 
+  <!-- Screen off delay -->
+  <java-symbol type="integer" name="config_screen_off_delay" />
+
 </resources>
