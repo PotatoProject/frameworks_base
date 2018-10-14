@@ -188,4 +188,7 @@
    <java-symbol type="id" name="notification_media_elapsed_time" />
    <java-symbol type="id" name="notification_media_total_time" />
 
+    <!-- Screen off delay -->
+    <java-symbol type="integer" name="config_screen_off_delay" />
+
 </resources>
