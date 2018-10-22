@@ -4201,6 +4201,12 @@ public final class Settings {
          */
         public static final String AMBIENT_RECOGNITION_KEYGUARD = "ambient_recognition_keyguard";
 
+        /**
+         * Whether to show VoLTE icon or not
+         * @hide
+         */
+        public static final String SHOW_VOLTE_ICON = "volte_icon";
+
         /** @hide */
         private static final Validator AMBIENT_RECOGNITION_KEYGUARD_VALIDATOR =
                 BOOLEAN_VALIDATOR;
