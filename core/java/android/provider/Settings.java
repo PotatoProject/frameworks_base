@@ -4350,6 +4350,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(EGG_MODE);
             PRIVATE_SETTINGS.add(SHOW_BATTERY_PERCENT);
             PRIVATE_SETTINGS.add(DISPLAY_COLOR_MODE);
+            PRIVATE_SETTINGS.add(WEATHER_LOCKSCREEN_UNIT);
         }
 
         /**
@@ -5420,6 +5421,16 @@ public final class Settings {
          */
         public static final String SYSUI_ROUNDED_SIZE = "sysui_rounded_size";
         public static final String SYSUI_ROUNDED_CONTENT_PADDING = "sysui_rounded_content_padding";
+
+        /**
+         * Weather lockscreen temperature scale
+         * @hide
+         */
+        public static final String WEATHER_LOCKSCREEN_UNIT = "weather_lockscreen_unit";
+
+        /** @hide */
+        private static final Validator WEATHER_LOCKSCREEN_UNIT_VALIDATOR =
+               BOOLEAN_VALIDATOR;
 
         /**
          * When the user has enable the option to have a "bug report" command
@@ -8350,6 +8361,7 @@ public final class Settings {
             VALIDATORS.put(HUSH_GESTURE_USED, HUSH_GESTURE_USED_VALIDATOR);
             VALIDATORS.put(MANUAL_RINGER_TOGGLE_COUNT, MANUAL_RINGER_TOGGLE_COUNT_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_BATTERY_STYLE, STATUS_BAR_BATTERY_STYLE_VALIDATOR);
+            VALIDATORS.put(WEATHER_LOCKSCREEN_UNIT, WEATHER_LOCKSCREEN_UNIT_VALIDATOR);
         }
 
         /**
