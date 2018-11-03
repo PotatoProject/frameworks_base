@@ -607,6 +607,9 @@
     <protected-broadcast android:name="com.android.systemui.action.RESTART_THEME" />
     <protected-broadcast android:name="com.android.systemui.action.REFRESH_SOUND" />
 
+    <!-- Ambient Indication -->
+    <protected-broadcast android:name="com.android.internal.util.ambient.play.AMBIENT_PLAY_SONG_MATCH" />
+
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->
