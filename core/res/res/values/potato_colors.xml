@@ -75,5 +75,6 @@
     <color name="power_menu_advanced_recovery">#ff202020</color>
     <color name="power_menu_advanced_system_restart_ui">#ff202020</color>
     <color name="power_menu_screenshot">#ff202020</color>
+    <color name="power_menu_hot_reboot">#ff202020</color>
 
 </resources>
