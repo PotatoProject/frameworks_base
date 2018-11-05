@@ -4210,6 +4210,12 @@ public final class Settings {
         private static final Validator AMBIENT_RECOGNITION_NOTIFICATION_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
+        /*
+         * Whether to use smart clock or not
+         * @hide
+         */
+        public static final String SMART_CLOCK_ENABLE = "smart_clock_enable";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
