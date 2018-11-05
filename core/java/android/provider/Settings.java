@@ -4631,6 +4631,16 @@ public final class Settings {
         private static final Validator STATUS_BAR_LOGO_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
+        /*
+         * Whether to use smart clock or not
+         * @hide
+         */
+        public static final String SMART_CLOCK_ENABLE = "smart_clock_enable";
+
+        /** @hide */
+        private static final Validator SMART_CLOCK_ENABLE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
         /**
          * Screenrecord: enable mic
          * @hide
@@ -4885,6 +4895,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_WALL);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
+            PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
         }
 
         /**
@@ -4990,6 +5001,7 @@ public final class Settings {
             VALIDATORS.put(QS_PANEL_BG_USE_FW, QS_PANEL_BG_USE_FW_VALIDATOR);
             VALIDATORS.put(CUSTOM_BACK_GESTURE_HEIGHT, CUSTOM_BACK_GESTURE_HEIGHT_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
+            VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
         }
 
         /**
