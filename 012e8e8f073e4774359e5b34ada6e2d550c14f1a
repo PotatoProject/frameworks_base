@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "499b56e3_71b00d98",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:30:07Z",
+      "side": 1,
+      "message": "nit: This is not actually a member variable, drop the m prefix",
+      "range": {
+        "startLine": 91,
+        "startChar": 15,
+        "endLine": 91,
+        "endChar": 24
+      },
+      "revId": "012e8e8f073e4774359e5b34ada6e2d550c14f1a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d3827c3_1f7e8fef",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:30:07Z",
+      "side": 1,
+      "message": "Is there any reason this could ever be false? Otherwise consider removing this for now",
+      "range": {
+        "startLine": 353,
+        "startChar": 32,
+        "endLine": 353,
+        "endChar": 49
+      },
+      "revId": "012e8e8f073e4774359e5b34ada6e2d550c14f1a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3f4df24_727fc94d",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:30:07Z",
+      "side": 1,
+      "message": "Make one member handler for this kind of general use (including the settings observer) instead of seperate ones which are initiated on every method call",
+      "range": {
+        "startLine": 368,
+        "startChar": 12,
+        "endLine": 368,
+        "endChar": 44
+      },
+      "revId": "012e8e8f073e4774359e5b34ada6e2d550c14f1a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5970e63f_425860cc",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:30:07Z",
+      "side": 1,
+      "message": "nit: if you have a branch which requires braces use braces for both branches",
+      "range": {
+        "startLine": 403,
+        "startChar": 16,
+        "endLine": 408,
+        "endChar": 17
+      },
+      "revId": "012e8e8f073e4774359e5b34ada6e2d550c14f1a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
