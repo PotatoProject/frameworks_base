@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "00451831_70aa801c",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2018-11-06T11:57:47Z",
+      "side": 1,
+      "message": "This will give compilation error, because you are not passing a new runnable, you should have object of Runnable, but you are assigning runnable, resulting in void as the 1st param.\njust remove runnable \u003d \n\nOr just use lambdas",
+      "range": {
+        "startLine": 356,
+        "startChar": 42,
+        "endLine": 356,
+        "endChar": 67
+      },
+      "revId": "b910e909b2c5eac856e64bff1b9b6998558e7b39",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6ecc6f86_9d4ff438",
         "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
         "patchSetId": 2
