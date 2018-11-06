@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5eac7c43_696a472e",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-11-06T12:01:55Z",
+      "side": 1,
+      "message": "Won\u0027t. You can perform assignment while passing params in a call. After all, runnable is an object of Runnable.",
+      "parentUuid": "00451831_70aa801c",
+      "range": {
+        "startLine": 356,
+        "startChar": 42,
+        "endLine": 356,
+        "endChar": 67
+      },
+      "revId": "b910e909b2c5eac856e64bff1b9b6998558e7b39",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6ecc6f86_9d4ff438",
         "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
         "patchSetId": 2
