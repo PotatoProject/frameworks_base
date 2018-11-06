@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ecc6f86_9d4ff438",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:49:03Z",
+      "side": 1,
+      "message": "postDelayed(::setupSmartClock, HIDE_DELAY)",
+      "range": {
+        "startLine": 356,
+        "startChar": 30,
+        "endLine": 361,
+        "endChar": 27
+      },
+      "revId": "b910e909b2c5eac856e64bff1b9b6998558e7b39",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf299a28_d7b98507",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T11:49:03Z",
+      "side": 1,
+      "message": "nit: naming of delays is confusing",
+      "range": {
+        "startLine": 373,
+        "startChar": 15,
+        "endLine": 373,
+        "endChar": 25
+      },
+      "revId": "b910e909b2c5eac856e64bff1b9b6998558e7b39",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
