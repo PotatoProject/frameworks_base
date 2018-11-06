@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89ee72f1_eb3d91b3",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-06T12:41:12Z",
+      "side": 1,
+      "message": "nit: code duplication",
+      "range": {
+        "startLine": 93,
+        "startChar": 8,
+        "endLine": 95,
+        "endChar": 46
+      },
+      "revId": "f4c22664abae27de3fb18a4c05099bfa5b75cd4f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
