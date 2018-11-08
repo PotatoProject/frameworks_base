@@ -763,8 +763,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         createAndAddWindows();
 
-        mNosSettingsObserver.observe();
-        mNosSettingsObserver.update();
+        mCustomSettingsObserver.observe();
+        mCustomSettingsObserver.update();
 
         // Make sure we always have the most current wallpaper info.
         IntentFilter wallpaperChangedFilter = new IntentFilter(Intent.ACTION_WALLPAPER_CHANGED);
@@ -4803,9 +4803,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     };
 
-    private NosSettingsObserver mNosSettingsObserver = new NosSettingsObserver(mHandler);
-    private class NosSettingsObserver extends ContentObserver {
-        NosSettingsObserver(Handler handler) {
+    private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+    private class CustomSettingsObserver extends ContentObserver {
+        CustomSettingsObserver(Handler handler) {
             super(handler);
         }
          void observe() {
