@@ -2289,6 +2289,84 @@ public class StatusBar extends SystemUI implements DemoMode,
         return themeInfo != null && themeInfo.isEnabled();
     }
 
+    public boolean isUsingBlackTheme() {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = mOverlayManager.getOverlayInfo("com.android.system.theme.black",
+                    mLockscreenUserManager.getCurrentUserId());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
+    public List<OverlayInfo> getAllOverlays() {
+        Map<String, List<OverlayInfo>> allOverlaysMap = null;
+        List<OverlayInfo> allOverlays = new ArrayList<OverlayInfo>();
+        try {
+            allOverlaysMap = mOverlayManager.getAllOverlays(
+                    mLockscreenUserManager.getCurrentUserId());
+            for (String key : allOverlaysMap.keySet()) {
+                      List<OverlayInfo> stuff = allOverlaysMap.get(key);
+                        allOverlays.addAll(stuff);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return allOverlays;
+    }
+
+    public List<OverlayInfo> getOverlayInfosForCategory(String category) {
+        List<OverlayInfo> allOverlays = getAllOverlays();
+        List<OverlayInfo> ret = new ArrayList<OverlayInfo>();
+        for (OverlayInfo oi : allOverlays) {
+            if (category.equals(oi.category)) {
+                ret.add(oi);
+            }
+        }
+        return ret;
+    }
+
+    public List<String> getDarkThemes() {
+        List<String> pkgs = new ArrayList<>();
+        List<OverlayInfo> dark = getOverlayInfosForCategory("android.theme.dark");
+        dark.addAll(getOverlayInfosForCategory("android.theme.common"));
+        for (int i = 0; i < dark.size(); i++)
+            pkgs.add(dark.get(i).packageName);
+        return pkgs;
+    }
+
+    public List<String> getBlackThemes() {
+        List<String> pkgs = new ArrayList<>();
+        List<OverlayInfo> black = getOverlayInfosForCategory("android.theme.black");
+        black.addAll(getOverlayInfosForCategory("android.theme.common"));
+        for (int i = 0; i < black.size(); i++)
+            pkgs.add(black.get(i).packageName);
+        return pkgs;
+    }
+
+    public void setDarkThemeState(boolean enable) {
+        try {
+            for (String pkg : getDarkThemes()) {
+                mOverlayManager.setEnabled(pkg,
+                        enable, mLockscreenUserManager.getCurrentUserId());
+            }
+        } catch (RemoteException e) {
+            Log.w(TAG, "Can't set dark themes", e);
+        }
+    }
+
+    public void setBlackThemeState(boolean enable) {
+        try {
+            for (String pkg : getBlackThemes()) {
+                mOverlayManager.setEnabled(pkg,
+                        enable, mLockscreenUserManager.getCurrentUserId());
+            }
+        } catch (RemoteException e) {
+            Log.w(TAG, "Can't set black themes", e);
+        }
+    }
+
     @Nullable
     public View getAmbientIndicationContainer() {
         return mAmbientIndicationContainer;
@@ -3006,6 +3084,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             pw.println("    overlay manager not initialized!");
         } else {
             pw.println("    dark overlay on: " + isUsingDarkTheme());
+            pw.println("    black overlay on: " + isUsingBlackTheme());
         }
         final boolean lightWpTheme = mContext.getThemeResId() == R.style.Theme_SystemUI_Light;
         pw.println("    light wallpaper theme: " + lightWpTheme);
@@ -4102,7 +4181,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void updateTheme() {
         final boolean inflated = mStackScroller != null && mStatusBarWindowManager != null;
 
-        // The system wallpaper defines if QS should be light or dark.
+        // The system wallpaper defines if system should be light or dark.
         WallpaperColors systemColors = mColorExtractor
                 .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
         final boolean wallpaperWantsDarkTheme = systemColors != null
@@ -4111,21 +4190,14 @@ public class StatusBar extends SystemUI implements DemoMode,
         final boolean nightModeWantsDarkTheme = DARK_THEME_IN_NIGHT_MODE
                 && (config.uiMode & Configuration.UI_MODE_NIGHT_MASK)
                     == Configuration.UI_MODE_NIGHT_YES;
-        final boolean useDarkTheme = wallpaperWantsDarkTheme || nightModeWantsDarkTheme;
-        if (isUsingDarkTheme() != useDarkTheme) {
+        boolean useBlackTheme = (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PREFER_BLACK_THEMES, 0, UserHandle.USER_CURRENT) == 1);
+        final boolean useDarkTheme = (wallpaperWantsDarkTheme || nightModeWantsDarkTheme) && !useBlackTheme;
+
+        if (isUsingDarkTheme() != useDarkTheme || isUsingBlackTheme() != useBlackTheme) {
             mUiOffloadThread.submit(() -> {
-                try {
-                    mOverlayManager.setEnabled("com.android.system.theme.dark",
-                            useDarkTheme, mLockscreenUserManager.getCurrentUserId());
-                    mOverlayManager.setEnabled("com.android.systemui.qstheme.dark",
-                            useDarkTheme, mLockscreenUserManager.getCurrentUserId());
-                    mOverlayManager.setEnabled("com.android.settings.theme.dark",
-                            useDarkTheme, mLockscreenUserManager.getCurrentUserId());
-                    mOverlayManager.setEnabled("com.android.gboard.theme.dark",
-                            useDarkTheme, mLockscreenUserManager.getCurrentUserId());
-                } catch (RemoteException e) {
-                    Log.w(TAG, "Can't change theme", e);
-                }
+                setDarkThemeState(useDarkTheme);
+                setBlackThemeState(useBlackTheme);
             });
         }
 
@@ -4815,6 +4887,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.HEADS_UP_STOPLIST_VALUES), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_BLACKLIST_VALUES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.PREFER_BLACK_THEMES), false, this);
         }
 
         @Override
@@ -4823,6 +4897,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setHeadsUpStoplist();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.HEADS_UP_BLACKLIST_VALUES))) {
                 setHeadsUpBlacklist();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.PREFER_BLACK_THEMES))) {
+                updateTheme();
             }
         }
 
@@ -4832,6 +4908,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
 
         public void update() {
+            updateTheme();
             setHeadsUpStoplist();
             setHeadsUpBlacklist();
         }
