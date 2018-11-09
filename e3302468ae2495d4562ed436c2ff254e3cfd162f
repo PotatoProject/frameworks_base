@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a09bbbe_482174a5",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2305,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-09T10:14:28Z",
+      "side": 1,
+      "message": "useBlackTheme \u003d useDarkTheme \u0026\u0026 useBlackTheme",
+      "range": {
+        "startLine": 2304,
+        "startChar": 8,
+        "endLine": 2305,
+        "endChar": 34
+      },
+      "revId": "e3302468ae2495d4562ed436c2ff254e3cfd162f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef6a5ac4_c369e977",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2309,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-09T10:14:28Z",
+      "side": 1,
+      "message": "The redeclaration of useBlackTheme should already ensure this",
+      "range": {
+        "startLine": 2309,
+        "startChar": 16,
+        "endLine": 2309,
+        "endChar": 68
+      },
+      "revId": "e3302468ae2495d4562ed436c2ff254e3cfd162f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cd8fb5f_3bedfcf5",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2325,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-09T10:14:28Z",
+      "side": 1,
+      "message": "nit: indentation",
+      "range": {
+        "startLine": 2324,
+        "startChar": 22,
+        "endLine": 2325,
+        "endChar": 50
+      },
+      "revId": "e3302468ae2495d4562ed436c2ff254e3cfd162f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba59c369_f8d366f5",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2347,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2018-11-09T10:14:28Z",
+      "side": 1,
+      "message": "Extracting this into a seperate \"getCommonOverlays\" method might be a good idea",
+      "range": {
+        "startLine": 2347,
+        "startChar": 20,
+        "endLine": 2347,
+        "endChar": 70
+      },
+      "revId": "e3302468ae2495d4562ed436c2ff254e3cfd162f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
