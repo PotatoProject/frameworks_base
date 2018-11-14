@@ -119,4 +119,9 @@
   <java-symbol type="array" name="config_custom_globalActionsList" />
   <java-symbol type="color" name="power_menu_hot_reboot" />
 
+  <!-- Minimum time in milliseconds between power button presses so it wil e considered
+       as a camera launch. To avoid false triggers.
+  -->
+  <java-symbol type="integer" name="config_cameraPowerDoubleTapMinTime" />
+
 </resources>
