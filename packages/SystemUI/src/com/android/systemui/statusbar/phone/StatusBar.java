@@ -2330,9 +2330,14 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private List<OverlayInfo> getOverlayInfosForCategory(String category) {
         List<OverlayInfo> allOverlays = getAllOverlays();
+        Log.i("SYSUI_THEME_DEBUG", "Got category: " + category);
+        Log.i("SYSUI_THEME_DEBUG", "All overlays:");
         List<OverlayInfo> ret = new ArrayList<OverlayInfo>();
         for (OverlayInfo oi : allOverlays) {
+            Log.i("SYSUI_THEME_DEBUG", "  " + oi.packageName);
             if (category.equals(oi.category)) {
+                Log.i("SYSUI_THEME_DEBUG", "    " + oi.packageName
+                                + " has " + category + "!");
                 ret.add(oi);
             }
         }
@@ -2340,6 +2345,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private List<String> getDarkThemes() {
+        Log.i("SYSUI_THEME_DEBUG", "Getting dark themes...");
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> dark = getOverlayInfosForCategory("android.theme.dark");
         dark.addAll(getOverlayInfosForCategory("android.theme.common"));
@@ -2349,6 +2355,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private List<String> getBlackThemes() {
+        Log.i("SYSUI_THEME_DEBUG", "Getting black themes...");
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> black = getOverlayInfosForCategory("android.theme.black");
         black.addAll(getOverlayInfosForCategory("android.theme.common"));
