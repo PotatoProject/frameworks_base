@@ -2282,7 +2282,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         OverlayInfo themeInfo = null;
         try {
             themeInfo = mOverlayManager.getOverlayInfo("com.android.system.theme.dark",
-                    mLockscreenUserManager.getCurrentUserId());
+                    ActivityManager.getCurrentUser());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -2293,7 +2293,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         OverlayInfo themeInfo = null;
         try {
             themeInfo = mOverlayManager.getOverlayInfo("com.android.system.theme.black",
-                    mLockscreenUserManager.getCurrentUserId());
+                    ActivityManager.getCurrentUser());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -2301,7 +2301,9 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private void handleThemeStates(boolean useBlackTheme, boolean useDarkTheme) {
+        Log.i("SYSUI_THEME_DEBUG", "Got useBlackTheme = " + useBlackTheme + " useDarkTheme = " + useDarkTheme);
         useBlackTheme = useDarkTheme && useBlackTheme;
+        Log.i("SYSUI_THEME_DEBUG", "Now useBlackTheme = " + useBlackTheme + " useDarkTheme = " + useDarkTheme);
         // We can only use final variables in lambdas
         final boolean finalUseBlackTheme = useBlackTheme;
         if ((isUsingBlackTheme() != useBlackTheme) ||
@@ -2312,12 +2314,13 @@ public class StatusBar extends SystemUI implements DemoMode,
             });
         }
     }
+
     private List<OverlayInfo> getAllOverlays() {
         Map<String, List<OverlayInfo>> allOverlaysMap = null;
         List<OverlayInfo> allOverlays = new ArrayList<OverlayInfo>();
         try {
             allOverlaysMap = mOverlayManager.getAllOverlays(
-                    mLockscreenUserManager.getCurrentUserId());
+                    ActivityManager.getCurrentUser());
             for (String key : allOverlaysMap.keySet()) {
                 List<OverlayInfo> stuff = allOverlaysMap.get(key);
                 allOverlays.addAll(stuff);
@@ -2330,9 +2333,12 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private List<OverlayInfo> getOverlayInfosForCategory(String category) {
         List<OverlayInfo> allOverlays = getAllOverlays();
+        Log.i("SYSUI_THEME_DEBUG", "Got category: " + category);
         List<OverlayInfo> ret = new ArrayList<OverlayInfo>();
         for (OverlayInfo oi : allOverlays) {
             if (category.equals(oi.category)) {
+                Log.i("SYSUI_THEME_DEBUG", "    " + oi.packageName
+                                + " has " + category + "!");
                 ret.add(oi);
             }
         }
@@ -2340,6 +2346,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private List<String> getDarkThemes() {
+        Log.i("SYSUI_THEME_DEBUG", "Getting dark themes...");
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> dark = getOverlayInfosForCategory("android.theme.dark");
         dark.addAll(getOverlayInfosForCategory("android.theme.common"));
@@ -2349,6 +2356,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private List<String> getBlackThemes() {
+        Log.i("SYSUI_THEME_DEBUG", "Getting black themes...");
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> black = getOverlayInfosForCategory("android.theme.black");
         black.addAll(getOverlayInfosForCategory("android.theme.common"));
@@ -2361,7 +2369,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         try {
             for (String pkg : pkgs) {
                 mOverlayManager.setEnabled(pkg,
-                        enable, mLockscreenUserManager.getCurrentUserId());
+                        enable, ActivityManager.getCurrentUser());
             }
         } catch (RemoteException e) {
             Log.w(TAG, "Can't set dark themes", e);
@@ -2369,10 +2377,12 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private void setDarkThemeState(boolean enable) {
+        Log.i("SYSUI_THEME_DEBUG", "Called setDarkThemeState with enable = " + enable);
         setThemeStateFromList(enable, getDarkThemes());
     }
 
     private void setBlackThemeState(boolean enable) {
+        Log.i("SYSUI_THEME_DEBUG", "Called setBlackThemeState with enable = " + enable);
         setThemeStateFromList(enable, getBlackThemes());
     }
 
