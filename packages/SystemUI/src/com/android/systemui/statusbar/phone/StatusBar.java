@@ -878,6 +878,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     mStatusBarView.setBar(this);
                     mStatusBarView.setPanel(mNotificationPanel);
                     mStatusBarView.setScrimController(mScrimController);
+                    handleCutout();
                     mStatusBarView.setBouncerShowing(mBouncerShowing);
                     if (oldStatusBarView != null) {
                         float fraction = oldStatusBarView.getExpansionFraction();
@@ -2243,6 +2244,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             });
         }
     }
+
     private List<OverlayInfo> getAllOverlays() {
         Map<String, List<OverlayInfo>> allOverlaysMap = null;
         List<OverlayInfo> allOverlays = new ArrayList<OverlayInfo>();
@@ -2299,6 +2301,15 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private void setCommonThemeState(boolean enable) {
         setThemeStateFromList(enable, getThemePkgs("android.theme.common"));
+    }
+
+    private void setCutoutOverlay(boolean enable) {
+        try {
+            mOverlayManager.setEnabled("com.potato.overlay.hidecutout",
+                        enable, mLockscreenUserManager.getCurrentUserId());
+        } catch (RemoteException e) {
+            Log.w(TAG, "Failed to handle cutout overlay", e);
+        }
     }
 
     @Nullable
@@ -4899,6 +4910,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_COLOR_WALL),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISPLAY_CUTOUT_MODE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -4927,7 +4941,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL))) {
                 mQSPanel.getHost().reloadAllTiles();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE))) {
+                handleCutout();
             }
+
         }
 
         @Override
@@ -4942,6 +4959,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             updateQsPanelResources();
             setStatusBarWindowViewOptions();
             updateCorners();
+            handleCutout();
         }
     }
 
@@ -4955,6 +4973,30 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (mStatusBarWindow != null) {
             mStatusBarWindow.setStatusBarWindowViewOptions();
         }
+    }
+
+    private void updateStatusBarColors(boolean enable) {
+
+        if (enable) {
+            if (mStatusBarView != null)
+                mStatusBarView.setBackgroundColor(0xFF000000);
+            if (mKeyguardStatusBar != null)
+                mKeyguardStatusBar.setBackgroundColor(0xFF000000);
+        } else {
+            if (mStatusBarView != null)
+                mStatusBarView.setBackgroundColor(Color.TRANSPARENT);
+            if (mKeyguardStatusBar != null)
+                mKeyguardStatusBar.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    private void handleCutout() {
+        final boolean immerseMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
+        final boolean hideCutoutMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 2;
+        updateStatusBarColors(immerseMode);
+        setCutoutOverlay(hideCutoutMode);
     }
 
     private void setHeadsUpStoplist() {

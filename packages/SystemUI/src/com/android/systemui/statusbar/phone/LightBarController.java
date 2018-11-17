@@ -18,8 +18,14 @@ package com.android.systemui.statusbar.phone;
 
 import android.app.WallpaperColors;
 import android.content.Context;
+import android.content.ContentResolver;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 
 import com.android.internal.colorextraction.ColorExtractor.GradientColors;
@@ -55,6 +61,10 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
     private int mLastStatusBarMode;
     private int mLastNavigationBarMode;
     private final Color mDarkModeColor;
+    private boolean mForceDarkIcons = false;
+    private Handler mHandler = new Handler();
+    private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
+    private Context mContext;
 
     /**
      * Whether the navigation bar should be light factoring in already how much alpha the scrim has
@@ -82,6 +92,9 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
         mStatusBarIconController = Dependency.get(DarkIconDispatcher.class);
         mBatteryController = Dependency.get(BatteryController.class);
         mBatteryController.addCallback(this);
+        mContext = ctx;
+        mCustomSettingsObserver.observe();
+        mCustomSettingsObserver.update();
     }
 
     public void setNavigationBar(LightBarTransitionsController navigationBar) {
@@ -188,12 +201,13 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
 
     private void updateStatus(Rect fullscreenStackBounds, Rect dockedStackBounds) {
         boolean hasDockedStack = !dockedStackBounds.isEmpty();
+        boolean iconsDark = !mForceDarkIcons;
 
         // If both are light or fullscreen is light and there is no docked stack, all icons get
         // dark.
         if ((mFullscreenLight && mDockedLight) || (mFullscreenLight && !hasDockedStack)) {
             mStatusBarIconController.setIconsDarkArea(null);
-            mStatusBarIconController.getTransitionsController().setIconsDark(true, animateChange());
+            mStatusBarIconController.getTransitionsController().setIconsDark(iconsDark, animateChange());
 
         }
 
@@ -212,7 +226,7 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
             } else {
                 mStatusBarIconController.setIconsDarkArea(bounds);
             }
-            mStatusBarIconController.getTransitionsController().setIconsDark(true, animateChange());
+            mStatusBarIconController.getTransitionsController().setIconsDark(iconsDark, animateChange());
         }
     }
 
@@ -272,6 +286,35 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
             pw.println(" NavigationBarTransitionsController:");
             mNavigationBarController.dump(fd, pw, args);
             pw.println();
+        }
+    }
+
+    private class CustomSettingsObserver extends ContentObserver {
+        CustomSettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISPLAY_CUTOUT_MODE), false, this);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE))) {
+                update();
+            }
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            update();
+        }
+
+        public void update() {
+            mForceDarkIcons = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
         }
     }
 }
