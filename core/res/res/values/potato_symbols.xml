@@ -191,4 +191,7 @@
     <!-- Screen off delay -->
     <java-symbol type="integer" name="config_screen_off_delay" />
 
+    <!-- System fonts -->
+    <java-symbol type="array" name="config_fontPackages" />
+
 </resources>
