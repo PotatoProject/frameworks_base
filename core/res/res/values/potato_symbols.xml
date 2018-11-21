@@ -41,6 +41,9 @@
   <!-- Whether device has turbo power charging support -->
   <java-symbol type="bool" name="config_hasTurboPowerCharger" />
 
+  <!-- Whether device has super charging support -->
+  <java-symbol type="bool" name="config_hasSuperCharger" />
+
   <!-- Proximity check on screen on -->
   <java-symbol type="bool" name="config_proximityCheckOnWake" />
 
