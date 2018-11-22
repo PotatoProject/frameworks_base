@@ -1,0 +1,243 @@
+[33mcommit 6482b61723a959dd200f3e55591cffd50d8e4404[m[33m ([m[1;36mHEAD[m[33m)[m
+Author: rajadeja <raj.jdja@gmail.com>
+Date:   Sun Dec 2 10:47:05 2018 +0100
+
+    QSTiles: change metrics
+    
+    Change-Id: If9c6475f99aa377105f9f721ea1f08b48f037241
+
+[33mcommit 958409d9c9fe16883916ddd93b6079b89b33f520[m
+Author: Kshitij Gupta <kshitijgm@gmail.com>
+Date:   Mon Nov 26 15:51:03 2018 +0530
+
+    metrics_constants: Refactor for Pie [1/2]
+    
+    Change-Id: I382693784d33b25e18d7abb814834ebd418556d8
+    Signed-off-by: Kshitij Gupta <kshitijgm@gmail.com>
+
+[33mcommit c7ef93804528670946e24a8d160435d3911171de[m[33m ([m[1;31mpotato/baked-release[m[33m, [m[1;31mm/baked-release[m[33m)[m
+Author: Benergy Meenan Ravuri <bravuri@codeaurora.org>
+Date:   Fri May 18 23:16:10 2018 +0530
+
+    IMS: Propagate RTT capability of the called party to UI
+    
+    Propagate RTT capability of the called party to UI
+    
+    Change-Id: Ia7d99e7b1f2e87ac7fb703333f5a4c617321e4ef
+    CRs-Fixed: 2245712
+
+[33mcommit deee1a65e4ab0be9a31b94170efb4936e0ae50b8[m
+Author: Suchand Ghosh <suchan@codeaurora.org>
+Date:   Wed Apr 12 14:26:23 2017 +0530
+
+    IMS: Conference URI support.
+    
+    Add Telephony extras EXTRAS_IS_CONFERENCE_URI,
+    EXTRA_DIAL_CONFERENCE_URI which will require by Telecomm,
+    TeleService, Telephony, Framework, IMS framework etc.
+    
+    IMS: Allow placeCall with complete URI
+    
+    Add extra "org.codeaurora.extra.SKIP_SCHEMA_PARSING".
+    Application need to set the intent extra to dial with
+    complete uri.
+    
+    IMS: Add participant support.
+    
+    Add Phone Capabilities ADD_PARTICIPANT and
+    Telephony Property ADD_PARTICIPANT_KEY.
+    
+    IMS: Allow add participant with normal IMS call
+    
+    We should allow add participant with normal IMS
+    call to make it conference.
+    Send add participant through existing connection
+    of normal IMS call.
+    
+    IMS: Add Participant support.
+    
+    Do not create new connection while adding participant
+    with existing call. Rather send add participant request
+    through IMSConference.
+    
+    IMS: Rectify the capability mask for add participant
+    
+    Properly set the add participant capability mask.
+    
+    CRs-Fixed: 2189932
+    Change-Id: I5052710a2d11a57331bdfbe64247e6a39bf9147a
+
+[33mcommit f41b1ed8f7f6cb00bd1b5d8fc1586bed227ff0e9[m
+Author: Ashit Sood <sooda@codeaurora.org>
+Date:   Wed Aug 8 08:45:42 2018 -0700
+
+    IMS: Add CALL_TYPE for audio and video inactive
+    
+    - Added CALL_TYPE_UNKNOWN for audio and video
+      inactive.
+    
+    Change-Id: Ic53e9fd8662c37a5cd327e1b56b89725cc07095f
+    CRs-Fixed: 2291455
+
+[33mcommit b3deb723474124798563fe8d2291af67d6789221[m
+Author: Benergy Meenan Ravuri <bravuri@codeaurora.org>
+Date:   Thu Jul 26 23:51:53 2018 +0530
+
+    IMS: Initialize provisioning status to unknown.
+    
+    CLIP query operation is displaying incorrect information on UI
+    that service is not provisioned even though service is enabled.
+    
+    To fix this, Initialize provisioning status to unknown.
+    
+    Change-Id: I2fb78935b4c82e4b5d1238dff36e684ad9d58097
+    CRs-Fixed: 2284038
+
+[33mcommit 6b635fe837e7203ea4b93596be12bc05127fddf7[m
+Author: Sumit Das <sumidas@codeaurora.org>
+Date:   Thu Jun 7 14:47:19 2018 -0700
+
+    IMS: Support Robocall Feature For MT VOLTE Calls
+    
+    -Added a new call fail error code for user marked unwanted calls.
+    
+    Change-Id: I7bbc45a39d637f93127097e8b27981c9519fe0e7
+    CRs-Fixed: 2226444
+
+[33mcommit fc6d5e3387b367e2f45d011f0d42c98b2001ea7b[m
+Author: Omkar Kolangade <omkark@codeaurora.org>
+Date:   Sun Jun 3 10:29:10 2018 -0700
+
+    IMS: Support for Implicit Call Rejection
+    
+    Adding an API in MmTelFeature to allow IMS
+    Service to report the reasons for implicit
+    call rejections by lower layers. Corresponding
+    ImsReasonInfo codes are also being added.
+    
+    The call rejections are not related to any
+    call session or a call that Framework is aware
+    of.
+    
+    CRs-Fixed: 2208730
+    Change-Id: I6e60b752884936ed77e45ac5a241fc6f04ab7a9d
+
+[33mcommit 3094506684cc8b41d0d30835eb565f54ff80f075[m
+Author: Nivedita Sarkar <nsarkar@codeaurora.org>
+Date:   Thu May 31 10:29:02 2018 -0700
+
+    IMS: Propagate call session property changed message
+    
+    - RTT Voice information will be passed to the UI via the call
+      session property changed message
+    
+    - The RTT voice information - SPEECH/SILENCE, will be conveyed
+      via the Connection.PROPERTY_RTT_AUDIO_SPEECH bit mask in the
+      call session property
+    
+    - A connection event will be sent from frameworks to the UI -
+      EVENT_CALL_PROPERTY_CHANGED
+    
+    - Add listeners, connection event and extras to propagate the
+      call session property to the UI
+    
+    Change-Id: Iad68bb3964d15a612be7020a8c03c28825e4d371
+    CRs-Fixed: 2233887
+
+[33mcommit 01869282226372041d48657eb83824f523a03919[m
+Author: Avinash Nalluri <anallu@codeaurora.org>
+Date:   Sat Apr 21 14:06:06 2018 -0700
+
+    Emergency SMS carrier config flag
+    
+    Allow send sms over ims to emergency number when the device is in
+    lte/limited lte mode without normal ims registration.
+    Modem will use emergency ims pdn to submit sms to network.
+    
+    Change-Id: I5762102c695fe309a4a5b318abccded5c50154e0
+    CRs-Fixed: 2243328
+
+[33mcommit c46fa648bd5a79b4b5ef4924b23848e20b047e00[m
+Author: Ashit Sood <sooda@codeaurora.org>
+Date:   Thu Apr 19 13:05:44 2018 -0700
+
+    IMS: Adding support for TIR/TIP permanent provisioning
+    
+    - Adding ProvisionStatus to ImsSsInfo
+    
+    Change-Id: I9c27b912aeeeb22856eb6896bac2c79665a7adca
+    CRs-Fixed: 2234340
+
+[33mcommit 01cb8341ff31843a37f8efe744f24446cb70b350[m
+Author: pengfei xiao <pengfeix@codeaurora.org>
+Date:   Tue Apr 3 17:25:42 2018 +0800
+
+    IMS: Add flag to control reset UT capability
+    
+    Change-Id: I4a8623148690c206d92d73431c08d37af3bf7c85
+    CRs-Fixed: 2216310
+
+[33mcommit c974aa36d53b83692a306b54642620b232d383a3[m
+Author: pengfeix <pengfeix@codeaurora.org>
+Date:   Sat Apr 15 23:16:12 2017 +0800
+
+    IMS: Add UT interface to query CF setting for service class.
+    
+    Current interface does not take any service class argument.
+    Add a new API for querying call forward status based on service
+    class.
+    This can be useful to query call forwarding information for video
+    calls differently from voice calls.
+    
+    Change-Id: I62904ba59ec2d9175f0e131582d758caec57cc0c
+    CRs-Fixed: 2214326
+
+[33mcommit d32f6417c2d14f9bdc6e2dc4c638e0706d5ae682[m
+Author: Ravi Paluri <rpaluri@codeaurora.org>
+Date:   Mon Sep 25 15:44:16 2017 +0530
+
+    IMS-VT: Add config to control holding a video call
+    
+    Add <allow_holding_video_call> config that controls
+    whether video call can be put on hold. The config holds true
+    if carrier supporting holding video calls else holds false
+    
+    Change-Id: Iccd93f871fabebc2ba59867898b45147e37356b0
+    CRs-Fixed: 2201695
+
+[33mcommit 6df592a2621780f60f2fd5cf7d1fc9f3d7558e5b[m
+Author: Lars Greiss <kufikugel@googlemail.com>
+Date:   Wed Nov 7 15:14:43 2018 +0530
+
+    base: Bring back less notification sounds [1/2]
+    
+    Change-Id: Ifb30b5e6762ae8e7122e5d16f0dcf2de8524ac2d
+    Signed-off-by: Shreyansh Lodha <slodha96@gmail.com>
+
+[33mcommit 36ca793104afb18fc249cc7bd4d2161160203a1a[m
+Author: Kshitij Gupta <kshitijgm@gmail.com>
+Date:   Thu Nov 8 18:02:37 2018 +0000
+
+    base: BlackUI for Pie [1/3]
+    
+    - Make a list of all overlays on the device
+    - Return overlays package list by category
+    - Saves us from all the package name hardcoding
+    - Make a setting to control usage of BlackUI overlays
+    
+    Change-Id: Ic08b9966db0dcf5368805e299b8ef748042837be
+    Signed-off-by: Kshitij Gupta <kshitijgm@gmail.com>
+
+[33mcommit 2b3e4a1190f8e2f211d318fa7320a2b26f4d2a6a[m
+Author: Kshitij Gupta <kshitijgm@gmail.com>
+Date:   Thu Nov 8 19:57:51 2018 +0000
+
+    StatusBar: Redo our SettingsObserver
+    
+    - We can just reuse this then
+    - Also, cleanup and use relevant checks in onChange()
+    
+    Change-Id: Ia2a4a3902b74ddfbfafc2e64c99302b51acc39c1
+    Signed-off-by: Kshitij Gupta <kshitijgm@gmail.com>
+
+[33mcommit dbaed27cd2633bd825a598e0b4615dacdb36c
