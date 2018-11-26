@@ -6434,6 +6434,6 @@ message MetricsEvent {
     // Add new aosp constants above this line.
     // END OF AOSP CONSTANTS
 
-    POTATO_WEDGES = 9999;
+    FRIES = 9999;
   }
 }
