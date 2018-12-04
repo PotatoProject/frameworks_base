@@ -107,4 +107,6 @@
   <java-symbol type="string" name="ambient_recognition_notification" />
   <java-symbol type="string" name="ambient_recognition_information" />
 
+  <!-- Pocket bridge -->
+  <java-symbol type="string" name="config_pocketBridgeSysfsInpocket" />
 </resources>
