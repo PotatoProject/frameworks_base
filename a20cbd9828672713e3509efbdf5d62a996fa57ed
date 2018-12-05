@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20e4d03b_09306632",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBarWindowView.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-05T15:03:39Z",
+      "side": 1,
+      "message": "Should be 0. Default value in Settings is \"Disabled\" which corresponds to 0. Having this set to 1 causes Quick pulldown to be enabled when the settings preference shows \"Disabled\". \n\nNote: This will only happen if the Settings.System.STATUS_BAR_QUICK_QS_PULLDOWN isn\u0027t set.",
+      "range": {
+        "startLine": 816,
+        "startChar": 62,
+        "endLine": 816,
+        "endChar": 63
+      },
+      "revId": "a20cbd9828672713e3509efbdf5d62a996fa57ed",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
