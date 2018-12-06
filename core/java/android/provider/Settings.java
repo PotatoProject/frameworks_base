@@ -4514,6 +4514,12 @@ public final class Settings {
         /** @hide */
         private static final Validator CUSTOM_DEVICE_PROXI_CHECK_ENABLED_VALIDATOR =
                 BOOLEAN_VALIDATOR;
+        /**
+         * Whether to display our du logo in the statusbar for extra swag
+         * @hide
+         */
+        public static final String STATUS_BAR_LOGO = "status_bar_logo";
+
 
         /** Whether to pulse ambient on new music tracks
          *
