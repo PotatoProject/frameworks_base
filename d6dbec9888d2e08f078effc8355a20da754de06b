@@ -1,0 +1,274 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a324c29_c56ec0e5",
+        "filename": "packages/SystemUI/plugin/src/com/android/systemui/plugins/qs/QSTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "might wanna check where the whitespace came from. If it\u0027s an open change on gerrit, might wanna amend that too xD",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 1
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e37372f_f024ab4d",
+        "filename": "packages/SystemUI/plugin/src/com/android/systemui/plugins/qs/QSTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 70,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 27
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d59df21b_24fd7ada",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/QSPanel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 566,
+        "startChar": 0,
+        "endLine": 566,
+        "endChar": 46
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bea1d7bb_af117568",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/QSPanel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 782,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "Long story short, this is completely unnecessary. Pie doesn\u0027t have proper dual target support. It\u0027s very janky. This entire method is meant to update long press actions for dual target tiles when showing/hiding titles. (Remember the little arrow we had next to titles in pie? Long pressing tiles to simulate that action when titles are off)",
+      "range": {
+        "startLine": 766,
+        "startChar": 0,
+        "endLine": 782,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5592f91b_18a181cc",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/QSPanel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "Similarly, this method is also useless as it calls configureTile(t,v) for every tile.\n\nNot sure where it\u0027s being called, maybe find and remove that too.",
+      "range": {
+        "startLine": 784,
+        "startChar": 0,
+        "endLine": 790,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "329e5248_5ec91406",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e425e462_c6bcd632",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "though this is a harmless null check, since we\u0027re getting rid of longclick changes, might as well discard this.",
+      "range": {
+        "startLine": 264,
+        "startChar": 0,
+        "endLine": 267,
+        "endChar": 9
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2a3b059_4d914099",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tiles/BluetoothTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81ed29dd_27487ad6",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tiles/CellularTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 282,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bc534e5_9442ef08",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tiles/DndTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f21ebe7f_490dae5b",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tiles/WifiTile.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "nuke",
+      "range": {
+        "startLine": 107,
+        "startChar": 0,
+        "endLine": 110,
+        "endChar": 5
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcca20c0_53921210",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4927,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2018-12-06T19:10:14Z",
+      "side": 1,
+      "message": "Irrelevant. Can let it stay an OR. Both are doing the same thing.",
+      "range": {
+        "startLine": 4924,
+        "startChar": 0,
+        "endLine": 4927,
+        "endChar": 41
+      },
+      "revId": "d6dbec9888d2e08f078effc8355a20da754de06b",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
