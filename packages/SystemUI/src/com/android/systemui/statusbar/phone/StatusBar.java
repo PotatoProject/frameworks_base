@@ -2313,6 +2313,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             mUiOffloadThread.submit(() -> {
                 setDarkThemeState(finalUseDarkTheme);
                 setBlackThemeState(finalUseBlackTheme);
+                setCommonThemeState(finalUseDarkTheme || finalUseBlackTheme);
             });
         }
     }
@@ -2346,7 +2347,6 @@ public class StatusBar extends SystemUI implements DemoMode,
     private List<String> getDarkThemes() {
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> dark = getOverlayInfosForCategory("android.theme.dark");
-        dark.addAll(getOverlayInfosForCategory("android.theme.common"));
         for (int i = 0; i < dark.size(); i++)
             pkgs.add(dark.get(i).packageName);
         return pkgs;
@@ -2355,9 +2355,16 @@ public class StatusBar extends SystemUI implements DemoMode,
     private List<String> getBlackThemes() {
         List<String> pkgs = new ArrayList<>();
         List<OverlayInfo> black = getOverlayInfosForCategory("android.theme.black");
-        black.addAll(getOverlayInfosForCategory("android.theme.common"));
         for (int i = 0; i < black.size(); i++)
             pkgs.add(black.get(i).packageName);
+        return pkgs;
+    }
+
+    private List<String> getCommonThemes() {
+        List<String> pkgs = new ArrayList<>();
+        List<OverlayInfo> common = getOverlayInfosForCategory("android.theme.common");
+        for (int i = 0; i < common.size(); i++)
+            pkgs.add(common.get(i).packageName);
         return pkgs;
     }
 
@@ -2378,6 +2385,10 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private void setBlackThemeState(boolean enable) {
         setThemeStateFromList(enable, getBlackThemes());
+    }
+
+    private void setCommonThemeState(boolean enable) {
+        setThemeStateFromList(enable, getCommonThemes());
     }
 
     @Nullable
