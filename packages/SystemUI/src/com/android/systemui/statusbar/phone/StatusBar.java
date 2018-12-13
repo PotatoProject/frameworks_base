@@ -2344,27 +2344,11 @@ public class StatusBar extends SystemUI implements DemoMode,
         return ret;
     }
 
-    private List<String> getDarkThemes() {
+    private List<String> getThemePkgs(String category) {
         List<String> pkgs = new ArrayList<>();
-        List<OverlayInfo> dark = getOverlayInfosForCategory("android.theme.dark");
-        for (int i = 0; i < dark.size(); i++)
-            pkgs.add(dark.get(i).packageName);
-        return pkgs;
-    }
-
-    private List<String> getBlackThemes() {
-        List<String> pkgs = new ArrayList<>();
-        List<OverlayInfo> black = getOverlayInfosForCategory("android.theme.black");
-        for (int i = 0; i < black.size(); i++)
-            pkgs.add(black.get(i).packageName);
-        return pkgs;
-    }
-
-    private List<String> getCommonThemes() {
-        List<String> pkgs = new ArrayList<>();
-        List<OverlayInfo> common = getOverlayInfosForCategory("android.theme.common");
-        for (int i = 0; i < common.size(); i++)
-            pkgs.add(common.get(i).packageName);
+        List<OverlayInfo> oi = getOverlayInfosForCategory(category);
+        for (int i = 0; i < oi.size(); i++)
+            pkgs.add(oi.get(i).packageName);
         return pkgs;
     }
 
@@ -2380,15 +2364,15 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private void setDarkThemeState(boolean enable) {
-        setThemeStateFromList(enable, getDarkThemes());
+        setThemeStateFromList(enable, getThemePkgs("android.theme.dark"));
     }
 
     private void setBlackThemeState(boolean enable) {
-        setThemeStateFromList(enable, getBlackThemes());
+        setThemeStateFromList(enable, getThemePkgs("android.theme.black"));
     }
 
     private void setCommonThemeState(boolean enable) {
-        setThemeStateFromList(enable, getCommonThemes());
+        setThemeStateFromList(enable, getThemePkgs("android.theme.common"));
     }
 
     @Nullable
