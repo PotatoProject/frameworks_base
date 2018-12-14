@@ -22,10 +22,12 @@ import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.view.OrientationEventListener;
 import android.view.View;
 
 import com.android.internal.colorextraction.ColorExtractor.GradientColors;
@@ -34,6 +36,7 @@ import com.android.systemui.Dumpable;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
+import com.android.systemui.util.leak.RotationUtils;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -65,6 +68,12 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
     private Handler mHandler = new Handler();
     private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
     private Context mContext;
+    private OrientationEventListener mOrientationListener = 
+            new OrientationEventListener(mContext, SensorManager.SENSOR_DELAY_UI) {
+                public void onOrientationChanged(int orientation) {
+                    rotationUpdate();
+                }
+            };
 
     /**
      * Whether the navigation bar should be light factoring in already how much alpha the scrim has
@@ -315,6 +324,15 @@ public class LightBarController implements BatteryController.BatteryStateChangeC
         public void update() {
             mForceDarkIcons = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
+            rotationUpdate();
+        }
+    }
+
+    private void rotationUpdate() {
+        int rotation = RotationUtils.getRotation(mContext);
+        if (rotation == RotationUtils.ROTATION_LANDSCAPE ||
+            rotation == RotationUtils.ROTATION_SEASCAPE) {
+            mForceDarkIcons = false;
         }
     }
 }

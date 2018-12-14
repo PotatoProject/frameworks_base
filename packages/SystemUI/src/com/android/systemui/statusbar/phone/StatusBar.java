@@ -89,6 +89,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.SensorManager;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
 import android.metrics.LogMaker;
@@ -125,6 +126,7 @@ import android.view.IWindowManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.OrientationEventListener;
 import android.view.RemoteAnimationAdapter;
 import android.view.ThreadedRenderer;
 import android.view.View;
@@ -257,6 +259,7 @@ import com.android.systemui.statusbar.policy.UserInfoControllerImpl;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
+import com.android.systemui.util.leak.RotationUtils;
 import com.android.systemui.volume.VolumeComponent;
 
 import java.io.FileDescriptor;
@@ -564,6 +567,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private PowerManager.WakeLock mGestureWakeLock;
     private Vibrator mVibrator;
     private long[] mCameraLaunchGestureVibePattern;
+    private boolean mImmerseMode = false;
 
     private final int[] mTmpInt2 = new int[2];
 
@@ -4937,7 +4941,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE))) {
                 updateStatusBarColors();
             }
-
         }
 
         @Override
@@ -4966,11 +4969,30 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
-    private void updateStatusBarColors() {
-        final boolean immerseMode = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
+    private OrientationEventListener mOrientationListener = 
+            new OrientationEventListener(mContext, SensorManager.SENSOR_DELAY_UI) {
+                public void onOrientationChanged(int orientation) {
+                    updateStatusBarColors();
+                }
+            };
 
-        if (immerseMode) {
+    private boolean getImmersionValue() {
+        int rotation = RotationUtils.getRotation(mContext);
+        if (rotation == RotationUtils.ROTATION_LANDSCAPE ||
+            rotation == RotationUtils.ROTATION_SEASCAPE) {
+            return false;
+        } else {
+            return Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
+        }
+    }
+
+    private void updateStatusBarColors() {
+        boolean newImmerseValue = getImmersionValue();
+        if (mImmerseMode == newImmerseValue)
+            return;
+        mImmerseMode = newImmerseValue; 
+        if (mImmerseMode) {
             if (mStatusBarView != null)
                 mStatusBarView.setBackgroundColor(0xFF000000);
             if (mKeyguardStatusBar != null)
