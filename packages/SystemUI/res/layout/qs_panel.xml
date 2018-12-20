@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/qs_footer_height"
         android:elevation="4dp"
-        android:background="@android:color/transparent"
+        android:background="@drawable/qs_background"
         android:focusable="true"
         android:accessibilityTraversalBefore="@id/qs_carrier_text"
     />
