@@ -101,10 +101,6 @@
   <!-- Vendor signatures -->
   <java-symbol type="array" name="config_vendorPlatformSignatures" />
 
-  <!-- Ambient play -->
-  <java-symbol type="string" name="ambient_recognition_notification" />
-  <java-symbol type="string" name="ambient_recognition_information" />
-
   <!-- Power menu -->
   <java-symbol type="string" name="reboot_to_recovery_title" />
   <java-symbol type="string" name="reboot_to_recovery_message" />
