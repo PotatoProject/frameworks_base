@@ -77,4 +77,6 @@
     <color name="power_menu_screenshot">#ff202020</color>
     <color name="power_menu_hot_reboot">#ff202020</color>
 
+    <!-- QS Accent -->
+    <color name="qs_accent">@color/accent_device_default_light</color>
 </resources>
