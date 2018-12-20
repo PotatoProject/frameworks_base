@@ -154,8 +154,11 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.Secure
+                    .getUriFor(Settings.Secure.THEME_MODE), false,
+                    this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.SYSTEM_THEME_STYLE), false,
+                    .getUriFor(Settings.System.PREFER_BLACK_THEMES), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -181,8 +184,10 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
                 UserHandle.USER_CURRENT);
-        userThemeSetting = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SYSTEM_THEME_STYLE, 2, ActivityManager.getCurrentUser());
+        userThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.THEME_MODE, 0, ActivityManager.getCurrentUser());
+	boolean blackTheme = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PREFER_BLACK_THEMES, 0, ActivityManager.getCurrentUser()) == 1;
         if (userThemeSetting == 0) {
             // The system wallpaper defines if system theme should be light or dark.
             WallpaperColors systemColors = null;
@@ -192,7 +197,7 @@ public class QSContainerImpl extends FrameLayout {
                     && (systemColors.getColorHints() & WallpaperColors.HINT_SUPPORTS_DARK_THEME) != 0;
         } else {
             useDarkTheme = userThemeSetting == 2;
-            useBlackTheme = userThemeSetting == 3;
+            useBlackTheme = blackTheme && useDarkTheme;
         }
         currentColor = setQsFromWall ? mQsBackGroundColorWall : mQsBackGroundColor;
         setQsBackground();
