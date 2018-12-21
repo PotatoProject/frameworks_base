@@ -2028,6 +2028,15 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TILES_BG_DISCO),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_PANEL_BG_USE_FW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.QS_PANEL_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.SYSUI_COLORS_ACTIVE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -2054,7 +2063,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.STOCK_STATUSBAR_IN_HIDE))||
                     uri.equals(Settings.Secure.getUriFor("sysui_rounded_size"))) {
                 handleCutout(null);
-            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_TILES_BG_DISCO))) {
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_TILES_BG_DISCO)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_FW)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.SYSUI_COLORS_ACTIVE))) {
                 mQSPanel.getHost().reloadAllTiles();
             }
         }
