@@ -4540,8 +4540,8 @@ public final class Settings {
         public static final String QS_PANEL_BG_ALPHA = "qs_panel_bg_alpha";
 
         /** @hide */
-        private static final Validator QS_PANEL_BG_ALPHA_VALIDATOR =
-                ANY_INTEGER_VALIDATOR;
+        private static final Validator QS_PANEL_BG_ALPHA_VALIDATOR = new
+                SettingsValidators.InclusiveIntegerRangeValidator(100, 255);
 
         /**
          * Color of the qs panel
