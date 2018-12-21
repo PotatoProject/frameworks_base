@@ -3829,11 +3829,25 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.System.QS_PANEL_BG_USE_WALL),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_PANEL_BG_USE_FW),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                     Settings.System.QS_PANEL_BG_COLOR),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_PANEL_BG_COLOR_WALL),
+                    false, this, UserHandle.USER_ALL);
         }
 
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_WALL))) {
                 updateQSPanel();
+                mQSPanel.getHost().reloadAllTiles();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_FW)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL))) {
+                mQSPanel.getHost().reloadAllTiles();
             }
         }
     }
