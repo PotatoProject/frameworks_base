@@ -345,12 +345,16 @@ public class QSContainerImpl extends FrameLayout {
 
         String qsthemeDark = "com.android.systemui.qstheme.dark";
         String qsthemeBlack = "com.android.systemui.qstheme.black";
+        String qsAccentBlack = "com.android.system.theme.qs_black";
+        String qsAccentWhite = "com.android.system.theme.qs_white";
         String qstheme = null;
 
         if (mSetQsFromResources) {
             try {
                 mOverlayManager.setEnabled(qsthemeDark, mUseDarkTheme, ActivityManager.getCurrentUser());
                 mOverlayManager.setEnabled(qsthemeBlack, mUseBlackTheme, ActivityManager.getCurrentUser());
+                mOverlayManager.setEnabled(qsAccentBlack, false, ActivityManager.getCurrentUser());
+                mOverlayManager.setEnabled(qsAccentWhite, false, ActivityManager.getCurrentUser());
             } catch (RemoteException e) {
                 Log.w(TAG, "Can't change dark/black qs overlays", e);
             }
@@ -362,6 +366,8 @@ public class QSContainerImpl extends FrameLayout {
                 qstheme = qsthemeDark;
             try {
                 mOverlayManager.setEnabled(qstheme, isColorDark(mCurrentColor), ActivityManager.getCurrentUser());
+                mOverlayManager.setEnabled(qsAccentBlack, !isColorDark(mCurrentColor), ActivityManager.getCurrentUser());
+                mOverlayManager.setEnabled(qsAccentWhite, isColorDark(mCurrentColor), ActivityManager.getCurrentUser());
             } catch (RemoteException e) {
                 Log.w(TAG, "Can't change qs theme", e);
             }
