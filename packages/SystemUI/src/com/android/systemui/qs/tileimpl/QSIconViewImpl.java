@@ -26,6 +26,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.Animatable2.AnimationCallback;
 import android.graphics.drawable.Drawable;
+import android.os.UserHandle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -177,8 +178,13 @@ public class QSIconViewImpl extends QSIconView {
                 float fraction = animation.getAnimatedFraction();
                 int alpha = (int) (fromAlpha + (toAlpha - fromAlpha) * fraction);
                 int channel = (int) (fromChannel + (toChannel - fromChannel) * fraction);
-
-                setTint(iv, Color.argb(alpha, channel, channel, channel));
+                boolean setQsFromResources = System.getIntForUser(getContext().getContentResolver(),
+                            System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
+                if (setQsFromResources) {
+                    setTint(iv, Color.argb(alpha, channel, channel, channel));
+                } else {
+                    setTint(iv, toColor);
+                }
             });
             anim.addListener(new AnimatorListenerAdapter() {
                 @Override
