@@ -28,6 +28,7 @@
         <item>restart</item>
         <item>advanced</item>
         <item>screenshot</item>
+        <item>lockdown</item>
     </string-array>
 
 </resources>
