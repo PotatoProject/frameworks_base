@@ -4322,6 +4322,18 @@ public final class Settings {
          */
         public static final String SETTINGS_ICON_TINT = "settings_icon_tint";
 
+        /**
+         * Whether to hide the lockscreen clock
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK = "lockscreen_clock";
+
+        /**
+         * Whether to hide the items underneath the lockscreen clock
+         * @hide
+         */
+        public static final String LOCKSCREEN_INFO = "lockscreen_info";
+
         /** @hide */
         private static final Validator SETTINGS_ICON_TINT_VALIDATOR =
                 BOOLEAN_VALIDATOR;
