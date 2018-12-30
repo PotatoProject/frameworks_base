@@ -37,6 +37,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ParceledListSlice;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
 import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.hardware.display.AmbientBrightnessDayStats;
@@ -72,6 +73,7 @@ import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.provider.Settings.System;
 import android.text.TextUtils;
 import android.util.IntArray;
 import android.util.Pair;
@@ -2163,6 +2165,14 @@ public final class DisplayManagerService extends SystemService {
     }
 
     private final class LocalService extends DisplayManagerInternal {
+
+        LocalService() {
+            super();
+            Handler handler = new Handler();
+            SettingsObserver settingsObserver = new SettingsObserver(handler);
+            settingsObserver.observe();
+        }
+
         @Override
         public void initPowerManagement(final DisplayPowerCallbacks callbacks, Handler handler,
                 SensorManager sensorManager) {
@@ -2279,6 +2289,37 @@ public final class DisplayManagerService extends SystemService {
                     mDisplayDevices.get(i).onOverlayChangedLocked();
                 }
             }
+        }
+
+        private class SettingsObserver extends ContentObserver {
+            SettingsObserver(Handler handler) {
+                super(handler);
+            }
+
+            void observe() {
+                mContext.getContentResolver().registerContentObserver(
+                        System.getUriFor(System.DISPLAY_CUTOUT_MODE), false, this);
+            }
+
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                if (uri.equals(System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE))) {
+                    updateCutoutMode();
+                }
+            }
+
+            @Override
+            public void onChange(boolean selfChange) {
+                update();
+            }
+
+            public void update() {
+                updateCutoutMode();
+            }
+        }
+
+        private void updateCutout() {
+            onOverlayChanged();
         }
     }
 }
