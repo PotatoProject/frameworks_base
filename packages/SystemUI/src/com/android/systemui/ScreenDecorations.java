@@ -47,6 +47,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemProperties;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.provider.Settings.System;
 import android.support.annotation.VisibleForTesting;

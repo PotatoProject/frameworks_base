@@ -26,11 +26,13 @@ import android.content.Context;
 import android.hardware.sidekick.SidekickInternal;
 import android.os.Build;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemProperties;
 import android.os.Trace;
+import android.provider.Settings.System;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.view.Display;
@@ -403,7 +405,9 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                         mInfo.flags |= DisplayDeviceInfo.FLAG_ROUND;
                     }
                     if (res.getBoolean(
-                            com.android.internal.R.bool.config_maskMainBuiltInDisplayCutout)) {
+                            com.android.internal.R.bool.config_maskMainBuiltInDisplayCutout) ||
+                            System.getIntForUser(getOverlayContext().getContentResolver(),
+                            System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 2) {
                         mInfo.flags |= DisplayDeviceInfo.FLAG_MASK_DISPLAY_CUTOUT;
                     }
                     mInfo.displayCutout = DisplayCutout.fromResourcesRectApproximation(res,

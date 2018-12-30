@@ -44,6 +44,7 @@ import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.ActivityThread;
 import android.app.AlarmManager;
 import android.app.IWallpaperManager;
 import android.app.KeyguardManager;
@@ -84,6 +85,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManagerInternal;
 import android.media.AudioAttributes;
 import android.media.MediaMetadata;
 import android.metrics.LogMaker;
@@ -154,6 +156,7 @@ import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.ViewMediatorCallback;
+import com.android.server.LocalServices;
 import com.android.systemui.ActivityStarterDelegate;
 import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.DemoMode;
@@ -257,6 +260,7 @@ import com.android.systemui.volume.VolumeComponent;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.Executor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -4933,8 +4937,13 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mQSPanel.getHost().reloadAllTiles();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE))) {
                 updateStatusBarColors();
+                final Executor executor = ActivityThread.currentActivityThread().getExecutor();
+                final DisplayManagerInternal display =
+                        LocalServices.getService(DisplayManagerInternal.class);
+                if (display != null) {
+                    executor.execute(display::onOverlayChanged);
+                }
             }
-
         }
 
         @Override
