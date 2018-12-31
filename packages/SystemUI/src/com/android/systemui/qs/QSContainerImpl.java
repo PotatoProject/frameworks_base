@@ -81,6 +81,8 @@ public class QSContainerImpl extends FrameLayout {
     private boolean mUseBlackTheme = false;
     private boolean mUseDarkTheme = false;
     private boolean mSetQsFromResources;
+    private boolean mQsShade = true;
+    private Configuration mCurrentConfig;
     private SysuiColorExtractor mColorExtractor;
 
     private IOverlayManager mOverlayManager;
@@ -119,14 +121,8 @@ public class QSContainerImpl extends FrameLayout {
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // Hide the backgrounds when in landscape mode.
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mBackgroundGradient.setVisibility(View.INVISIBLE);
-            mStatusBarBackground.setVisibility(View.INVISIBLE);
-        } else {
-            mBackgroundGradient.setVisibility(View.VISIBLE);
-            mStatusBarBackground.setVisibility(View.VISIBLE);
-        }
+        mCurrentConfig = newConfig;
+        updateQsShade();
 
         updateResources();
         mSizePoint.set(0, 0); // Will be retrieved on next measure pass.
@@ -159,6 +155,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.PREFER_BLACK_THEMES), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_CUTOUT_SHADE), false,
+                    this, UserHandle,USER_ALL);
         }
 
         @Override
@@ -185,6 +184,8 @@ public class QSContainerImpl extends FrameLayout {
                 UserHandle.USER_CURRENT);
         mUserThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                 Settings.Secure.THEME_MODE, 0, ActivityManager.getCurrentUser());
+        mQsShade = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.PREFER_BLACK_THEMES, 1, ActivityManager.getCurrentUser()) == 1;
         boolean blackTheme = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.PREFER_BLACK_THEMES, 0, ActivityManager.getCurrentUser()) == 1;
         if (mUserThemeSetting == 0) {
@@ -204,6 +205,7 @@ public class QSContainerImpl extends FrameLayout {
         mCurrentColor = mSetQsFromWall ? mQsBackGroundColorWall : mQsBackGroundColor;
         setQsBackground();
         setQsOverlay();
+        updateQsShade();
     }
 
     private void setQsBackground() {
@@ -218,6 +220,18 @@ public class QSContainerImpl extends FrameLayout {
         }
         if (mQsBackGround != null && mBackground != null) {
             mBackground.setBackground(mQsBackGround);
+        }
+    }
+
+    private void updateQsShade() {
+        // Hide the backgrounds when in landscape mode or forced.
+        if (!mQsShade || (mCurrentConfig != null &&
+                mCurrentConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+            mBackgroundGradient.setVisibility(View.INVISIBLE);
+            mStatusBarBackground.setVisibility(View.INVISIBLE);
+        } else {
+            mBackgroundGradient.setVisibility(View.VISIBLE);
+            mStatusBarBackground.setVisibility(View.VISIBLE);
         }
     }
 
