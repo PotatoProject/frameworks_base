@@ -4342,6 +4342,18 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to hide the lockscreen clock
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK = "lockscreen_clock";
+
+        /**
+         * Select which lockscreen clock style to display
+         * @hide
+         */
+        public static final String LOCKSCREEN_CLOCK_SELECTION = "lockscreen_clock_selection";
+
+        /**
          * Whether to mute annoying notifications
          * @hide
          */
