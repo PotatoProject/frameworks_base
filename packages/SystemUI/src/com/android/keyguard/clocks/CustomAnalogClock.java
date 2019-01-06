@@ -16,21 +16,27 @@
 
 package com.android.keyguard.clocks;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.om.IOverlayManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.ServiceManager;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RemoteViews.RemoteView;
-
+import android.content.om.IOverlayManager;
+import android.content.om.OverlayInfo;
+import android.os.RemoteException;
 import com.android.systemui.R;
 
 import java.util.TimeZone;
@@ -54,6 +60,10 @@ public class CustomAnalogClock extends View {
     private Drawable mDial;
     private Drawable mDialAmbient;
 
+    private Drawable mDialLight;
+    private Drawable mDialDark;
+    private Drawable mDialButtons;
+
     private boolean mIsAmbientDisplay;
 
     private int mDialWidth;
@@ -64,6 +74,9 @@ public class CustomAnalogClock extends View {
     private float mMinutes;
     private float mHour;
     private boolean mChanged;
+    private boolean mUseDarkTheme;
+
+    private IOverlayManager mOverlayManager;
 
     public CustomAnalogClock(Context context) {
         this(context, null);
@@ -77,18 +90,39 @@ public class CustomAnalogClock extends View {
         this(context, attrs, defStyleAttr, 0);
     }
 
+    public static boolean isUsingDarkTheme(IOverlayManager om, int userId) {
+        OverlayInfo themeInfo = null;
+        try {
+            themeInfo = om.getOverlayInfo("com.android.system.theme.dark",
+                    userId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return themeInfo != null && themeInfo.isEnabled();
+    }
+
     public CustomAnalogClock(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+
+        mOverlayManager = IOverlayManager.Stub.asInterface(
+                ServiceManager.getService(Context.OVERLAY_SERVICE));
 
         final Resources r = context.getResources();
         final TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.CustomAnalogClock, defStyleAttr, defStyleRes);
 
-        mDial = a.getDrawable(R.styleable.CustomAnalogClock_custom_dial);
+        mDialLight = a.getDrawable(R.styleable.CustomAnalogClock_custom_dial);
+        mDialDark = a.getDrawable(R.styleable.CustomAnalogClock_custom_dial_dark);
+
+        mDialButtons = a.getDrawable(R.styleable.CustomAnalogClock_custom_dial_buttons);
 
         mHourHand = a.getDrawable(R.styleable.CustomAnalogClock_custom_hand_hour);
 
         mMinuteHand = a.getDrawable(R.styleable.CustomAnalogClock_custom_hand_minute);
+
+        final boolean useDarkTheme = isUsingDarkTheme(
+                mOverlayManager, ActivityManager.getCurrentUser());
+        onThemeChanged(useDarkTheme, false);
 
         mDialAmbient = a.getDrawable(R.styleable.CustomAnalogClock_custom_clock_dial_ambient);
 
@@ -98,6 +132,14 @@ public class CustomAnalogClock extends View {
 
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
+    }
+
+    public void onThemeChanged(boolean useDarkTheme, boolean forceInvalidate) {
+        mUseDarkTheme = useDarkTheme;
+        mDial = useDarkTheme ? mDialDark : mDialLight;
+        if (forceInvalidate) {
+            invalidate();
+        }
     }
 
     public void setDark(boolean dark) {
@@ -205,7 +247,7 @@ public class CustomAnalogClock extends View {
         if (availableWidth < w || availableHeight < h) {
             scaled = true;
             float scale = Math.min((float) availableWidth / (float) w,
-                                   (float) availableHeight / (float) h);
+                    (float) availableHeight / (float) h);
             canvas.save();
             canvas.scale(scale, scale, x, y);
         }
@@ -214,6 +256,29 @@ public class CustomAnalogClock extends View {
             dial.setBounds(x - (w / 2), y - (h / 2), x + (w / 2), y + (h / 2));
         }
         dial.draw(canvas);
+
+        final Drawable dialbuttons = mDialButtons;
+        int wb = dial.getIntrinsicWidth();
+        int hb = dial.getIntrinsicHeight();
+
+        if (availableWidth < wb || availableHeight < hb) {
+            scaled = true;
+            float scale = Math.min((float) availableWidth / (float) wb,
+                    (float) availableHeight / (float) hb);
+            canvas.save();
+            canvas.scale(scale, scale, x, y);
+        }
+
+        if (changed) {
+            dialbuttons.setBounds(x - (wb / 2), y - (hb / 2), x + (wb / 2), y + (hb / 2));
+        }
+        if (mIsAmbientDisplay) {
+            dialbuttons.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+        } else {
+            dialbuttons.setColorFilter(getResources().getColor(
+                    R.color.analog_clock_hand_hour_color), PorterDuff.Mode.SRC_ATOP);
+        }
+        dialbuttons.draw(canvas);
 
         canvas.save();
         canvas.rotate(mHour / 12.0f * 360.0f, x, y);
@@ -224,9 +289,10 @@ public class CustomAnalogClock extends View {
             hourHand.setBounds(x - (w / 2), y - (h / 2), x + (w / 2), y + (h / 2));
         }
         if (mIsAmbientDisplay) {
-            hourHand.setTint(Color.GRAY);
+            hourHand.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
         } else {
-            hourHand.setTintList(null);
+            hourHand.setColorFilter(getResources().getColor(
+                    R.color.analog_clock_hand_hour_color), PorterDuff.Mode.SRC_ATOP);
         }
         hourHand.draw(canvas);
         canvas.restore();
@@ -241,9 +307,12 @@ public class CustomAnalogClock extends View {
             minuteHand.setBounds(x - (w / 2), y - (h / 2), x + (w / 2), y + (h / 2));
         }
         if (mIsAmbientDisplay) {
-            minuteHand.setTint(Color.WHITE);
+            minuteHand.setColorFilter(getResources().getColor(
+                    android.R.color.white), PorterDuff.Mode.SRC_ATOP);
         } else {
-            minuteHand.setTintList(null);
+            minuteHand.setColorFilter(mUseDarkTheme ? getResources().getColor(
+                    android.R.color.white) : getResources().getColor(
+                    android.R.color.black), PorterDuff.Mode.SRC_ATOP);
         }
         minuteHand.draw(canvas);
         canvas.restore();
@@ -288,3 +357,4 @@ public class CustomAnalogClock extends View {
         setContentDescription(contentDescription);
     }
 }
+
