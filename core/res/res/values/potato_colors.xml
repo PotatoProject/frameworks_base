@@ -80,4 +80,7 @@
 
     <!-- QS Accent -->
     <color name="qs_accent">@color/accent_device_default_light</color>
+
+    <!-- Navbar color -->
+    <color name="navbar_color">#99000000</color>
 </resources>
