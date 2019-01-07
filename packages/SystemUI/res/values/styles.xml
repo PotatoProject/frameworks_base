@@ -396,7 +396,7 @@
     <style name="DualToneDarkTheme">
         <item name="backgroundColor">@color/dark_mode_icon_color_dual_tone_background</item>
         <item name="fillColor">@color/dark_mode_icon_color_dual_tone_fill</item>
-        <item name="singleToneColor">@color/dark_mode_icon_color_single_tone</item>
+        <item name="singleToneColor">@android:color/navbar_color</item>
     </style>
     <style name="QSIconTheme">
         <item name="backgroundColor">?android:attr/textColorHint</item>
