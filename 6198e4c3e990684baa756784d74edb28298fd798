@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7452e80_2fbb4857",
+        "filename": "core/res/res/values/potato_colors.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-01-08T06:32:57Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 4
+      },
+      "revId": "6198e4c3e990684baa756784d74edb28298fd798",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
