@@ -22,6 +22,30 @@
       "revId": "6198e4c3e990684baa756784d74edb28298fd798",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d872a72a_ddfee465",
+        "filename": "core/res/res/values/potato_colors.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1000039
+      },
+      "writtenOn": "2019-01-08T13:10:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7452e80_2fbb4857",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 4
+      },
+      "revId": "6198e4c3e990684baa756784d74edb28298fd798",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": false
     }
   ]
 }
