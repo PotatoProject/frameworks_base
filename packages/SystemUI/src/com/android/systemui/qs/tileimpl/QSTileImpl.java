@@ -409,6 +409,18 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
                     return context.getColor(R.color.qs_tiles_inactive_tint);
                 }
             case Tile.STATE_ACTIVE:
+               if (!enableQsTileTinting) {
+                    if (setQsFromResources) {
+                        return Utils.getColorAttr(context, android.R.attr.colorPrimary);
+                        } else {
+                        if (setQsFromWall)
+                                return qsBackGroundColorWall;
+                        else
+                            return qsBackGroundColor;
+                        }
+                } else {
+                    return context.getColor(R.color.qs_tiles_active_tint);
+                }
                 if (enableQsTileTinting) {
                     return context.getColor(R.color.qs_tiles_active_tint);
                 } else if (setQsFromResources) {
