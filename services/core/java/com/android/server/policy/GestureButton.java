@@ -19,11 +19,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.hardware.input.InputManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.RemoteException;;
+import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
@@ -43,8 +46,8 @@ import android.view.WindowManagerPolicyConstants.PointerEventListener;
 import android.view.inputmethod.InputMethodManagerInternal;
 
 import com.android.internal.R;
+import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.potato.PotatoUtils;
-import com.android.internal.util.potato.TaskUtils;
 import com.android.server.LocalServices;
 
 public class GestureButton implements PointerEventListener {
@@ -112,8 +115,27 @@ public class GestureButton implements PointerEventListener {
                     if (DEBUG) Slog.i(TAG, "MSG_SEND_LONG_PRESS");
                     mKeyEventHandled = true;
                     mPwm.performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
-                    TaskUtils.toggleLastApp(mContext, UserHandle.USER_CURRENT);
+                    triggerAssistant();
                     break;
+            }
+        }
+    }
+
+    private static IStatusBarService getStatusBarService() {
+        IStatusBarService mService = null;
+        try {
+            mService = IStatusBarService.Stub.asInterface(
+                    ServiceManager.getService("statusbar"));
+        } catch (Exception e) {}
+        return mService;
+    }
+
+    private static void triggerAssistant() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.startAssist(new Bundle());
+            } catch (RemoteException e) {
             }
         }
     }
