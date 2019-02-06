@@ -2983,6 +2983,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // The status bar is the only window allowed to exhibit keyguard behavior.
             attrs.privateFlags &= ~WindowManager.LayoutParams.PRIVATE_FLAG_KEYGUARD;
         }
+        attrs.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
     }
 
     private int getImpliedSysUiFlagsForLayout(LayoutParams attrs) {
