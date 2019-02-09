@@ -64,6 +64,8 @@ import com.android.systemui.statusbar.policy.DateView;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 
+import com.android.systemui.statusbar.policy.NetworkTraffic;
+
 import java.util.Locale;
 import java.util.Objects;
 
@@ -123,6 +125,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private ZenModeController mZenController;
     /** Counts how many times the long press tooltip has been shown to the user. */
     private int mShownCount;
+
+    // Statusbar Traffic
+    private NetworkTraffic mTraffic;
 
     private final BroadcastReceiver mRingerReceiver = new BroadcastReceiver() {
         @Override
@@ -185,6 +190,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mClockView.setOnClickListener(this);
         mClockView.setQsHeader();
         mDateView = findViewById(R.id.date);
+	mTraffic = findViewById(R.id.networkTraffic);
     }
 
     private void updateStatusText() {
@@ -263,6 +269,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                 newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
         mBatteryMeterView.useWallpaperTextColor(shouldUseWallpaperTextColor);
         mClockView.useWallpaperTextColor(shouldUseWallpaperTextColor);
+	mTraffic.useWallpaperTextColor(shouldUseWallpaperTextColor);
     }
 
     @Override
