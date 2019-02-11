@@ -167,4 +167,7 @@
 
     <!-- Logout button -->
     <color name="logout_button_bg_color">#ccffffff</color>
+
+    <!-- Device accent -->
+    <color name="accent_device_default_light">@*android:color/accent_device_default_light</color>
 </resources>
