@@ -53,6 +53,8 @@ import com.android.systemui.plugins.qs.QSTile.State;
 import com.android.systemui.qs.PagedTileLayout.TilePage;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.QuickStatusBarHeader;
+import com.android.systemui.R;
+
 
 import java.util.ArrayList;
 
@@ -383,6 +385,8 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
                     System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT) == 1;
         boolean setQsFromResources = System.getIntForUser(context.getContentResolver(),
                     System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
+        boolean setQsFromAccent = System.getIntForUser(context.getContentResolver(),
+                    System.QS_PANEL_BG_USE_ACCENT, 1, UserHandle.USER_CURRENT) == 1;
 
         int qsBackGroundColor = System.getIntForUser(context.getContentResolver(),
                 System.QS_PANEL_BG_COLOR, activeDefault, UserHandle.USER_CURRENT);
@@ -399,10 +403,14 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
                 if (setQsFromResources) {
                     return Utils.getColorAttr(context, android.R.attr.colorPrimary);
                 } else {
-                    if (setQsFromWall)
-                        return qsBackGroundColorWall;
-                    else
-                        return qsBackGroundColor;
+                    if (setQsFromAccent) {
+                        return context.getResources().getColor(R.color.accent_device_default_light);
+                    } else {
+                        if (setQsFromWall)
+                            return qsBackGroundColorWall;
+                        else
+                            return qsBackGroundColor;
+                    }
                 }
             default:
                 Log.e("QSTile", "Invalid state " + state);
