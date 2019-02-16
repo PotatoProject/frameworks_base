@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d49125c6_f17c4348",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4225,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-02-16T17:26:28Z",
+      "side": 1,
+      "message": "updateTheme is called multiple times; we can do this in init and on content update instead i guess",
+      "revId": "04263e1636c26e39819afcfa94ca7e22fd6e5fa3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "029e1753_c929a6f7",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4276,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-02-16T17:26:28Z",
+      "side": 1,
+      "message": "should be done on ui offload thread",
+      "range": {
+        "startLine": 4276,
+        "startChar": 0,
+        "endLine": 4276,
+        "endChar": 89
+      },
+      "revId": "04263e1636c26e39819afcfa94ca7e22fd6e5fa3",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
