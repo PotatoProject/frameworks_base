@@ -2319,7 +2319,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                         enable, mLockscreenUserManager.getCurrentUserId());
             }
         } catch (RemoteException e) {
-            Log.w(TAG, "Can't set dark themes", e);
+            Log.w(TAG, "Can't set themes for category", e);
         }
     }
 
@@ -4222,6 +4222,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         updateCorners();
         updateQSPanel();
+        updateSettingsTiles();
     }
 
     private void updateCorners() {
@@ -4266,6 +4267,13 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
 
         }
+    }
+
+    private void updateSettingsTiles() {
+        final boolean useOreoStyle = (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.USE_OREO_SETTINGS, 0, UserHandle.USER_CURRENT) == 1);
+
+        setThemeStateFromList(useOreoStyle, getThemePkgs("android.settings_tiles.oreo"));
     }
 
     private void updateDozingState() {
