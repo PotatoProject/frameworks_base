@@ -4225,6 +4225,17 @@ public final class Settings {
         public static final String PREFER_BLACK_THEMES = "prefer_black_themes";
 
         /**
+         * Whether to set the settings app tiles to oreo style
+         *
+         * @hide
+         */
+        public static final String USE_OREO_SETTINGS = "use_oreo_settings";
+
+        /** @hide */
+        private static final Validator USE_OREO_SETTINGS_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Transparency of the qs panel
          * @hide
          */
@@ -4561,6 +4572,7 @@ public final class Settings {
             BATTERY_LIGHT_MEDIUM_COLOR,
             BATTERY_LIGHT_FULL_COLOR,
             BATTERY_LIGHT_REALLYFULL_COLOR,
+            USE_OREO_SETTINGS,
         };
 
         /**
@@ -4693,6 +4705,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_MEDIUM_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_FULL_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_REALLYFULL_COLOR);
+            PRIVATE_SETTINGS.add(USE_OREO_SETTINGS);
         }
 
         /**
@@ -4799,6 +4812,7 @@ public final class Settings {
             VALIDATORS.put(BATTERY_LIGHT_MEDIUM_COLOR, BATTERY_LIGHT_MEDIUM_COLOR_VALIDATOR);
             VALIDATORS.put(BATTERY_LIGHT_FULL_COLOR, BATTERY_LIGHT_FULL_COLOR_VALIDATOR);
             VALIDATORS.put(BATTERY_LIGHT_REALLYFULL_COLOR, BATTERY_LIGHT_REALLYFULL_COLOR_VALIDATOR);
+            VALIDATORS.put(USE_OREO_SETTINGS, USE_OREO_SETTINGS_VALIDATOR);
         }
 
         /**

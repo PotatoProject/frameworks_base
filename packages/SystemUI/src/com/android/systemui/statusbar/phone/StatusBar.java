@@ -837,6 +837,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateDisplaySize(); // populates mDisplayMetrics
         updateResources();
         updateTheme();
+        updateSettingsTiles();
 
         inflateStatusBarWindow(context);
         mStatusBarWindow.setService(this);
@@ -2319,7 +2320,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                         enable, mLockscreenUserManager.getCurrentUserId());
             }
         } catch (RemoteException e) {
-            Log.w(TAG, "Can't set dark themes", e);
+            Log.w(TAG, "Can't set themes for category", e);
         }
     }
 
@@ -4268,6 +4269,16 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    private void updateSettingsTiles() {
+        final boolean useOreoStyle = (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.USE_OREO_SETTINGS, 0, UserHandle.USER_CURRENT) == 1);
+
+            mUiOffloadThread.submit(() -> {
+                setThemeStateFromList(useOreoStyle,
+                                getThemePkgs("android.settings_tiles.oreo"));
+            });
+    }
+
     private void updateDozingState() {
         Trace.traceCounter(Trace.TRACE_TAG_APP, "dozing", mDozing ? 1 : 0);
         Trace.beginSection("StatusBar#updateDozingState");
@@ -4973,6 +4984,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.FORCE_AMBIENT_FOR_MEDIA),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_OREO_SETTINGS),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -5007,8 +5021,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                 handleCutout(null);
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.FORCE_AMBIENT_FOR_MEDIA))) {
                 setForceAmbient();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.USE_OREO_SETTINGS))) {
+                updateSettingsTiles();
             }
-
         }
 
         @Override
@@ -5025,6 +5040,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             updateCorners();
             handleCutout(null);
             setForceAmbient();
+            updateSettingsTiles();
         }
     }
 
