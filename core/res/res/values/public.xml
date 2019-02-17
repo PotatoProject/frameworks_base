@@ -2885,6 +2885,8 @@
     <!-- An interpolator which accelerates fast but decelerates extra slowly. -->
     <public type="interpolator" name="fast_out_extra_slow_in" id="0x10c001a"/>
 
+    <public type="attr" name="singleToneColor" id="0x01010587"/>
+
   <!-- ===============================================================
        Resources added in version Q of the platform
 
