@@ -130,6 +130,7 @@
                     android:tint="?android:attr/colorForeground"/>
 
             </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
+
         </com.android.keyguard.AlphaOptimizedLinearLayout>
     </LinearLayout>
 
@@ -139,6 +140,7 @@
         android:layout_height="4dp"
         android:layout_marginBottom="16dp"
         android:layout_gravity="center_horizontal|bottom"
-        android:background="@drawable/qs_footer_drag_handle" />
+        android:background="@drawable/qs_footer_drag_handle" 
+        android:visibility="invisible"/>
 
 </com.android.systemui.qs.QSFooterImpl>

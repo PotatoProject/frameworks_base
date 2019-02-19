@@ -193,6 +193,7 @@ public class QSContainerImpl extends FrameLayout {
                 Settings.Secure.THEME_MODE, 0, ActivityManager.getCurrentUser());
         boolean blackTheme = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.PREFER_BLACK_THEMES, 0, ActivityManager.getCurrentUser()) == 1;
+
         if (mUserThemeSetting == 0) {
             // The system wallpaper defines if system theme should be light or dark.
             WallpaperColors systemColors = null;

@@ -108,10 +108,10 @@
     <dimen name="notification_max_heads_up_height_increased">188dp</dimen>
 
     <!-- Side padding on the lockscreen on the side of notifications -->
-    <dimen name="notification_side_paddings">4dp</dimen>
+    <dimen name="notification_side_paddings">0dp</dimen>
 
     <!-- padding between the heads up and the statusbar -->
-    <dimen name="heads_up_status_bar_padding">8dp</dimen>
+    <dimen name="heads_up_status_bar_padding">0dp</dimen>
 
     <!-- heads up elevation that is added if the view is pinned -->
     <dimen name="heads_up_pinned_elevation">16dp</dimen>
@@ -243,31 +243,31 @@
     <dimen name="close_handle_underlap">32dp</dimen>
 
     <!-- Height of the status bar header bar in the car setting. -->
-    <dimen name="car_status_bar_header_height">128dp</dimen>
+    <dimen name="car_status_bar_header_height">40dp</dimen>
 
     <!-- The bottom padding of the status bar header. -->
-    <dimen name="status_bar_header_padding_bottom">48dp</dimen>
+    <dimen name="status_bar_header_padding_bottom">10dp</dimen>
 
     <!-- The height of the container that holds the battery and time in the quick settings header.
          -->
-    <dimen name="qs_header_system_icons_area_height">48dp</dimen>
+    <dimen name="qs_header_system_icons_area_height">0dp</dimen>
 
     <!-- How far the quick-quick settings panel extends below the status bar -->
-    <dimen name="qs_quick_header_panel_height">128dp</dimen>
+    <dimen name="qs_quick_header_panel_height">0dp</dimen>
 
     <!-- The height of the container that holds the system icons in the quick settings header in the
          car setting. -->
-    <dimen name="car_qs_header_system_icons_area_height">54dp</dimen>
+    <dimen name="car_qs_header_system_icons_area_height">0dp</dimen>
 
     <!-- The height of the quick settings footer that holds the user switcher, settings icon,
          etc. -->
-    <dimen name="qs_footer_height">56dp</dimen>
+    <dimen name="qs_footer_height">40dp</dimen>
 
     <!-- The padding between the notifications and the quick settings container -->
     <dimen name="qs_notification_padding">@dimen/notification_side_paddings</dimen>
 
     <!-- Height of the status bar header bar when expanded -->
-    <dimen name="status_bar_header_height_expanded">124dp</dimen>
+    <dimen name="status_bar_header_height_expanded">30dp</dimen>
 
     <!-- Height of the status bar header bar when on Keyguard -->
     <dimen name="status_bar_header_height_keyguard">40dp</dimen>
@@ -295,37 +295,39 @@
     <!-- The width of the panel that holds the quick settings. -->
     <dimen name="qs_panel_width">@dimen/notification_panel_width</dimen>
 
-    <dimen name="volume_dialog_panel_transparent_padding_right">8dp</dimen>
+    <dimen name="volume_dialog_panel_transparent_padding_right">0dp</dimen>
 
-    <dimen name="volume_dialog_panel_transparent_padding">20dp</dimen>
+    <dimen name="volume_dialog_panel_transparent_padding">0dp</dimen>
 
-    <dimen name="volume_dialog_stream_padding">8dp</dimen>
+    <dimen name="volume_dialog_stream_padding">0dp</dimen>
 
     <!-- the amount the volume panel should be offset at the end from the view next to it (or
     the screen edge, in portrait-->
-    <dimen name="volume_dialog_base_margin">8dp</dimen>
+    <dimen name="volume_dialog_base_margin">0dp</dimen>
 
-    <dimen name="volume_dialog_panel_width">64dp</dimen>
+    <dimen name="volume_dialog_panel_width">416dp</dimen>
 
-    <dimen name="volume_dialog_slider_height">116dp</dimen>
+    <dimen name="volume_dialog_slider_width">350dp</dimen>
 
-    <dimen name="volume_dialog_row_height">252dp</dimen>
+    <dimen name="volume_dialog_slider_height">@dimen/notification_panel_width</dimen>
 
-    <dimen name="volume_dialog_ringer_size">64dp</dimen>
+    <dimen name="volume_dialog_row_height">@dimen/notification_panel_width</dimen>
+
+    <dimen name="volume_dialog_ringer_size">80dp</dimen>
 
     <dimen name="volume_dialog_tap_target_size">48dp</dimen>
 
-    <dimen name="volume_dialog_spacer">4dp</dimen>
+    <dimen name="volume_dialog_spacer">0dp</dimen>
 
-    <dimen name="volume_dialog_slider_margin_top">14dp</dimen>
+    <dimen name="volume_dialog_slider_margin_top">0dp</dimen>
 
     <dimen name="volume_dialog_slider_margin_bottom">-2dp</dimen>
 
-    <dimen name="volume_dialog_row_margin_bottom">8dp</dimen>
+    <dimen name="volume_dialog_row_margin_bottom">0dp</dimen>
 
     <dimen name="volume_dialog_settings_icon_size">16dp</dimen>
 
-    <dimen name="volume_dialog_elevation">9dp</dimen>
+    <dimen name="volume_dialog_elevation">0dp</dimen>
 
     <!-- Gravity for the notification panel -->
     <integer name="notification_panel_layout_gravity">0x31</integer><!-- center_horizontal|top -->
@@ -347,10 +349,10 @@
 
     <dimen name="qs_tile_height">106dp</dimen>
     <dimen name="qs_tile_layout_margin_side">6dp</dimen>
-    <dimen name="qs_tile_margin_horizontal">18dp</dimen>
-    <dimen name="qs_tile_margin_vertical">24dp</dimen>
-    <dimen name="qs_tile_margin_top_bottom">12dp</dimen>
-    <dimen name="qs_tile_margin_top">18dp</dimen>
+    <dimen name="qs_tile_margin_horizontal">3dp</dimen>
+    <dimen name="qs_tile_margin_vertical">6dp</dimen>
+    <dimen name="qs_tile_margin_top_bottom">6dp</dimen>
+    <dimen name="qs_tile_margin_top">6dp</dimen>
     <dimen name="qs_quick_tile_size">48dp</dimen>
     <!-- Width for the spacer, used between QS tiles. -->
     <dimen name="qs_quick_tile_space_width">0dp</dimen>
@@ -373,12 +375,12 @@
     <dimen name="qs_tile_spacing">4dp</dimen>
     <dimen name="qs_panel_padding_bottom">0dp</dimen>
     <dimen name="qs_panel_padding_top">30dp</dimen>
-    <dimen name="qs_detail_header_height">56dp</dimen>
+    <dimen name="qs_detail_header_height">30dp</dimen>
     <dimen name="qs_detail_header_padding">0dp</dimen>
     <dimen name="qs_detail_image_width">56dp</dimen>
-    <dimen name="qs_detail_image_height">56dp</dimen>
-    <dimen name="qs_detail_image_padding">16dp</dimen>
-    <dimen name="qs_detail_item_height">48dp</dimen>
+    <dimen name="qs_detail_image_height">30dp</dimen>
+    <dimen name="qs_detail_image_padding">8dp</dimen>
+    <dimen name="qs_detail_item_height">30dp</dimen>
     <dimen name="qs_detail_header_text_size">20sp</dimen>
     <dimen name="qs_detail_button_text_size">14sp</dimen>
     <dimen name="qs_detail_item_primary_text_size">16sp</dimen>
@@ -399,8 +401,8 @@
     <dimen name="qs_header_tooltip_height">18dp</dimen>
     <dimen name="qs_header_alarm_icon_size">18dp</dimen>
     <dimen name="qs_header_alarm_text_margin_start">6dp</dimen>
-    <dimen name="qs_footer_padding_start">16dp</dimen>
-    <dimen name="qs_footer_padding_end">16dp</dimen>
+    <dimen name="qs_footer_padding_start">2dp</dimen>
+    <dimen name="qs_footer_padding_end">2dp</dimen>
     <dimen name="qs_footer_icon_size">16dp</dimen>
     <dimen name="qs_paged_tile_layout_padding_bottom">24dp</dimen>
 
@@ -422,7 +424,7 @@
     <!-- Left and right margin of the icons -->
     <dimen name="qs_footer_dialog_icon_margin">8sp</dimen>
     <!-- Padding between subtitles and the following text in the QSFooter dialog -->
-    <dimen name="qs_footer_dialog_subtitle_padding">20dp</dimen>
+    <dimen name="qs_footer_dialog_subtitle_padding">15dp</dimen>
 
     <dimen name="seek_bar_height">3dp</dimen>
     <dimen name="seek_bar_corner_radius">3dp</dimen>

@@ -199,12 +199,14 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     @Nullable
     private TouchAnimator createFooterAnimator() {
         return new TouchAnimator.Builder()
+                .addFloat(mDivider, "alpha", 1, 1)
+                .addFloat(mCarrierText, "alpha", 1, 1, 1)
+                .addFloat(mMobileGroup, "alpha", 1, 1)
+                .addFloat(mActionsContainer, "alpha", 1, 1)
+                .addFloat(mEdit, "alpha", 0, 1)
                 .addFloat(mDivider, "alpha", 0, 1)
-                .addFloat(mCarrierText, "alpha", 0, 0, 1)
-                .addFloat(mMobileGroup, "alpha", 0, 1)
-                .addFloat(mActionsContainer, "alpha", 0, 1)
-                .addFloat(mDragHandle, "alpha", 1, 0, 0)
-                .addFloat(mPageIndicator, "alpha", 0, 1)
+                .addFloat(mDragHandle, "alpha", 0, 0, 0)
+                .addFloat(mPageIndicator, "alpha", 1, 1)
                 .setStartDelay(0.15f)
                 .build();
     }
@@ -285,11 +287,11 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     }
 
     private void updateVisibilities() {
-        mSettingsContainer.setVisibility(mQsDisabled ? View.GONE : View.VISIBLE);
+        mSettingsContainer.setVisibility(mQsDisabled ? View.VISIBLE : View.VISIBLE);
         final boolean isDemo = UserManager.isDeviceInDemoMode(mContext);
-        mMultiUserSwitch.setVisibility(showUserSwitcher(isDemo) ? View.VISIBLE : View.INVISIBLE);
+        mMultiUserSwitch.setVisibility(showUserSwitcher(isDemo) ? View.INVISIBLE : View.INVISIBLE);
         mEdit.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
-        mSettingsButton.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
+        mSettingsButton.setVisibility(isDemo || !mExpanded ? View.VISIBLE : View.VISIBLE);
     }
 
     private boolean showUserSwitcher(boolean isDemo) {
@@ -337,10 +339,6 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
     @Override
     public void onClick(View v) {
-        // Don't do anything until view are unhidden
-        if (!mExpanded) {
-            return;
-        }
 
         if (v == mSettingsButton) {
             if (!Dependency.get(DeviceProvisionedController.class).isCurrentUserSetup()) {
@@ -362,7 +360,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
             mVibrator.vibrate(50);
         }
         return false;
-    }
+   }
 
     private ComponentName FRIES_DASHBOARD_SETTING_COMPONENT = new ComponentName(
             "com.android.settings", "com.android.settings.Settings$FriesDashboardActivity");

@@ -25,9 +25,9 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:gravity="center|left"
+        android:layout_gravity="center|left"
+        android:orientation="horizontal" >
         <TextView
             android:id="@+id/volume_row_header"
             android:layout_width="wrap_content"
@@ -38,32 +38,31 @@
             android:visibility="gone"
             android:textColor="?android:attr/colorControlNormal"
             android:textAppearance="@style/TextAppearance.Volume.Header" />
+        <com.android.keyguard.AlphaOptimizedImageButton
+            android:id="@+id/volume_row_icon"
+            style="@style/VolumeButtons"
+            android:layout_width="30dp"
+            android:layout_height="@dimen/volume_dialog_tap_target_size"
+            android:background="@drawable/ripple_drawable_20dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
+            android:tint="@color/accent_tint_color_selector"
+            android:soundEffectsEnabled="false" />
         <FrameLayout
             android:id="@+id/volume_row_slider_frame"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/volume_dialog_slider_margin_top"
             android:layout_marginBottom="@dimen/volume_dialog_slider_margin_bottom"
-            android:layoutDirection="rtl"
-            android:layout_height="@dimen/volume_dialog_slider_height">
+            android:layout_height="@dimen/volume_dialog_ringer_size"
+            android:orientation="horizontal">
             <SeekBar
                 android:id="@+id/volume_row_slider"
                 android:clickable="true"
-                android:layout_width="@dimen/volume_dialog_slider_height"
+                android:layout_width="@dimen/volume_dialog_slider_width"
                 android:layout_height="match_parent"
-                android:layoutDirection="rtl"
-                android:layout_gravity="center"
-                android:rotation="90" />
+                android:layout_gravity="center_vertical|left"
+                android:rotation="0" />
         </FrameLayout>
-
-        <com.android.keyguard.AlphaOptimizedImageButton
-            android:id="@+id/volume_row_icon"
-            style="@style/VolumeButtons"
-            android:layout_width="@dimen/volume_dialog_tap_target_size"
-            android:layout_height="@dimen/volume_dialog_tap_target_size"
-            android:background="@drawable/ripple_drawable_20dp"
-            android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
-            android:tint="@color/accent_tint_color_selector"
-            android:soundEffectsEnabled="false" />
     </LinearLayout>
 
     <include layout="@layout/volume_dnd_icon"/>

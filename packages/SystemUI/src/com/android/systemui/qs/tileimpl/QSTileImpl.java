@@ -55,7 +55,6 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.QuickStatusBarHeader;
 import com.android.systemui.R;
 
-
 import java.util.ArrayList;
 
 /**
@@ -393,23 +392,38 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
         int qsBackGroundColorWall = System.getIntForUser(context.getContentResolver(),
                 System.QS_PANEL_BG_COLOR_WALL, activeDefault, UserHandle.USER_CURRENT);
 
+        boolean enableQsTileTinting = context.getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
+
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
-                return Utils.getDisabled(context,
+                if (!enableQsTileTinting) {
+                    return Utils.getDisabled(context,
                         Utils.getColorAttr(context, android.R.attr.textColorSecondary));
-            case Tile.STATE_INACTIVE:
-                return Utils.getColorAttr(context, android.R.attr.textColorSecondary);
-            case Tile.STATE_ACTIVE:
-                if (setQsFromResources) {
-                    return Utils.getColorAttr(context, android.R.attr.colorPrimary);
                 } else {
-                    if (setQsFromAccent) {
-                        return context.getResources().getColor(R.color.accent_device_default_light);
+                    return Utils.getDisabled(context,
+                        context.getColor(R.color.qs_tiles_unavailable_tint));
+                }
+            case Tile.STATE_INACTIVE:
+                if (!enableQsTileTinting) {
+                    return Utils.getColorAttr(context, android.R.attr.textColorSecondary);
+                } else {
+                    return context.getColor(R.color.qs_tiles_inactive_tint);
+                }
+            case Tile.STATE_ACTIVE:
+                if (enableQsTileTinting) {
+                    return context.getColor(R.color.qs_tiles_active_tint);
+                } else {
+                    if (setQsFromResources) {
+                        return Utils.getColorAttr(context, android.R.attr.colorPrimary);
                     } else {
-                        if (setQsFromWall)
-                            return qsBackGroundColorWall;
-                        else
-                            return qsBackGroundColor;
+                        if (setQsFromAccent) {
+                            return context.getResources().getColor(R.color.accent_device_default_light);
+                        } else {
+                            if (setQsFromWall)
+                                return qsBackGroundColorWall;
+                            else
+                                return qsBackGroundColor;
+                        }
                     }
                 }
             default:
