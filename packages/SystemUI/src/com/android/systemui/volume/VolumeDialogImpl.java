@@ -835,6 +835,12 @@ public class VolumeDialogImpl implements VolumeDialog,
             Log.d(TAG, "mDialog.dismiss() reason: " + Events.DISMISS_REASONS[reason]
                     + " from: " + Debug.getCaller());
         }
+
+        // Avoid multiple animation calls on touch spams.
+        if (!mShowing) {
+            return;
+        }
+        
         mHandler.removeMessages(H.DISMISS);
         mHandler.removeMessages(H.SHOW);
         mDialogView.animate().cancel();
