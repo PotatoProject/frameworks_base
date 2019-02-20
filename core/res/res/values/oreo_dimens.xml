@@ -1,0 +1,69 @@
+<?xml version="1.0" encording="utf-8"?>
+<resources>
+    <!-- Side padding on the lockscreen on the side of notifications -->
+    <dimen name="notification_side_paddings">4dp</dimen>
+
+    <!-- padding between the heads up and the statusbar -->
+    <dimen name="heads_up_status_bar_padding">8dp</dimen>
+
+    <!-- Height of the status bar header bar in the car setting. -->
+    <dimen name="car_status_bar_header_height">128dp</dimen>
+
+    <!-- The bottom padding of the status bar header. -->
+    <dimen name="status_bar_header_padding_bottom">48dp</dimen>
+
+    <!-- The height of the container that holds the battery and time in the quick settings header. -->
+    <dimen name="qs_header_system_icons_area_height">48dp</dimen>
+
+    <!-- How far the quick-quick settings panel extends below the status bar -->
+    <dimen name="qs_quick_header_panel_height">128dp</dimen>
+
+    <!-- The height of the container that holds the system icons in the quick settings header in the
+         car setting. -->
+    <dimen name="car_qs_header_system_icons_area_height">54dp</dimen>
+
+    <!-- The height of the quick settings footer that holds the user switcher, settings icon,
+         etc. -->
+    <dimen name="qs_footer_height">56dp</dimen>
+
+    <!-- Height of the status bar header bar when expanded -->
+    <dimen name="status_bar_header_height_expanded">124dp</dimen>
+
+    <dimen name="volume_dialog_panel_transparent_padding_right">8dp</dimen>
+
+    <dimen name="volume_dialog_panel_transparent_padding">20dp</dimen>
+
+    <dimen name="volume_dialog_stream_padding">8dp</dimen>
+
+    <!-- the amount the volume panel should be offset at the end from the view next to it (or
+    the screen edge, in portrait-->
+    <dimen name="volume_dialog_base_margin">8dp</dimen>
+
+    <dimen name="volume_dialog_panel_width">64dp</dimen>
+
+    <dimen name="volume_dialog_slider_height">116dp</dimen>
+
+    <dimen name="volume_dialog_row_height">252dp</dimen>
+
+    <dimen name="volume_dialog_ringer_size">64dp</dimen>
+
+    <dimen name="volume_dialog_spacer">4dp</dimen>
+
+    <dimen name="volume_dialog_slider_margin_top">14dp</dimen>
+
+    <dimen name="volume_dialog_row_margin_bottom">8dp</dimen>
+
+    <dimen name="volume_dialog_elevation">9dp</dimen>
+
+    <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
+    <dimen name="qs_tile_margin_horizontal">18dp</dimen>
+    <dimen name="qs_tile_margin_vertical">24dp</dimen>
+    <dimen name="qs_tile_margin_top_bottom">12dp</dimen>
+    <dimen name="qs_tile_margin_top">18dp</dimen>
+    <dimen name="qs_detail_header_height">56dp</dimen>
+    <dimen name="qs_detail_image_height">56dp</dimen>
+    <dimen name="qs_detail_image_padding">16dp</dimen>
+    <dimen name="qs_detail_item_height">48dp</dimen>
+    <dimen name="qs_footer_padding_start">16dp</dimen>
+    <dimen name="qs_footer_padding_end">16dp</dimen>
+    <dimen name="qs_footer_dialog_subtitle_padding">20dp</dimen>
