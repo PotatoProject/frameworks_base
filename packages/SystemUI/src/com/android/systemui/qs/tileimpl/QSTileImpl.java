@@ -55,7 +55,6 @@ import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.QuickStatusBarHeader;
 import com.android.systemui.R;
 
-
 import java.util.ArrayList;
 
 /**
@@ -387,6 +386,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
                     System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
         boolean setQsFromAccent = System.getIntForUser(context.getContentResolver(),
                     System.QS_PANEL_BG_USE_ACCENT, 1, UserHandle.USER_CURRENT) == 1;
+        boolean enableQsTileTinting = context.getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
 
         int qsBackGroundColor = System.getIntForUser(context.getContentResolver(),
                 System.QS_PANEL_BG_COLOR, activeDefault, UserHandle.USER_CURRENT);
@@ -395,12 +395,23 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
 
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
-                return Utils.getDisabled(context,
+                if (!enableQsTileTinting) {
+                    return Utils.getDisabled(context,
                         Utils.getColorAttr(context, android.R.attr.textColorSecondary));
+                } else {
+                    return Utils.getDisabled(context,
+                        context.getColor(R.color.qs_tiles_unavailable_tint));
+                }
             case Tile.STATE_INACTIVE:
-                return Utils.getColorAttr(context, android.R.attr.textColorSecondary);
+                if (!enableQsTileTinting) {
+                    return Utils.getColorAttr(context, android.R.attr.textColorSecondary);
+                } else {
+                    return context.getColor(R.color.qs_tiles_inactive_tint);
+                }
             case Tile.STATE_ACTIVE:
-                if (setQsFromResources) {
+                if (enableQsTileTinting) {
+                    return context.getColor(R.color.qs_tiles_active_tint);
+                } else if (setQsFromResources) {
                     return Utils.getColorAttr(context, android.R.attr.colorPrimary);
                 } else {
                     if (setQsFromAccent) {
