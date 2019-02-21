@@ -49,10 +49,14 @@
                 android:id="@+id/volume_row_slider"
                 android:clickable="true"
                 android:layout_width="@dimen/volume_dialog_slider_height"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:layoutDirection="rtl"
                 android:layout_gravity="center"
-                android:rotation="90" />
+                android:rotation="90"
+                android:minHeight="40dp"
+                android:maxHeight="40dp"
+                android:progressDrawable="@drawable/round_seekbar"
+                android:thumb="@drawable/round_seekbar_thumb" />
         </FrameLayout>
 
         <com.android.keyguard.AlphaOptimizedImageButton
@@ -63,7 +67,8 @@
             android:background="@drawable/ripple_drawable_20dp"
             android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
             android:tint="@color/accent_tint_color_selector"
-            android:soundEffectsEnabled="false" />
+            android:soundEffectsEnabled="false"
+            android:visibility="gone" />
     </LinearLayout>
 
     <include layout="@layout/volume_dnd_icon"/>

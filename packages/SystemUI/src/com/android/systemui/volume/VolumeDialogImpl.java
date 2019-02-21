@@ -440,7 +440,7 @@ public class VolumeDialogImpl implements VolumeDialog {
 
     public void initSettingsH() {
         mSettingsView.setVisibility(
-                mDeviceProvisionedController.isCurrentUserSetup() ? VISIBLE : GONE);
+                mDeviceProvisionedController.isCurrentUserSetup() ? GONE : GONE);
         mSettingsIcon.setOnClickListener(v -> {
             Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
             Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
@@ -731,7 +731,7 @@ public class VolumeDialogImpl implements VolumeDialog {
      */
     private void enableVolumeRowViewsH(VolumeRow row, boolean enable) {
         boolean showDndIcon = !enable;
-        row.dndIcon.setVisibility(showDndIcon ? VISIBLE : GONE);
+        row.dndIcon.setVisibility(showDndIcon ? GONE : GONE);
     }
 
     /**

@@ -408,7 +408,7 @@ public class NotificationPanelView extends PanelView implements
 
     public void updateResources() {
         Resources res = getResources();
-        int qsWidth = res.getDimensionPixelSize(R.dimen.qs_panel_width);
+        int qsWidth = res.getDimensionPixelSize(R.dimen.wrap_content);
         int panelGravity = getResources().getInteger(R.integer.notification_panel_layout_gravity);
         FrameLayout.LayoutParams lp =
                 (FrameLayout.LayoutParams) mQsFrame.getLayoutParams();
@@ -418,7 +418,7 @@ public class NotificationPanelView extends PanelView implements
             mQsFrame.setLayoutParams(lp);
         }
 
-        int panelWidth = res.getDimensionPixelSize(R.dimen.notification_panel_width);
+        int panelWidth = res.getDimensionPixelSize(R.dimen.wrap_content);
         lp = (FrameLayout.LayoutParams) mNotificationStackScroller.getLayoutParams();
         if (lp.width != panelWidth || lp.gravity != panelGravity) {
             lp.width = panelWidth;

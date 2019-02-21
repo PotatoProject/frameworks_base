@@ -18,7 +18,7 @@
     xmlns:systemui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/quick_qs_status_icons"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="14dp"
     android:layout_marginStart="@dimen/status_bar_padding_start"
@@ -28,6 +28,20 @@
     android:clipToPadding="false"
     android:minHeight="20dp" >
 
+    <com.android.systemui.statusbar.policy.Clock
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="48dp"
+        android:gravity="center_vertical|start"
+        android:paddingStart="@dimen/status_bar_left_clock_starting_padding"
+        android:paddingEnd="@dimen/status_bar_left_clock_end_padding"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+        android:paddingTop="6dp"
+        android:paddingLeft="10dp"
+        systemui:showDark="true" />
+
     <com.android.systemui.statusbar.policy.DateView
         android:id="@+id/date"
         android:layout_width="wrap_content"
@@ -36,12 +50,74 @@
         android:gravity="center_vertical"
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.QS.TileLabel"
-        systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm" />
+        systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm"
+        android:visibility="gone" />
 
     <com.android.systemui.statusbar.phone.StatusIconContainer
         android:id="@+id/statusIcons"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:visibility="invisible"/>
+
+    <com.android.keyguard.AlphaOptimizedLinearLayout
+        android:id="@+id/qs_footer_actions_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|end"
+        android:background="@drawable/very_round_bg"
+        android:layout_margin="5dp"
+        android:padding="0dp" >
+
+        <com.android.systemui.statusbar.AlphaOptimizedImageView
+           android:id="@android:id/edit"
+           android:layout_width="18dp"
+           android:layout_height="18dp"
+           android:background="?android:attr/selectableItemBackgroundBorderless"
+           android:clickable="true"
+           android:clipToPadding="false"
+           android:contentDescription="@string/accessibility_quick_settings_edit"
+           android:focusable="true"
+           android:src="@drawable/ic_mode_edit"
+           android:tint="#FFFFFF"
+           android:gravity="center_vertical|start"/>
+
+        <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
+            android:id="@+id/settings_button_container"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <com.android.systemui.statusbar.phone.SettingsButton
+                android:id="@+id/settings_button"
+                style="@android:style/Widget.Material.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ripple_drawable"
+                android:contentDescription="@string/accessibility_quick_settings_settings"
+                android:src="@drawable/ic_settings_16dp"
+                android:tint="#FFFFFF"/>
+
+            <com.android.systemui.statusbar.AlphaOptimizedImageView
+                android:id="@+id/tuner_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="36dp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/tuner"
+                android:tint="?android:attr/textColorTertiary"
+                android:visibility="gone"/>
+
+        </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
+    </com.android.keyguard.AlphaOptimizedLinearLayout>
+
+    <com.android.systemui.BatteryMeterView
+        android:id="@+id/battery"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:gravity="center_vertical|end"
+        android:paddingTop="0dp"
+        android:paddingRight="10dp" />
 
 </LinearLayout>

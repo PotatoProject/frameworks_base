@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/progressshape">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="?android:attr/panelColorBackground" />
+                <corners android:radius="255dp" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>
+

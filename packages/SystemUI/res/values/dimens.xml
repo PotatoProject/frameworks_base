@@ -108,7 +108,7 @@
     <dimen name="notification_max_heads_up_height_increased">188dp</dimen>
 
     <!-- Side padding on the lockscreen on the side of notifications -->
-    <dimen name="notification_side_paddings">4dp</dimen>
+    <dimen name="notification_side_paddings">8dp</dimen>
 
     <!-- padding between the heads up and the statusbar -->
     <dimen name="heads_up_status_bar_padding">8dp</dimen>
@@ -261,7 +261,7 @@
 
     <!-- The height of the quick settings footer that holds the user switcher, settings icon,
          etc. -->
-    <dimen name="qs_footer_height">56dp</dimen>
+    <dimen name="qs_footer_height">0dp</dimen>
 
     <!-- The padding between the notifications and the quick settings container -->
     <dimen name="qs_notification_padding">@dimen/notification_side_paddings</dimen>
@@ -280,6 +280,7 @@
 
     <!-- Width for the notification panel and related windows -->
     <dimen name="match_parent">-1px</dimen>
+    <dimen name="wrap_content">-2px</dimen>
     <dimen name="standard_notification_panel_width">416dp</dimen>
 
     <!-- The top margin of the panel that holds the list of notifications. -->
@@ -317,15 +318,15 @@
 
     <dimen name="volume_dialog_spacer">4dp</dimen>
 
-    <dimen name="volume_dialog_slider_margin_top">14dp</dimen>
+    <dimen name="volume_dialog_slider_margin_top">0dp</dimen>
 
-    <dimen name="volume_dialog_slider_margin_bottom">-2dp</dimen>
+    <dimen name="volume_dialog_slider_margin_bottom">0dp</dimen>
 
-    <dimen name="volume_dialog_row_margin_bottom">8dp</dimen>
+    <dimen name="volume_dialog_row_margin_bottom">0dp</dimen>
 
-    <dimen name="volume_dialog_settings_icon_size">16dp</dimen>
+    <dimen name="volume_dialog_settings_icon_size">0dp</dimen>
 
-    <dimen name="volume_dialog_elevation">9dp</dimen>
+    <dimen name="volume_dialog_elevation">0dp</dimen>
 
     <!-- Gravity for the notification panel -->
     <integer name="notification_panel_layout_gravity">0x31</integer><!-- center_horizontal|top -->

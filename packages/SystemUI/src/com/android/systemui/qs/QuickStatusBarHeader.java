@@ -46,6 +46,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.internal.logging.MetricsLogger;
+import com.android.internal.logging.nano.MetricsProto;
 import com.android.settingslib.Utils;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.Dependency;
@@ -64,6 +66,15 @@ import com.android.systemui.statusbar.policy.DateView;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 
+import android.os.Vibrator;
+import static android.content.Context.VIBRATOR_SERVICE;
+import com.android.systemui.statusbar.phone.SettingsButton;
+import com.android.systemui.plugins.ActivityStarter;
+import android.content.ComponentName;
+import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+
 import java.util.Locale;
 import java.util.Objects;
 
@@ -73,7 +84,7 @@ import java.util.Objects;
  * contents.
  */
 public class QuickStatusBarHeader extends RelativeLayout implements
-        View.OnClickListener, NextAlarmController.NextAlarmChangeCallback,
+        View.OnClickListener, OnLongClickListener, NextAlarmController.NextAlarmChangeCallback,
         ZenModeController.Callback {
     private static final String TAG = "QuickStatusBarHeader";
     private static final boolean DEBUG = false;
@@ -98,9 +109,12 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private TouchAnimator mStatusIconsAlphaAnimator;
     private TouchAnimator mHeaderTextContainerAlphaAnimator;
 
+    private ActivityStarter mActivityStarter;
     private View mSystemIconsView;
     private View mQuickQsStatusIcons;
     private View mHeaderTextContainerView;
+    protected View mEdit;
+    private SettingsButton mSettingsButton;
     /** View containing the next alarm and ringer mode info. */
     private View mStatusContainer;
     /** Tooltip for educating users that they can long press on icons to see more details. */
@@ -118,6 +132,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private BatteryMeterView mBatteryMeterView;
     private Clock mClockView;
     private DateView mDateView;
+
+    private Vibrator mVibrator;
 
     private NextAlarmController mAlarmController;
     private ZenModeController mZenController;
@@ -142,6 +158,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mAlarmController = Dependency.get(NextAlarmController.class);
         mZenController = Dependency.get(ZenModeController.class);
         mShownCount = getStoredShownCount();
+        mVibrator = (Vibrator) getContext().getSystemService(VIBRATOR_SERVICE);
     }
 
     @Override
@@ -154,6 +171,11 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         StatusIconContainer iconContainer = findViewById(R.id.statusIcons);
         iconContainer.setShouldRestrictIcons(false);
         mIconManager = new TintedIconManager(iconContainer);
+
+        mEdit = findViewById(android.R.id.edit);
+        mEdit.setOnClickListener(view ->
+                Dependency.get(ActivityStarter.class).postQSRunnableDismissingKeyguard(() ->
+                        mQsPanel.showEdit(view)));
 
         // Views corresponding to the header info section (e.g. tooltip and next alarm).
         mHeaderTextContainerView = findViewById(R.id.header_text_container);
@@ -178,6 +200,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         // Set the correct tint for the status icons so they contrast
         mIconManager.setTint(fillColor);
 
+        mActivityStarter = Dependency.get(ActivityStarter.class);
         mBatteryMeterView = findViewById(R.id.battery);
         mBatteryMeterView.setForceShowPercent(true);
         mBatteryMeterView.setOnClickListener(this);
@@ -185,6 +208,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mClockView.setOnClickListener(this);
         mClockView.setQsHeader();
         mDateView = findViewById(R.id.date);
+        mSettingsButton = findViewById(R.id.settings_button);
+        mSettingsButton.setOnClickListener(this);
+        mSettingsButton.setOnLongClickListener(this);
     }
 
     private void updateStatusText() {
@@ -315,13 +341,13 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     private void updateStatusIconAlphaAnimator() {
         mStatusIconsAlphaAnimator = new TouchAnimator.Builder()
-                .addFloat(mQuickQsStatusIcons, "alpha", 1, 0)
+                .addFloat(mQuickQsStatusIcons, "alpha", 1, 1)
                 .build();
     }
 
     private void updateHeaderTextContainerAlphaAnimator() {
         mHeaderTextContainerAlphaAnimator = new TouchAnimator.Builder()
-                .addFloat(mHeaderTextContainerView, "alpha", 0, 1)
+                .addFloat(mHeaderTextContainerView, "alpha", 1, 1)
                 .setStartDelay(.5f)
                 .build();
     }
@@ -330,7 +356,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         if (mExpanded == expanded) return;
         mExpanded = expanded;
         mHeaderQsPanel.setExpanded(expanded);
-        mDateView.setVisibility(mClockView.isClockDateEnabled() ? View.INVISIBLE : View.VISIBLE);
+        mDateView.setVisibility(mClockView.isClockDateEnabled() ? View.INVISIBLE : View.INVISIBLE);
         updateEverything();
     }
 
@@ -444,6 +470,16 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         } else if (v == mBatteryMeterView) {
             Dependency.get(ActivityStarter.class).postStartActivityDismissingKeyguard(new Intent(
                     Intent.ACTION_POWER_USAGE_SUMMARY),0);
+        } else if (v == mSettingsButton) {
+            if (!Dependency.get(DeviceProvisionedController.class).isCurrentUserSetup()) {
+                // If user isn't setup just unlock the device and dump them back at SUW.
+                mActivityStarter.postQSRunnableDismissingKeyguard(() -> { });
+                return;
+            }
+            MetricsLogger.action(mContext,
+                    mExpanded ? MetricsProto.MetricsEvent.ACTION_QS_EXPANDED_SETTINGS_LAUNCH
+                            : MetricsProto.MetricsEvent.ACTION_QS_COLLAPSED_SETTINGS_LAUNCH);
+            startSettingsActivity();
         }
     }
 
@@ -476,6 +512,28 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private boolean hasStatusText() {
         return mNextAlarmTextView.getVisibility() == View.VISIBLE
                 || mRingerModeTextView.getVisibility() == View.VISIBLE;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v == mSettingsButton) {
+            startFriesDashboardActivity();
+            mVibrator.vibrate(50);
+        }
+        return false;
+    }
+
+    private ComponentName FRIES_DASHBOARD_SETTING_COMPONENT = new ComponentName(
+            "com.android.settings", "com.android.settings.Settings$FriesDashboardActivity");
+
+    private void startFriesDashboardActivity() {
+        mActivityStarter.startActivity(new Intent().setComponent(FRIES_DASHBOARD_SETTING_COMPONENT),
+                true /* dismissShade */);
+    }
+
+    private void startSettingsActivity() {
+        mActivityStarter.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS),
+                true /* dismissShade */);
     }
 
     /**
