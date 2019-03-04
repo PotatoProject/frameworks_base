@@ -44,6 +44,13 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
+
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.provider.Settings.System;
+
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
@@ -121,6 +128,10 @@ public class VolumeDialogImpl implements VolumeDialog {
     private Window mWindow;
     private CustomDialog mDialog;
     private ViewGroup mDialogView;
+
+    private ViewGroup mAospVolume;
+    private ViewGroup mRoundVolume;
+
     private ViewGroup mDialogRowsView;
     private ViewGroup mRinger;
     private ImageButton mRingerIcon;
@@ -139,6 +150,8 @@ public class VolumeDialogImpl implements VolumeDialog {
     private ColorStateList mInactiveTint;
     private int mInactiveAlpha;
 
+    private boolean mRoundDialog;
+
     private boolean mShowing;
     private boolean mShowA11yStream;
 
@@ -156,6 +169,10 @@ public class VolumeDialogImpl implements VolumeDialog {
         mKeyguard = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mAccessibilityMgr = Dependency.get(AccessibilityManagerWrapper.class);
         mDeviceProvisionedController = Dependency.get(DeviceProvisionedController.class);
+
+        Handler handler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(handler);
+        settingsObserver.observe();
     }
 
     public void init(int windowType, Callback callback) {
@@ -223,6 +240,7 @@ public class VolumeDialogImpl implements VolumeDialog {
                     })
                     .start();
         });
+
         mDialogView = mDialog.findViewById(R.id.volume_dialog);
         mDialogView.setOnHoverListener((v, event) -> {
             int action = event.getActionMasked();
@@ -232,18 +250,32 @@ public class VolumeDialogImpl implements VolumeDialog {
             return true;
         });
 
+        mAospVolume = mDialog.findViewById(R.id.aosp_volume);
+        mRoundVolume = mDialog.findViewById(R.id.round_volume);
+
         mActiveTint = ColorStateList.valueOf(Utils.getColorAccent(mContext));
         mActiveAlpha = Color.alpha(mActiveTint.getDefaultColor());
         mInactiveTint = ColorStateList.valueOf(
                 Utils.getColorAttr(mContext, android.R.attr.colorForeground));
         mInactiveAlpha = getAlphaAttr(android.R.attr.secondaryContentAlpha);
 
-        mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
-        mRinger = mDialog.findViewById(R.id.ringer);
-        mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
-        mZenIcon = mRinger.findViewById(R.id.dnd_icon);
-        mSettingsView = mDialog.findViewById(R.id.settings_container);
-        mSettingsIcon = mDialog.findViewById(R.id.settings);
+        updateSettings();
+
+        /* if(!mRoundDialog) {
+            mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.ringer);
+            mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.settings);
+        } else {
+            mDialogRowsView = mDialog.findViewById(R.id.round_volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.round_ringer);
+            mRingerIcon = mRinger.findViewById(R.id.round_ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.round_settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.round_settings);
+        } */
 
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
@@ -276,6 +308,53 @@ public class VolumeDialogImpl implements VolumeDialog {
         updateRowsH(getActiveRow());
         initRingerH();
         initSettingsH();
+    }
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            mContext.getContentResolver().registerContentObserver(System.getUriFor(System.USE_ROUND_VOLUME_PANEL), false,
+                this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private void updateSettings() {
+        int useRoundDialog = System.getIntForUser(mContext.getContentResolver(),
+                System.USE_ROUND_VOLUME_PANEL, 0, UserHandle.USER_CURRENT);
+        mRoundDialog = useRoundDialog == 1;
+        updateVolumeDialog(mRoundDialog);
+    }
+
+    private void updateVolumeDialog(boolean isRound) {
+        if (isRound) {
+            mDialogRowsView = mDialog.findViewById(R.id.round_volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.round_ringer);
+            mRingerIcon = mRinger.findViewById(R.id.round_ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.round_settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.round_settings);
+
+            mAospVolume.setVisibility(View.GONE);
+            mRoundVolume.setVisibility(View.VISIBLE);
+        } else if (!isRound) {
+            mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.ringer);
+            mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.settings);
+
+            mAospVolume.setVisibility(View.VISIBLE);
+            mRoundVolume.setVisibility(View.GONE);
+        }
     }
 
     protected ViewGroup getDialogView() {
