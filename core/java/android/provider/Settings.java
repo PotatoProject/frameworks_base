@@ -4296,6 +4296,16 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to use the Roundy styled volume dialog
+         * @hide
+         **/
+        public static final String USE_ROUND_VOLUME_PANEL = "use_round_volume_panel";
+
+        /** @hide */
+        private static final Validator USE_ROUND_VOLUME_PANEL_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether to mute annoying notifications
          * @hide
          */
@@ -4573,6 +4583,7 @@ public final class Settings {
             BATTERY_LIGHT_FULL_COLOR,
             BATTERY_LIGHT_REALLYFULL_COLOR,
             USE_OREO_SETTINGS,
+            USE_ROUND_VOLUME_PANEL,
         };
 
         /**
@@ -4706,6 +4717,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_FULL_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_REALLYFULL_COLOR);
             PRIVATE_SETTINGS.add(USE_OREO_SETTINGS);
+            PRIVATE_SETTINGS.add(USE_ROUND_VOLUME_PANEL);
         }
 
         /**
@@ -4813,6 +4825,7 @@ public final class Settings {
             VALIDATORS.put(BATTERY_LIGHT_FULL_COLOR, BATTERY_LIGHT_FULL_COLOR_VALIDATOR);
             VALIDATORS.put(BATTERY_LIGHT_REALLYFULL_COLOR, BATTERY_LIGHT_REALLYFULL_COLOR_VALIDATOR);
             VALIDATORS.put(USE_OREO_SETTINGS, USE_OREO_SETTINGS_VALIDATOR);
+            VALIDATORS.put(USE_ROUND_VOLUME_PANEL, USE_ROUND_VOLUME_PANEL_VALIDATOR);
         }
 
         /**

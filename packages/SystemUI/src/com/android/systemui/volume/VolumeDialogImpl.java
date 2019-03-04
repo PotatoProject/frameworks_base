@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   //www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,6 +44,13 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
+
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.provider.Settings.System;
+
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
@@ -121,6 +128,13 @@ public class VolumeDialogImpl implements VolumeDialog {
     private Window mWindow;
     private CustomDialog mDialog;
     private ViewGroup mDialogView;
+
+    private ViewGroup mAospVolume;
+    private ViewGroup mRoundVolume;
+
+    private ViewGroup mAospRow;
+    private ViewGroup mRoundRow;
+
     private ViewGroup mDialogRowsView;
     private ViewGroup mRinger;
     private ImageButton mRingerIcon;
@@ -139,6 +153,9 @@ public class VolumeDialogImpl implements VolumeDialog {
     private ColorStateList mInactiveTint;
     private int mInactiveAlpha;
 
+    private boolean mRoundDialog;
+    private boolean mRowsReady;
+
     private boolean mShowing;
     private boolean mShowA11yStream;
 
@@ -156,6 +173,10 @@ public class VolumeDialogImpl implements VolumeDialog {
         mKeyguard = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mAccessibilityMgr = Dependency.get(AccessibilityManagerWrapper.class);
         mDeviceProvisionedController = Dependency.get(DeviceProvisionedController.class);
+
+        Handler handler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(handler);
+        settingsObserver.observe();
     }
 
     public void init(int windowType, Callback callback) {
@@ -223,6 +244,7 @@ public class VolumeDialogImpl implements VolumeDialog {
                     })
                     .start();
         });
+
         mDialogView = mDialog.findViewById(R.id.volume_dialog);
         mDialogView.setOnHoverListener((v, event) -> {
             int action = event.getActionMasked();
@@ -232,18 +254,32 @@ public class VolumeDialogImpl implements VolumeDialog {
             return true;
         });
 
+        mAospVolume = mDialog.findViewById(R.id.aosp_volume);
+        mRoundVolume = mDialog.findViewById(R.id.round_volume);
+
         mActiveTint = ColorStateList.valueOf(Utils.getColorAccent(mContext));
         mActiveAlpha = Color.alpha(mActiveTint.getDefaultColor());
         mInactiveTint = ColorStateList.valueOf(
                 Utils.getColorAttr(mContext, android.R.attr.colorForeground));
         mInactiveAlpha = getAlphaAttr(android.R.attr.secondaryContentAlpha);
 
-        mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
-        mRinger = mDialog.findViewById(R.id.ringer);
-        mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
-        mZenIcon = mRinger.findViewById(R.id.dnd_icon);
-        mSettingsView = mDialog.findViewById(R.id.settings_container);
-        mSettingsIcon = mDialog.findViewById(R.id.settings);
+        /* if(!mRoundDialog) {
+            mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.ringer);
+            mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.settings);
+        } else {
+            mDialogRowsView = mDialog.findViewById(R.id.round_volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.round_ringer);
+            mRingerIcon = mRinger.findViewById(R.id.round_ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.round_settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.round_settings);
+        }*/
+
+        updateSettings();
 
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
@@ -273,9 +309,69 @@ public class VolumeDialogImpl implements VolumeDialog {
             addExistingRows();
         }
 
+        mRowsReady = true;
         updateRowsH(getActiveRow());
         initRingerH();
         initSettingsH();
+    }
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            mContext.getContentResolver().registerContentObserver(System.getUriFor(System.USE_ROUND_VOLUME_PANEL), false,
+                this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private void updateSettings() {
+        int useRoundDialog = System.getIntForUser(mContext.getContentResolver(),
+                System.USE_ROUND_VOLUME_PANEL, 0, UserHandle.USER_CURRENT);
+        mRoundDialog = useRoundDialog == 1;
+        updateVolumeDialog(mRoundDialog);
+    }
+
+    private void updateVolumeDialog(boolean isRound) {
+        if (isRound) {
+            mDialogRowsView = mDialog.findViewById(R.id.round_volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.round_ringer);
+            mRingerIcon = mRinger.findViewById(R.id.round_ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.round_settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.round_settings);
+
+            mAospVolume.setVisibility(View.GONE);
+            mRoundVolume.setVisibility(View.VISIBLE);
+
+            if(mRowsReady) {
+                purgeRows();
+                addRow(AudioManager.STREAM_MUSIC,
+                        R.drawable.ic_volume_media, R.drawable.ic_volume_media_mute, true, true);
+            }
+        } else if (!isRound) {
+            mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+            mRinger = mDialog.findViewById(R.id.ringer);
+            mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
+            mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            mSettingsView = mDialog.findViewById(R.id.settings_container);
+            mSettingsIcon = mDialog.findViewById(R.id.settings);
+
+            mAospVolume.setVisibility(View.VISIBLE);
+            mRoundVolume.setVisibility(View.GONE);
+
+            if(mRowsReady) {
+                purgeRows();
+                addRow(AudioManager.STREAM_MUSIC,
+                        R.drawable.ic_volume_media, R.drawable.ic_volume_media_mute, true, true);
+            }
+        }
     }
 
     protected ViewGroup getDialogView() {
@@ -386,6 +482,29 @@ public class VolumeDialogImpl implements VolumeDialog {
     @SuppressLint("InflateParams")
     private void initRow(final VolumeRow row, final int stream, int iconRes, int iconMuteRes,
             boolean important, boolean defaultStream) {
+
+        row.view  = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_row, null);
+	mAospRow  = row.view.findViewById(R.id.aosp_volume_row);
+        mRoundRow = row.view.findViewById(R.id.round_volume_row);
+
+        if(mRoundDialog) {
+            row.header  = row.view.findViewById(R.id.round_volume_row_header);
+            row.dndIcon = row.view.findViewById(R.id.dnd_icon);
+            row.slider  =  row.view.findViewById(R.id.round_volume_row_slider);
+            row.icon    = row.view.findViewById(R.id.round_volume_row_icon);
+
+            mAospRow.setVisibility(View.GONE);
+            mRoundRow.setVisibility(View.VISIBLE);
+        } else {
+            row.header  = row.view.findViewById(R.id.volume_row_header);
+            row.dndIcon = row.view.findViewById(R.id.dnd_icon);
+            row.slider  =  row.view.findViewById(R.id.volume_row_slider);
+            row.icon    = row.view.findViewById(R.id.volume_row_icon);
+
+            mAospRow.setVisibility(View.GONE);
+            mRoundRow.setVisibility(View.VISIBLE);
+        }
+
         row.stream = stream;
         row.iconRes = iconRes;
         row.iconMuteRes = iconMuteRes;
@@ -752,6 +871,13 @@ public class VolumeDialogImpl implements VolumeDialog {
             if (!mDynamic.get(row.stream)) {
                 removeRow(row);
             }
+        }
+    }
+
+    private void purgeRows() {
+        for (int i = mRows.size() - 1; i >= 0; i--) {
+            final VolumeRow row = mRows.get(i);
+            removeRow(row);
         }
     }
 

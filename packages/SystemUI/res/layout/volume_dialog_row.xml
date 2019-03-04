@@ -23,49 +23,110 @@
     android:theme="@style/qs_theme">
 
     <LinearLayout
+        android:id="@+id/aosp_volume_row"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="vertical" >
-        <TextView
-            android:id="@+id/volume_row_header"
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLength="10"
-            android:maxLines="1"
-            android:visibility="gone"
-            android:textColor="?android:attr/colorControlNormal"
-            android:textAppearance="@style/TextAppearance.Volume.Header" />
-        <FrameLayout
-            android:id="@+id/volume_row_slider_frame"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/volume_dialog_slider_margin_top"
-            android:layout_marginBottom="@dimen/volume_dialog_slider_margin_bottom"
-            android:layoutDirection="rtl"
-            android:layout_height="@dimen/volume_dialog_slider_height">
-            <SeekBar
-                android:id="@+id/volume_row_slider"
-                android:clickable="true"
-                android:layout_width="@dimen/volume_dialog_slider_height"
-                android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/volume_row_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLength="10"
+                android:maxLines="1"
+                android:visibility="gone"
+                android:textColor="?android:attr/colorControlNormal"
+                android:textAppearance="@style/TextAppearance.Volume.Header" />
+            <FrameLayout
+                android:id="@+id/volume_row_slider_frame"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/volume_dialog_slider_margin_top"
+                android:layout_marginBottom="@dimen/volume_dialog_slider_margin_bottom"
                 android:layoutDirection="rtl"
-                android:layout_gravity="center"
-                android:rotation="90" />
-        </FrameLayout>
+                android:layout_height="@dimen/volume_dialog_slider_height">
+                <SeekBar
+                    android:id="@+id/volume_row_slider"
+                    android:clickable="true"
+                    android:layout_width="@dimen/volume_dialog_slider_height"
+                    android:layout_height="match_parent"
+                    android:layoutDirection="rtl"
+                    android:layout_gravity="center"
+                    android:rotation="90" />
+            </FrameLayout>
 
-        <com.android.keyguard.AlphaOptimizedImageButton
-            android:id="@+id/volume_row_icon"
-            style="@style/VolumeButtons"
-            android:layout_width="@dimen/volume_dialog_tap_target_size"
-            android:layout_height="@dimen/volume_dialog_tap_target_size"
-            android:background="@drawable/ripple_drawable_20dp"
-            android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
-            android:tint="@color/accent_tint_color_selector"
-            android:soundEffectsEnabled="false" />
+            <com.android.keyguard.AlphaOptimizedImageButton
+                android:id="@+id/volume_row_icon"
+                style="@style/VolumeButtons"
+                android:layout_width="@dimen/volume_dialog_tap_target_size"
+                android:layout_height="@dimen/volume_dialog_tap_target_size"
+                android:background="@drawable/ripple_drawable_20dp"
+                android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
+                android:tint="@color/accent_tint_color_selector"
+                android:soundEffectsEnabled="false" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/round_volume_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <LinearLayout
+            android:layout_height="202dp"
+            android:layout_width="match_parent"
+            android:layout_gravity="top|center_horizontal"
+            android:gravity="center|center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="24dp" >
+            <TextView
+                android:id="@+id/round_volume_row_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLength="10"
+                android:maxLines="1"
+                android:visibility="gone"
+                android:textColor="?android:attr/colorControlNormal"
+                android:textAppearance="@style/TextAppearance.Volume.Header" />
+            <SeekBar
+                android:id="@+id/round_volume_row_slider"
+                android:clickable="true"
+                android:layout_width="192dp"
+                android:layout_height="48dp"
+                android:layoutDirection="rtl"
+                android:rotation="90"
+                android:minHeight="48dp"
+                android:maxHeight="48dp"
+                android:padding="0dp"
+                android:layout_margin="0dp"
+                android:progressDrawable="@drawable/round_seekbar"
+                android:thumb="@drawable/round_seekbar_thumb" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal" >
+            <com.android.keyguard.AlphaOptimizedImageButton
+                android:id="@+id/round_volume_row_icon"
+                style="@style/VolumeButtons"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:background="@drawable/ripple_drawable_20dp"
+                android:tint="?android:attr/colorBackgroundFloating"
+                android:gravity="center_horizontal"
+                android:layout_gravity="bottom|center_horizontal"
+                android:soundEffectsEnabled="false" />
+        </LinearLayout>
     </LinearLayout>
 
     <include layout="@layout/volume_dnd_icon"/>
 
 </FrameLayout>
+
