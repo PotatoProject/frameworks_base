@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c481b43_8e77cd6c",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBarPolicy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-06T03:56:22Z",
+      "side": 1,
+      "message": "Indent this with 4 spaces",
+      "range": {
+        "startLine": 380,
+        "startChar": 0,
+        "endLine": 387,
+        "endChar": 20
+      },
+      "revId": "465c3fb7a8f4e6ec6e8be9eb3d7505b038b25e5f",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
