@@ -58,6 +58,7 @@ import com.android.internal.app.IAppOpsService;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -664,18 +665,14 @@ public class Camera {
 
         String packageName = ActivityThread.currentOpPackageName();
 
-        //Force HAL1 if the package name falls in this bucket
-        String packageList = SystemProperties.get("camera.hal1.packagelist", "");
-        if (packageList.length() > 0) {
-            TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-            splitter.setString(packageList);
-            for (String str : splitter) {
-                if (packageName.equals(str)) {
-                    halVersion = CAMERA_HAL_API_VERSION_1_0;
-                    break;
-                }
+        // Force HAL1 if the package name is in our 'blacklist'
+        String packageList = SystemProperties.get("vendor.camera.hal1.packagelist", "");
+        if (!packageList.isEmpty()) {
+            if (Arrays.asList(packageList.split(",")).contains(packageName)) {
+                halVersion = CAMERA_HAL_API_VERSION_1_0;
             }
-	}
+        }
+
         return native_setup(new WeakReference<Camera>(this), cameraId, halVersion, packageName);
     }
 
