@@ -459,7 +459,7 @@ public class VolumeDialogImpl implements VolumeDialog {
     private void cleanExpandRows() {
         for(int i = mRows.size() - 1; i >= 0; i--) {
             final VolumeRow row = mRows.get(i);
-            if (row.stream == AudioManager.STREAM_RING ||
+            if (row.stream == AudioManager.STREAM_RING || row.stream == AudioManager.STREAM_NOTIFICATION ||
                     row.stream == AudioManager.STREAM_ALARM)
                 removeRow(row);
         }
@@ -469,6 +469,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         mExpandRowsView.setVisibility(
                 mDeviceProvisionedController.isCurrentUserSetup() ? VISIBLE : GONE);
         mExpandRows.setOnLongClickListener(v -> {
+            VolumeRow notificationRow = findRow(AudioManager.STREAM_NOTIFICATION);
             Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
             Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -477,11 +478,18 @@ public class VolumeDialogImpl implements VolumeDialog {
             return true;
         });
         mExpandRows.setOnClickListener(v -> {
+            VolumeRow notificationRow = findRow(AudioManager.STREAM_NOTIFICATION);
             if(!mExpanded) {
                 addRow(AudioManager.STREAM_RING,
-                        R.drawable.ic_volume_notification, R.drawable.ic_volume_notification_mute, true, false);
+                        R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, false);
                 addRow(AudioManager.STREAM_ALARM,
                         R.drawable.ic_volume_alarm, R.drawable.ic_volume_alarm_mute, true, false);
+            if (notificationRow != null && mState.linkedNotification) {
+                 removeRow(notificationRow);
+            } else if (notificationRow == null && !mState.linkedNotification) {
+                      addRow(AudioManager.STREAM_NOTIFICATION,
+                            R.drawable.ic_volume_notification, R.drawable.ic_volume_notification_mute, true, false);
+                      }
                 updateAllActiveRows();
                 mExpanded = true;
             } else {
@@ -489,8 +497,9 @@ public class VolumeDialogImpl implements VolumeDialog {
                 mExpanded = false;
             }
             mExpandRows.setExpanded(mExpanded);
-        });
-    }
+            });
+       }
+
 
     public void initRingerH() {
         mRingerIcon.setOnClickListener(v -> {
