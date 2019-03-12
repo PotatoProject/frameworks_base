@@ -16,25 +16,45 @@
 
 package com.android.internal.util.potato;
 
+import android.app.ActivityManager;
+import android.Manifest;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.input.InputManager;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.SystemProperties;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.UserHandle;
-import android.view.IWindowManager;
-import android.view.WindowManagerGlobal;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.os.Vibrator;
 import android.view.InputDevice;
+import android.view.IWindowManager;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.WindowManagerGlobal;
 
+import com.android.internal.R;
 import com.android.internal.statusbar.IStatusBarService;
 
 /**
@@ -45,11 +65,21 @@ public class PotatoUtils {
     public static final String INTENT_SCREENSHOT = "action_handler_screenshot";
     public static final String INTENT_REGION_SCREENSHOT = "action_handler_region_screenshot";
 
+    private static IStatusBarService mStatusBarService = null;
+
+    private static IStatusBarService getStatusBarService() {
+        synchronized (PotatoUtils.class) {
+            if (mStatusBarService == null)
+                mStatusBarService = IStatusBarService.Stub.asInterface(
+                                ServiceManager.getService("statusbar"));
+            return mStatusBarService;
+        }
+    }
+
     public static void switchScreenOff(Context ctx) {
         PowerManager pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
-        if (pm!= null) {
+        if (pm!= null)
             pm.goToSleep(SystemClock.uptimeMillis());
-        }
     }
 
     public static boolean deviceHasFlashlight(Context ctx) {
@@ -98,10 +128,9 @@ public class PotatoUtils {
         private static IStatusBarService mStatusBarService = null;
         private static IStatusBarService getStatusBarService() {
             synchronized (FireActions.class) {
-                if (mStatusBarService == null) {
+                if (mStatusBarService == null)
                     mStatusBarService = IStatusBarService.Stub.asInterface(
                             ServiceManager.getService("statusbar"));
-                }
                 return mStatusBarService;
             }
         }
@@ -118,16 +147,74 @@ public class PotatoUtils {
         }
     }
 
-	public static String batteryTemperature(Context context, Boolean ForC) {
-		Intent intent = context.registerReceiver(null, new IntentFilter(
+    public static String batteryTemperature(Context context, Boolean ForC) {
+        Intent intent = context.registerReceiver(null, new IntentFilter(
                 Intent.ACTION_BATTERY_CHANGED));
-		float temp = ((float) (intent != null ? intent.getIntExtra(
+        float temp = ((float) (intent != null ? intent.getIntExtra(
                 BatteryManager.EXTRA_TEMPERATURE, 0) : 0)) / 10;
         // Round up to nearest number
         int c = (int) ((temp) + 0.5f);
         float n = temp + 0.5f;
         // Use boolean to determine celsius or fahrenheit
-		return String.valueOf((n - c) % 2 == 0 ? (int) temp :
+        return String.valueOf((n - c) % 2 == 0 ? (int) temp :
                 ForC ? c * 9/5 + 32 + "°F" :c + "°C");
-	}
+    }
+
+    public static boolean isPackageInstalled(Context context, String pkg, boolean ignoreState) {
+        if (pkg != null) {
+            try {
+                PackageInfo pi = context.getPackageManager().getPackageInfo(pkg, 0);
+                if (!pi.applicationInfo.enabled && !ignoreState)
+                    return false;
+            } catch (NameNotFoundException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isPackageInstalled(Context context, String pkg) {
+        return isPackageInstalled(context, pkg, true);
+    }
+
+    public static void toggleVolumePanel(Context context) {
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+    }
+
+    // Clear notifications
+    public static void clearAllNotifications() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.onClearAllNotifications(ActivityManager.getCurrentUser());
+            } catch (RemoteException e) {
+            // do nothing.
+            }
+        }
+    }
+
+    // Toggle notifications panel
+    public static void toggleNotifications() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.togglePanel();
+            } catch (RemoteException e) {
+            // do nothing.
+            }
+        }
+    }
+
+    // Toggle qs panel
+    public static void toggleQsPanel() {
+        IStatusBarService service = getStatusBarService();
+        if (service != null) {
+            try {
+                service.toggleSettingsPanel();
+            } catch (RemoteException e) {
+                // do nothing.
+            }
+        }
+    }
 }
