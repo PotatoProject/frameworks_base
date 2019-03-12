@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab7d9941_c5e3ed2f",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/StatusBar.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5749,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-12T11:40:20Z",
+      "side": 1,
+      "message": "Half of this is unnecessary.",
+      "range": {
+        "startLine": 5687,
+        "startChar": 0,
+        "endLine": 5749,
+        "endChar": 9
+      },
+      "revId": "9136a62b9f69832f4772d1e66f23591d79a0edcc",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
