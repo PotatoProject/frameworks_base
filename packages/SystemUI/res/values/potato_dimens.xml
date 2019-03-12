@@ -31,4 +31,7 @@
     <dimen name="opa_line_x_trans_bg">30.0dip</dimen>
     <dimen name="opa_line_x_trans_ry">15.0dip</dimen>
     <dimen name="opa_line_y_translation">16.0dip</dimen>
+
+   <dimen name="net_sbtraffic_multi_text_size">13dp</dimen>
+
 </resources>
