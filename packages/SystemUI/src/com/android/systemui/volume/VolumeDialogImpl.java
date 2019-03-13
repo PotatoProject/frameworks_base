@@ -402,12 +402,6 @@ public class VolumeDialogImpl implements VolumeDialog,
         }
     }
 
-    private void updateAllActiveRows() {
-        int N = mRows.size();
-        for (int i = 0; i < N; i++)
-            updateVolumeRowH(mRows.get(i));
-    }
-
     private VolumeRow getActiveRow() {
         for (VolumeRow row : mRows) {
             if (row.stream == mActiveStream) {
@@ -505,9 +499,10 @@ public class VolumeDialogImpl implements VolumeDialog,
     private void cleanExpandRows() {
         for(int i = mRows.size() - 1; i >= 0; i--) {
             final VolumeRow row = mRows.get(i);
-            if (row.stream == AudioManager.STREAM_RING ||
-                    row.stream == AudioManager.STREAM_ALARM)
-                removeRow(row);
+            if ((row.stream == AudioManager.STREAM_RING ||
+                    row.stream == AudioManager.STREAM_ALARM) && row.stream != mActiveStream) {
+                Util.setVisOrGone(row.view, /* vis */ false);
+            }
         }
     }
 
@@ -538,13 +533,41 @@ public class VolumeDialogImpl implements VolumeDialog,
             Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade */);
             return true;
         });
+
+        // We need to track the ally stream only if it's not equal
+        // to our "hardcoded" extra elements.
+        int watchAllyStream;
+        if (mActiveStream != AudioManager.STREAM_RING
+                || mActiveStream != AudioManager.STREAM_ALARM) {
+            watchAllyStream = mActiveStream;
+        } else {
+            watchAllyStream = -1;
+        }
+
         mExpandRows.setOnClickListener(v -> {
             if(!mExpanded) {
-                addRow(AudioManager.STREAM_RING,
-                        R.drawable.ic_volume_notification, R.drawable.ic_volume_notification_mute, true, false);
-                addRow(AudioManager.STREAM_ALARM,
-                        R.drawable.ic_volume_alarm, R.drawable.ic_volume_alarm_mute, true, false);
-                updateAllActiveRows();
+                VolumeRow row = findRow(AudioManager.STREAM_RING);
+                if (row != null) {
+                    Util.setVisOrGone(row.view, /* vis */ true);
+                    updateVolumeRowTintH(row,
+                            /* isActive */ row.stream == mActiveStream);
+                }
+                row = findRow(AudioManager.STREAM_ALARM);
+                if (row != null) {
+                    Util.setVisOrGone(row.view, /* vis */ true);
+                    updateVolumeRowTintH(row,
+                            /* isActive */ row.stream == mActiveStream);
+                }
+                // Track ally stream, basically whatever is active next
+                // to the default one (media stream). e.g call stream.
+                if (watchAllyStream != -1) {
+                    row = findRow(watchAllyStream);
+                    if (row != null) {
+                        Util.setVisOrGone(row.view, /* vis */ true);
+                        updateVolumeRowTintH(row,
+                            /* isActive */ row.stream == mActiveStream);
+                    }
+                }
                 mExpanded = true;
             } else {
                 cleanExpandRows();
@@ -829,6 +852,8 @@ public class VolumeDialogImpl implements VolumeDialog,
                 .withEndAction(() -> mHandler.postDelayed(() -> {
                     mDialog.dismiss();
                     tryToRemoveCaptionsTooltip();
+                    mExpanded = false;
+                    mExpandRows.setExpanded(mExpanded);
                 }, 50));
         if (!isLandscape()) animator.translationX((mDialogView.getWidth() / 2.0f)*(isAudioPanelOnLeftSide() ? -1 : 1));
         animator.start();
@@ -840,10 +865,6 @@ public class VolumeDialogImpl implements VolumeDialog,
                 mSafetyWarning.dismiss();
             }
         }
-
-        cleanExpandRows();
-        mExpanded = false;
-        mExpandRows.setExpanded(mExpanded);
     }
 
     private boolean showActiveStreamOnly() {
