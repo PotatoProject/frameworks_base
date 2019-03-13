@@ -4326,6 +4326,16 @@ public final class Settings {
         public static final String QS_TILE_TITLE_VISIBILITY = "qs_tile_title_visibility";
 
         /**
+         * Whether to expose the settings button on the qs panel
+         * @hide
+         */
+        public static final String EXPOSE_SETTINGS_QS_ICON = "expose_settings_qs_icon";
+
+        /** @hide */
+        private static final Validator EXPOSE_SETTINGS_QS_ICON_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * @hide
          */
         public static final String ROAMING_INDICATOR_ICON = "roaming_indicator_icon";
@@ -4586,6 +4596,7 @@ public final class Settings {
             BATTERY_LIGHT_MEDIUM_COLOR,
             BATTERY_LIGHT_FULL_COLOR,
             BATTERY_LIGHT_REALLYFULL_COLOR,
+            EXPOSE_SETTINGS_QS_ICON,
         };
 
         /**
@@ -4718,6 +4729,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_MEDIUM_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_FULL_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_REALLYFULL_COLOR);
+            PRIVATE_SETTINGS.add(EXPOSE_SETTINGS_QS_ICON);
         }
 
         /**
@@ -4824,6 +4836,7 @@ public final class Settings {
             VALIDATORS.put(BATTERY_LIGHT_MEDIUM_COLOR, BATTERY_LIGHT_MEDIUM_COLOR_VALIDATOR);
             VALIDATORS.put(BATTERY_LIGHT_FULL_COLOR, BATTERY_LIGHT_FULL_COLOR_VALIDATOR);
             VALIDATORS.put(BATTERY_LIGHT_REALLYFULL_COLOR, BATTERY_LIGHT_REALLYFULL_COLOR_VALIDATOR);
+            VALIDATORS.put(EXPOSE_SETTINGS_QS_ICON, EXPOSE_SETTINGS_QS_ICON_VALIDATOR);
         }
 
         /**

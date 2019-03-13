@@ -24,12 +24,17 @@ import android.content.Intent;
 import android.content.pm.UserInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.os.Vibrator;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.provider.Settings.System;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
@@ -84,6 +89,8 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
     private boolean mListening;
 
+    private boolean mSettingsExposed;
+
     private boolean mShowEmergencyCallsOnly;
     private View mDivider;
     protected MultiUserSwitch mMultiUserSwitch;
@@ -110,11 +117,16 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         super(context, attrs);
         mColorForeground = Utils.getColorAttr(context, android.R.attr.colorForeground);
         mVibrator = (Vibrator) getContext().getSystemService(VIBRATOR_SERVICE);
+
+        Handler handler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(handler);
+        settingsObserver.observe();
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        mSettingsExposed = true;
         mDivider = findViewById(R.id.qs_footer_divider);
         mEdit = findViewById(android.R.id.edit);
         mEdit.setOnClickListener(view ->
@@ -143,13 +155,40 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         // settings), so disable it for this view
         ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
 
+        //updateSettings();
         updateResources();
-
+        
         mUserInfoController = Dependency.get(UserInfoController.class);
         mActivityStarter = Dependency.get(ActivityStarter.class);
         addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight,
                 oldBottom) -> updateAnimator(right - left));
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+    }
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            mContext.getContentResolver().registerContentObserver(System.getUriFor(System.EXPOSE_SETTINGS_QS_ICON), false,
+                            this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private void updateSettings() {
+        int exposeSettingsIcon = System.getIntForUser(mContext.getContentResolver(),
+                        System.EXPOSE_SETTINGS_QS_ICON, 0, UserHandle.USER_CURRENT);
+        mSettingsExposed = exposeSettingsIcon == 1;
+        addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight,
+                oldBottom) -> updateAnimator(right - left));
+        updateResources();
+        updateVisibilities();
     }
 
     private void updateAnimator(int width) {
@@ -159,11 +198,18 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         int remaining = (width - numTiles * size) / (numTiles - 1);
         int defSpace = mContext.getResources().getDimensionPixelOffset(R.dimen.default_gear_space);
 
-        mSettingsCogAnimator = new Builder()
-                .addFloat(mSettingsContainer, "translationX",
-                        isLayoutRtl() ? (remaining - defSpace) : -(remaining - defSpace), 0)
-                .addFloat(mSettingsButton, "rotation", -120, 0)
-                .build();
+        if(!mSettingsExposed) {
+            mSettingsCogAnimator = new Builder()
+                    .addFloat(mSettingsContainer, "translationX",
+                            isLayoutRtl() ? (remaining - defSpace) : -(remaining - defSpace), 0)
+                    .addFloat(mSettingsButton, "rotation", -120, 0)
+                    .build();
+        } else {
+            mSettingsCogAnimator = new Builder()
+                    .addFloat(mSettingsContainer, "translationX", 0, 0)
+                    .addFloat(mSettingsButton, "rotation", 0, 0)
+                    .build();
+        }
 
         setExpansion(mExpansionAmount);
     }
@@ -198,15 +244,28 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
     @Nullable
     private TouchAnimator createFooterAnimator() {
-        return new TouchAnimator.Builder()
-                .addFloat(mDivider, "alpha", 0, 1)
-                .addFloat(mCarrierText, "alpha", 0, 0, 1)
-                .addFloat(mMobileGroup, "alpha", 0, 1)
-                .addFloat(mActionsContainer, "alpha", 0, 1)
-                .addFloat(mDragHandle, "alpha", 1, 0, 0)
-                .addFloat(mPageIndicator, "alpha", 0, 1)
-                .setStartDelay(0.15f)
-                .build();
+        if(!mSettingsExposed) {
+            return new TouchAnimator.Builder()
+                    .addFloat(mDivider, "alpha", 0, 1)
+                    .addFloat(mCarrierText, "alpha", 0, 0, 1)
+                    .addFloat(mMobileGroup, "alpha", 0, 1)
+                    .addFloat(mActionsContainer, "alpha", 0, 1)
+                    .addFloat(mDragHandle, "alpha", 1, 0, 0)
+                    .addFloat(mPageIndicator, "alpha", 0, 1)
+                    .setStartDelay(0.15f)
+                    .build();
+        } else {
+            return new TouchAnimator.Builder()
+                    .addFloat(mDivider, "alpha", 1, 1)
+                    .addFloat(mCarrierText, "alpha", 1, 1, 1)
+                    .addFloat(mMobileGroup, "alpha", 1, 1)
+                    .addFloat(mEdit, "alpha", 0, 1)
+                    .addFloat(mActionsContainer, "alpha", 1, 1)
+                    .addFloat(mDragHandle, "alpha", 0, 0, 0)
+                    .addFloat(mPageIndicator, "alpha", 0, 1)
+                    .setStartDelay(0.15f)
+                    .build();
+        }
     }
 
     @Override
@@ -285,11 +344,16 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     }
 
     private void updateVisibilities() {
-        mSettingsContainer.setVisibility(mQsDisabled ? View.GONE : View.VISIBLE);
         final boolean isDemo = UserManager.isDeviceInDemoMode(mContext);
+        if(!mSettingsExposed) {
+            mSettingsContainer.setVisibility(mQsDisabled ? View.GONE : View.VISIBLE);
+            mSettingsButton.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
+        } else {
+            mSettingsContainer.setVisibility(mQsDisabled ? View.VISIBLE : View.VISIBLE);
+            mSettingsButton.setVisibility(isDemo || !mExpanded ? View.VISIBLE : View.VISIBLE);
+        }
         mMultiUserSwitch.setVisibility(showUserSwitcher(isDemo) ? View.VISIBLE : View.INVISIBLE);
         mEdit.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
-        mSettingsButton.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
     }
 
     private boolean showUserSwitcher(boolean isDemo) {
@@ -337,11 +401,6 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
     @Override
     public void onClick(View v) {
-        // Don't do anything until view are unhidden
-        if (!mExpanded) {
-            return;
-        }
-
         if (v == mSettingsButton) {
             if (!Dependency.get(DeviceProvisionedController.class).isCurrentUserSetup()) {
                 // If user isn't setup just unlock the device and dump them back at SUW.
