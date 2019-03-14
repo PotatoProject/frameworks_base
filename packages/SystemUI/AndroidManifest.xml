@@ -332,6 +332,13 @@
                   android:exported="true">
         </activity>
 
+        <activity android:name=".tuner.StatusBarActivity"
+                  android:theme="@style/TunerSettings"
+                  android:label="@string/status_bar"
+                  android:process=":tuner"
+                  android:exported="true">
+        </activity>
+
         <!-- Service used by secondary users to register themselves with the system user. -->
         <service android:name=".recents.RecentsSystemUserService"
             android:exported="false"
