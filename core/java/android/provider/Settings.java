@@ -4594,6 +4594,12 @@ public final class Settings {
          */
         public static final String NETWORK_TRAFFIC_HIDEARROW = "network_traffic_hidearrow";
 
+	/**
+         * Whether to disable showing arrows in statusbar network traffic indicators
+         * @hide
+         */
+        public static final String NETWORK_TRAFFIC_HIDEARROW_SB = "network_traffic_hidearrow_sb";
+
         /**
          * Whether to use icon pack for Recents
          * @hide
