@@ -133,6 +133,17 @@
         </com.android.keyguard.AlphaOptimizedLinearLayout>
     </LinearLayout>
 
+    <com.android.systemui.statusbar.phone.ExpandableIndicator
+        android:id="@+id/expand_indicator"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:clipToPadding="false"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/accessibility_quick_settings_expand"
+        android:padding="14dp" />
+
     <View
         android:id="@+id/qs_drag_handle_view"
         android:layout_width="24dp"

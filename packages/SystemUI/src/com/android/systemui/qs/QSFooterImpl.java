@@ -55,6 +55,7 @@ import com.android.systemui.R;
 import com.android.systemui.R.dimen;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.qs.TouchAnimator.Builder;
+import com.android.systemui.statusbar.phone.ExpandableIndicator;
 import com.android.systemui.statusbar.phone.MultiUserSwitch;
 import com.android.systemui.statusbar.phone.SettingsButton;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
@@ -69,6 +70,7 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class QSFooterImpl extends FrameLayout implements QSFooter,
         OnClickListener, OnLongClickListener, OnUserInfoChangedListener, EmergencyListener, SignalCallback {
+    private static final float EXPAND_INDICATOR_THRESHOLD = .93f;
 
     private ActivityStarter mActivityStarter;
     private UserInfoController mUserInfoController;
@@ -81,6 +83,8 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     private QSPanel mQsPanel;
 
     private boolean mExpanded;
+
+    protected ExpandableIndicator mExpandIndicator;
 
     private boolean mListening;
 
@@ -123,6 +127,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
 
         mPageIndicator = findViewById(R.id.footer_page_indicator);
 
+        mExpandIndicator = findViewById(R.id.expand_indicator);
         mSettingsButton = findViewById(R.id.settings_button);
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
@@ -142,6 +147,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         // RenderThread is doing more harm than good when touching the header (to expand quick
         // settings), so disable it for this view
         ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
+        ((RippleDrawable) mExpandIndicator.getBackground()).setForceSoftware(true);
 
         updateResources();
 
@@ -234,6 +240,8 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         if (mFooterAnimator != null) {
             mFooterAnimator.setPosition(headerExpansionFraction);
         }
+
+        mExpandIndicator.setExpanded(headerExpansionFraction > EXPAND_INDICATOR_THRESHOLD);
     }
 
     @Override
