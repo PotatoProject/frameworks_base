@@ -453,7 +453,7 @@ public class VolumeDialogImpl implements VolumeDialog {
     private void cleanExpandRows() {
         for(int i = mRows.size() - 1; i >= 0; i--) {
             final VolumeRow row = mRows.get(i);
-            if ((row.stream == AudioManager.STREAM_RING ||
+            if ((row.stream == AudioManager.STREAM_RING || row.stream == AudioManager.STREAM_NOTIFICATION ||
                     row.stream == AudioManager.STREAM_ALARM) && row.stream != mActiveStream) {
                 Util.setVisOrGone(row.view, /* vis */ false);
             }
@@ -475,7 +475,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         // We need to track the ally stream only if it's not equal
         // to our "hardcoded" extra elements.
         int watchAllyStream;
-        if (mActiveStream != AudioManager.STREAM_RING
+        if (mActiveStream != AudioManager.STREAM_RING || mActiveStream != AudioManager.STREAM_NOTIFICATION
                 || mActiveStream != AudioManager.STREAM_ALARM) {
             watchAllyStream = mActiveStream;
         } else {
@@ -491,6 +491,12 @@ public class VolumeDialogImpl implements VolumeDialog {
                             /* isActive */ row.stream == mActiveStream);
                 }
                 row = findRow(AudioManager.STREAM_ALARM);
+                if (row != null) {
+                    Util.setVisOrGone(row.view, /* vis */ true);
+                    updateVolumeRowTintH(row,
+                            /* isActive */ row.stream == mActiveStream);
+                }
+                row = findRow(AudioManager.STREAM_NOTIFICATION);
                 if (row != null) {
                     Util.setVisOrGone(row.view, /* vis */ true);
                     updateVolumeRowTintH(row,
