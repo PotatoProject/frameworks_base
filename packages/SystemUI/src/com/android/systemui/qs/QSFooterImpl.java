@@ -216,6 +216,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                 .addFloat(mMobileSignal, "alpha", 0, 1)
                 .addFloat(mMobileRoaming, "alpha", 0, 1)
                 .addFloat(mDragHandle, "alpha", 0, 0, 0)
+                .addFloat(mMultiUserSwitch, "alpha", 0, 1)
                 .setStartDelay(0.15f)
                 .build();
     }
