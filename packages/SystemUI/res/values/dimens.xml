@@ -266,6 +266,9 @@
     <!-- The padding between the notifications and the quick settings container -->
     <dimen name="qs_notification_padding">@dimen/notification_side_paddings</dimen>
 
+    <!-- The corner radius for qs panel elements (such as notifications and panel bg) -->
+    <dimen name="qs_panel_corner_radius">12.0dip</dimen>
+
     <!-- Height of the status bar header bar when expanded -->
     <dimen name="status_bar_header_height_expanded">124dp</dimen>
 
