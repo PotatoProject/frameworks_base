@@ -79,6 +79,7 @@ public class QSContainerImpl extends FrameLayout {
     private int mUserThemeSetting;
     private boolean mSetQsFromWall;
     private boolean mSetQsFromAccent;
+    private boolean mQsUseOreoStyle;
     private boolean mUseBlackTheme = false;
     private boolean mUseDarkTheme = false;
     private boolean mSetQsFromResources;
@@ -157,6 +158,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_PANEL_USE_OREO_STYLE), false,
+                    this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.Secure
                     .getUriFor(Settings.Secure.THEME_MODE), false,
                     this, UserHandle.USER_ALL);
@@ -189,6 +193,9 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
                 UserHandle.USER_CURRENT);
+        mQsUseOreoStyle = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_USE_OREO_STYLE, 0,
+                UserHandle.USER_CURRENT) == 1;
         mUserThemeSetting = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                 Settings.Secure.THEME_MODE, 0, ActivityManager.getCurrentUser());
         boolean blackTheme = Settings.System.getIntForUser(mContext.getContentResolver(),
@@ -206,6 +213,11 @@ public class QSContainerImpl extends FrameLayout {
             // Make sure we turn off dark theme if we plan using black
             if (mUseBlackTheme)
                 mUseDarkTheme = false;
+        }
+        if (mQsUseOreoStyle) {
+            mHeader.setVisibility(View.GONE);
+        } else {
+            mHeader.setVisibility(View.VISIBLE);
         }
         mCurrentColor = mSetQsFromAccent
                 ? getContext().getResources().getColor(R.color.accent_device_default_light)
