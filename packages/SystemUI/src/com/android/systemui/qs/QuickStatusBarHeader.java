@@ -27,11 +27,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.provider.AlarmClock;
+import android.provider.Settings;
 import android.service.notification.ZenModeConfig;
 import android.support.annotation.VisibleForTesting;
 import android.widget.FrameLayout;
@@ -97,6 +100,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     protected QuickQSPanel mHeaderQsPanel;
     protected QSTileHost mHost;
     private TintedIconManager mIconManager;
+    private TintedIconManager mBatteryManager;
     private TouchAnimator mStatusIconsAlphaAnimator;
     private TouchAnimator mHeaderTextContainerAlphaAnimator;
 
@@ -119,6 +123,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private TextView mRingerModeTextView;
     private BatteryMeterView mBatteryMeterView;
     private Clock mClockView;
+    private BatteryMeterView mOreoBatteryMeterView;
+    private Clock mOreoClockView;
+    private LinearLayout mContainerOreoClockView;
     private DateView mDateView;
 
     private NextAlarmController mAlarmController;
@@ -147,6 +154,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mAlarmController = Dependency.get(NextAlarmController.class);
         mZenController = Dependency.get(ZenModeController.class);
         mShownCount = getStoredShownCount();
+
+        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
+        settingsObserver.observe();
     }
 
     @Override
@@ -170,8 +180,6 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mRingerModeIcon = findViewById(R.id.ringer_mode_icon);
         mRingerModeTextView = findViewById(R.id.ringer_mode_text);
 
-        updateResources();
-
         Rect tintArea = new Rect(0, 0, 0, 0);
         int colorForeground = Utils.getColorAttr(getContext(), android.R.attr.colorForeground);
         float intensity = getColorIntensity(colorForeground);
@@ -189,8 +197,61 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mClockView = findViewById(R.id.clock);
         mClockView.setOnClickListener(this);
         mClockView.setQsHeader();
+
+        mOreoClockView = findViewById(R.id.clock_oreo);
+        mOreoClockView.setOnClickListener(this);
+        mContainerOreoClockView = findViewById(R.id.container_clock_oreo);
+
+        mOreoBatteryMeterView = findViewById(R.id.battery_oreo);
+        mOreoBatteryMeterView.setForceShowPercent(true);
+        mOreoBatteryMeterView.setOnClickListener(this);
+        mBatteryManager = new TintedIconManager(mOreoBatteryMeterView);
+        mBatteryManager.setTint(fillColor);
+
         mDateView = findViewById(R.id.date);
 	mTraffic = findViewById(R.id.networkTraffic);
+
+        updateResources();
+        updateSettings();
+    }
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                            .getUriFor(Settings.System.QS_PANEL_USE_OREO_STYLE), false,
+                    this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private void updateSettings() {
+        boolean useOreoStyle = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_USE_OREO_STYLE, 0,
+                UserHandle.USER_CURRENT) == 1;
+
+        toggleViews(useOreoStyle);
+    }
+
+    private void toggleViews(boolean toggle) {
+        if(toggle) {
+            mSystemIconsView.setVisibility(View.INVISIBLE);
+
+            mContainerOreoClockView.setVisibility(View.VISIBLE);
+            mOreoBatteryMeterView.setVisibility(View.VISIBLE);
+        } else {
+            mSystemIconsView.setVisibility(View.VISIBLE);
+
+            mContainerOreoClockView.setVisibility(View.GONE);
+            mOreoBatteryMeterView.setVisibility(View.GONE);
+        }
     }
 
     private void updateStatusText() {
@@ -287,7 +348,6 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                 com.android.internal.R.dimen.status_bar_height);
         int qqsHeight = mContext.getResources().getDimensionPixelSize(
                 R.dimen.qs_quick_header_panel_height);
-
         setMinimumHeight(sbHeight + qqsHeight);
     }
 
@@ -445,10 +505,10 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     @Override
     public void onClick(View v) {
-        if (v == mClockView) {
+        if (v == mClockView || v == mOreoClockView) {
             Dependency.get(ActivityStarter.class).postStartActivityDismissingKeyguard(new Intent(
                     AlarmClock.ACTION_SHOW_ALARMS),0);
-        } else if (v == mBatteryMeterView) {
+        } else if (v == mBatteryMeterView || v == mOreoBatteryMeterView) {
             Dependency.get(ActivityStarter.class).postStartActivityDismissingKeyguard(new Intent(
                     Intent.ACTION_POWER_USAGE_SUMMARY),0);
         }
@@ -607,6 +667,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         // Use SystemUI context to get battery meter colors, and let it use the default tint (white)
         mBatteryMeterView.setColorsFromContext(mHost.getContext());
         mBatteryMeterView.onDarkChanged(new Rect(), 0, DarkIconDispatcher.DEFAULT_ICON_TINT);
+
+        Rect rect = new Rect(0, 0, 0, 0);
+        int colorForeground = Utils.getColorAttr(getContext(), android.R.attr.colorForeground);
+        float intensity = getColorIntensity(colorForeground);
+        int fillColor = fillColorForIntensity(intensity, getContext());
+
+        mOreoBatteryMeterView.setColorsFromContext(mHost.getContext());
+        mOreoBatteryMeterView.onDarkChanged(rect, intensity, fillColor);
     }
 
     public void setCallback(Callback qsPanelCallback) {
