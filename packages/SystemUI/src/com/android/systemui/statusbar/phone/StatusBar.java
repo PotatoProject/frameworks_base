@@ -838,6 +838,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateResources();
         updateTheme();
         updateSettingsTiles();
+        toggleOreoQsPanel();
 
         inflateStatusBarWindow(context);
         mStatusBarWindow.setService(this);
@@ -4308,6 +4309,29 @@ public class StatusBar extends SystemUI implements DemoMode,
             });
     }
 
+    private void toggleOreoQsPanel() {
+        final boolean toggleOreoPanel = (Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.QS_PANEL_USE_OREO_STYLE, 0, UserHandle.USER_CURRENT) == 1);
+
+        final boolean cutoutBool = mContext.getResources().getBoolean(
+                        com.android.internal.R.bool.config_physicalDisplayCutout);
+
+        final boolean hideCutoutMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 2;
+
+        final boolean useAndroidOverlay = toggleOreoPanel && (!cutoutBool || hideCutoutMode);
+
+        try {
+            mOverlayManager.setEnabled("com.potato.overlay.oreopanel.android",
+                        useAndroidOverlay, mLockscreenUserManager.getCurrentUserId());
+
+            mOverlayManager.setEnabled("com.potato.overlay.oreopanel.systemui",
+                        toggleOreoPanel, mLockscreenUserManager.getCurrentUserId());
+        } catch (RemoteException e) {
+            Log.w(TAG, "Failed to handle oreo qs panel overlays", e);
+        }
+    }
+
     private void updateDozingState() {
         Trace.traceCounter(Trace.TRACE_TAG_APP, "dozing", mDozing ? 1 : 0);
         Trace.beginSection("StatusBar#updateDozingState");
@@ -5019,6 +5043,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USE_OREO_SETTINGS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_PANEL_USE_OREO_STYLE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -5048,6 +5075,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_BG_USE_ACCENT))) {
                 mQSPanel.getHost().reloadAllTiles();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_PANEL_USE_OREO_STYLE))) {
+                toggleOreoQsPanel();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.STOCK_STATUSBAR_IN_HIDE))) {
                 handleCutout(null);
@@ -5075,6 +5104,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             handleCutout(null);
             setForceAmbient();
             updateSettingsTiles();
+            toggleOreoQsPanel();
         }
     }
 
@@ -5119,6 +5149,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         updateStatusBarColors(immerseMode);
         setCutoutOverlay(hideCutoutMode);
         setStatusBarStockOverlay(hideCutoutMode && statusBarStock);
+        toggleOreoQsPanel();
     }
 
     private void setForceAmbient() {
