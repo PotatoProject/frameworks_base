@@ -4285,6 +4285,16 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * Whether to switch to the oreo styled qs panel
+         * @hide
+         */
+        public static final String QS_PANEL_USE_OREO_STYLE = "qs_panel_use_oreo_style";
+
+        /** @hide */
+        private static final Validator QS_PANEL_USE_OREO_STYLE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether to mute annoying notifications
          * @hide
          */
@@ -4582,6 +4592,7 @@ public final class Settings {
             QS_PANEL_BG_USE_WALL,
             QS_PANEL_BG_USE_FW,
             QS_PANEL_BG_USE_ACCENT,
+            QS_PANEL_USE_OREO_STYLE,
             DISPLAY_CUTOUT_MODE,
             STOCK_STATUSBAR_IN_HIDE,
             USE_BOTTOM_GESTURE_NAVIGATION,
@@ -4714,6 +4725,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_WALL);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_ACCENT);
+            PRIVATE_SETTINGS.add(QS_PANEL_USE_OREO_STYLE);
             PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_MODE);
             PRIVATE_SETTINGS.add(STOCK_STATUSBAR_IN_HIDE);
             PRIVATE_SETTINGS.add(USE_BOTTOM_GESTURE_NAVIGATION);
@@ -4820,6 +4832,7 @@ public final class Settings {
             VALIDATORS.put(QS_PANEL_BG_USE_WALL, QS_PANEL_BG_USE_WALL_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_USE_FW, QS_PANEL_BG_USE_FW_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_USE_ACCENT, QS_PANEL_BG_USE_ACCENT_VALIDATOR);
+            VALIDATORS.put(QS_PANEL_USE_OREO_STYLE, QS_PANEL_USE_OREO_STYLE_VALIDATOR);
             VALIDATORS.put(DISPLAY_CUTOUT_MODE, DISPLAY_CUTOUT_MODE_VALIDATOR);
             VALIDATORS.put(STOCK_STATUSBAR_IN_HIDE, STOCK_STATUSBAR_IN_HIDE_VALIDATOR);
             VALIDATORS.put(USE_BOTTOM_GESTURE_NAVIGATION, USE_BOTTOM_GESTURE_NAVIGATION_VALIDATOR);
