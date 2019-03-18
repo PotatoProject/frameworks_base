@@ -319,6 +319,7 @@ public class NotificationPanelView extends PanelView implements
 
     private boolean mDoubleTapToSleepEnabled;
     private boolean mDoubleTapToSleepAnywhere;
+    private boolean mQsPanelUseOreoStyle;
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
@@ -2759,6 +2760,8 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_PANEL_USE_OREO_STYLE), false, this);
             update();
         }
 
@@ -2786,6 +2789,13 @@ public class NotificationPanelView extends PanelView implements
             mStatusBarLockedOnSecureKeyguard = Settings.Secure.getIntForUser(
                     resolver, Settings.Secure.STATUS_BAR_LOCKED_ON_SECURE_KEYGUARD, 0,
                     UserHandle.USER_CURRENT) == 1;
+            mQsPanelUseOreoStyle = Settings.System.getInt(
+                    resolver, Settings.System.QS_PANEL_USE_OREO_STYLE, 0) == 1;
+
+            mQsNotificationTopPadding = mQsPanelUseOreoStyle ? 0 : getResources().getDimensionPixelSize(R.dimen.qs_notification_padding);
+            mNotificationStackScroller.setMaxTopPadding(mQsMaxExpansionHeight + mQsNotificationTopPadding);
+            positionClockAndNotifications();
+            calculateQsTopPadding();
         }
     }
 
