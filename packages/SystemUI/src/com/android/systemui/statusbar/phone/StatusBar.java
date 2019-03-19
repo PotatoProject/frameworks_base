@@ -150,6 +150,7 @@ import com.android.internal.util.potato.PotatoUtils;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.widget.MessagingGroup;
 import com.android.internal.widget.MessagingMessage;
+import com.android.internal.util.potato.ImageHelper;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -393,6 +394,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     private DozeServiceHost mDozeServiceHost = new DozeServiceHost();
     private boolean mWakeUpComingFromTouch;
     private PointF mWakeUpTouchLocation;
+
+    private int mAlbumArtFilter;
 
     private final Object mQueueLock = new Object();
 
@@ -1736,7 +1739,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                         artworkDrawable = new BitmapDrawable(mBackdropBack.getResources(), ImageHelper.toGrayscale(artworkBitmap));
                         break;
                     case 2:
-                        artworkDrawable = new BitmapDrawable(mBackdropBack.getResources(), ImageHelper.getBlurredImage(mContext, artworkBitmap, 7.0f));
+                        artworkDrawable = new BitmapDrawable(mBackdropBack.getResources(), ImageHelper.getBlurredImage(mContext, artworkBitmap));
                         break;
                     case 0:
                     default:
@@ -5055,8 +5058,22 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.USE_OREO_SETTINGS),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
+<<<<<<< HEAD
                     Settings.System.QS_PANEL_USE_OREO_STYLE),
                     false, this, UserHandle.USER_ALL);
+=======
+                    Settings.System.LOCKSCREEN_CLOCK),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_INFO),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_CLOCK_SELECTION),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.LOCKSCREEN_ALBUM_ART_FILTER),
+                  false, this, UserHandle.USER_ALL);
+>>>>>>> 6ad66c40213... base: Add Lockscreen cover art filter
         }
 
         @Override
@@ -5097,6 +5114,12 @@ public class StatusBar extends SystemUI implements DemoMode,
                 updateSettingsTiles();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT))) {
                 setIconTintOverlay(shouldUseDarkTheme());
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_ALBUM_ART_FILTER))) {
+                updateLockscreenFilter();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_CLOCK)) ||
+                   uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_INFO)) ||
+                   uri.equals(Settings.System.getUriFor(Settings.System.LOCKSCREEN_CLOCK_SELECTION))) {
+                updateKeyguardStatusSettings();
             }
         }
 
@@ -5115,7 +5138,12 @@ public class StatusBar extends SystemUI implements DemoMode,
             handleCutout(null);
             setForceAmbient();
             updateSettingsTiles();
+<<<<<<< HEAD
             toggleOreoQsPanel();
+=======
+            updateKeyguardStatusSettings();
+            updateLockscreenFilter();
+>>>>>>> 6ad66c40213... base: Add Lockscreen cover art filter
         }
     }
 
@@ -5183,6 +5211,12 @@ public class StatusBar extends SystemUI implements DemoMode,
     private boolean isAmbientContainerAvailable() {
         return mAmbientMediaPlaying && mAmbientIndicationContainer != null;
     }
+
+    private void updateLockscreenFilter() {
+        mAlbumArtFilter = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_ALBUM_ART_FILTER, 0,
+                UserHandle.USER_CURRENT);
+      }
 
     private void setHeadsUpStoplist() {
         final String stopString = Settings.System.getString(mContext.getContentResolver(),
