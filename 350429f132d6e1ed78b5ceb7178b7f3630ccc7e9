@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "88b863d3_1a3bba25",
+        "filename": "packages/SystemUI/res/xml/tuner_prefs.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-24T09:54:50Z",
+      "side": 1,
+      "message": "y tho",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "revId": "350429f132d6e1ed78b5ceb7178b7f3630ccc7e9",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
