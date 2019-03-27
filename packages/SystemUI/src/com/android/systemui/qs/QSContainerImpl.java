@@ -28,6 +28,7 @@ import android.content.om.OverlayInfo;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -39,6 +40,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
@@ -64,7 +67,8 @@ public class QSContainerImpl extends FrameLayout {
     private QSCustomizer mQSCustomizer;
     private View mQSFooter;
 
-    private View mBackground;
+    private RelativeLayout mBackground;
+    private ImageView mBackgroundImage;
     private View mBackgroundGradient;
     private View mStatusBarBackground;
 
@@ -104,6 +108,7 @@ public class QSContainerImpl extends FrameLayout {
         mQSCustomizer = findViewById(R.id.qs_customize);
         mQSFooter = findViewById(R.id.qs_footer);
         mBackground = findViewById(R.id.quick_settings_background);
+        mBackgroundImage = findViewById(R.id.quick_settings_background_image);
         mStatusBarBackground = findViewById(R.id.quick_settings_status_bar_background);
         mBackgroundGradient = findViewById(R.id.quick_settings_gradient_view);
         mSideMargins = getResources().getDimensionPixelSize(R.dimen.notification_side_paddings);
@@ -224,6 +229,9 @@ public class QSContainerImpl extends FrameLayout {
                 mQsBackGround.setAlpha(mQsBackGroundAlpha);
             }
         }
+
+        mBackgroundImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.easter));
+
         if (mQsBackGround != null && mBackground != null) {
             mBackground.setBackground(mQsBackGround);
         }
@@ -297,6 +305,8 @@ public class QSContainerImpl extends FrameLayout {
         mQSFooter.setTranslationY(height - mQSFooter.getHeight());
         mBackground.setTop(mQSPanel.getTop());
         mBackground.setBottom(height);
+//        mBackgroundImage.setTop(mQSPanel.getTop());
+        mBackgroundImage.setBottom(height - mQSFooter.getHeight());
     }
 
     protected int calculateContainerHeight() {

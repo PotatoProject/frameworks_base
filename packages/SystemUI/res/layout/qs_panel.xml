@@ -22,12 +22,20 @@
     android:clipChildren="false" >
 
     <!-- Main QS background -->
-    <View
+    <RelativeLayout
         android:id="@+id/quick_settings_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:elevation="4dp"
-        android:background="@drawable/qs_background_primary" />
+        android:background="@drawable/qs_background_primary" >
+        <ImageView
+            android:id="@+id/quick_settings_background_image"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:adjustViewBounds="true"
+            android:src="@drawable/easter"
+            android:background="@drawable/qs_background_primary" />
+    </RelativeLayout>
 
     <!-- Black part behind the status bar -->
     <View
