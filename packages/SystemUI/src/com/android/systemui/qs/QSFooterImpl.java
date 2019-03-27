@@ -201,6 +201,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                 .addFloat(mMobileSignal, "alpha", 0, 1)
                 .addFloat(mMobileRoaming, "alpha", 0, 1)
                 .addFloat(mDragHandle, "alpha", 0, 0, 0)
+                .addFloat(mMultiUserSwitch, "alpha", 0, 0)
                 .setStartDelay(0.15f)
                 .build();
     }
@@ -285,7 +286,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         mSettingsContainer.setVisibility(View.VISIBLE);
         mSettingsButton.setVisibility(View.VISIBLE);
 
-        mMultiUserSwitch.setVisibility(showUserSwitcher(isDemo) ? View.VISIBLE : View.INVISIBLE);
+        mMultiUserSwitch.setVisibility(View.INVISIBLE);
         mEdit.setVisibility(isDemo || !mExpanded ? View.INVISIBLE : View.VISIBLE);
     }
 
