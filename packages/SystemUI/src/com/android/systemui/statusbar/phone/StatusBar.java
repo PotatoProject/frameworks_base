@@ -2354,10 +2354,12 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
-    private void setIconTintOverlay() {
+    private void setIconTintOverlay(boolean isDark) {
         final boolean enable = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SETTINGS_ICON_TINT, 0, UserHandle.USER_CURRENT) == 1;
         try {
+            mOverlayManager.setEnabled("com.potato.overlay.settingsicontint_dark",
+                    isDark && !enable, mLockscreenUserManager.getCurrentUserId());
             mOverlayManager.setEnabled("com.potato.overlay.settingsicontint",
                         enable, mLockscreenUserManager.getCurrentUserId());
         } catch (RemoteException e) {
@@ -4243,6 +4245,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         updateCorners();
         updateQSPanel();
+        setIconTintOverlay(useDarkTheme);
     }
 
     private void updateCorners() {
@@ -5018,7 +5021,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setHeadsUpStoplist();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.HEADS_UP_BLACKLIST_VALUES))) {
                 setHeadsUpBlacklist();
-            } else if (uri.equals(Settings.System.getUriFor(Settings.System.PREFER_BLACK_THEMES))) {
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.PREFER_BLACK_THEMES)) ||
+                    uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT))) {
                 updateTheme();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_PORTRAIT)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_LANDSCAPE)) ||
@@ -5046,8 +5050,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 setForceAmbient();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.USE_OREO_SETTINGS))) {
                 updateSettingsTiles();
-            } else if (uri.equals(Settings.System.getUriFor(Settings.System.SETTINGS_ICON_TINT))) {
-                setIconTintOverlay();
             }
         }
 
@@ -5066,7 +5068,6 @@ public class StatusBar extends SystemUI implements DemoMode,
             handleCutout(null);
             setForceAmbient();
             updateSettingsTiles();
-            setIconTintOverlay();
         }
     }
 
