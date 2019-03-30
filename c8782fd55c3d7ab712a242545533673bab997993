@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb946cf1_44f660e3",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/QSFooterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-03-30T23:59:31Z",
+      "side": 1,
+      "message": "If we\u0027re removing it, ig we\u0027re better off just setting this to View.GONE.",
+      "range": {
+        "startLine": 289,
+        "startChar": 44,
+        "endLine": 289,
+        "endChar": 53
+      },
+      "revId": "c8782fd55c3d7ab712a242545533673bab997993",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
