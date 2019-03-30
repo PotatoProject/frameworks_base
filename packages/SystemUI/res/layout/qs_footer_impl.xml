@@ -99,6 +99,19 @@
             </com.android.systemui.statusbar.phone.MultiUserSwitch>
 
             <com.android.systemui.statusbar.AlphaOptimizedImageView
+                android:id="@+id/pewdiepie"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:clipToPadding="false"
+                android:contentDescription="@string/accessibility_quick_settings_pewdiepie"
+                android:focusable="true"
+                android:padding="15dp"
+                android:src="@drawable/ic_pewdiepie"
+                android:tint="?android:attr/colorForeground"/>
+
+            <com.android.systemui.statusbar.AlphaOptimizedImageView
                 android:id="@android:id/edit"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

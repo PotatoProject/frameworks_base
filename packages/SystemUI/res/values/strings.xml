@@ -1972,6 +1972,9 @@
     <!-- Warning message when we try to launch a non-resizeable activity on a secondary display and launch it on the primary instead. -->
     <string name="activity_launch_on_secondary_display_failed_text">App does not support launch on secondary displays.</string>
 
+    <!-- accessibility label for button to sub to Pewdiepie [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_pewdiepie">Subscribe to PewDiePie.</string>
+
     <!-- accessibility label for button to open settings [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_settings">Open settings.</string>
 
