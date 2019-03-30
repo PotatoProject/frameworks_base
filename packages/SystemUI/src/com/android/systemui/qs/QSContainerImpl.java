@@ -21,14 +21,20 @@ import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 import android.app.ActivityManager;
 import android.app.WallpaperColors;
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.om.IOverlayManager;
 import android.content.om.OverlayInfo;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -39,6 +45,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
@@ -46,6 +53,8 @@ import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.Dependency;
 import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.statusbar.CommandQueue;
+
+import java.util.Calendar;
 
 /**
  * Wrapper view with background which contains {@link QSPanel} and {@link BaseStatusBarHeader}
@@ -62,9 +71,10 @@ public class QSContainerImpl extends FrameLayout {
     private QuickStatusBarHeader mHeader;
     private float mQsExpansion;
     private QSCustomizer mQSCustomizer;
-    private View mQSFooter;
+    private QSFooterImpl mQSFooter;
 
-    private View mBackground;
+    private FrameLayout mBackground;
+    private ImageView mQsBackgroundImage;
     private View mBackgroundGradient;
     private View mStatusBarBackground;
 
@@ -86,6 +96,27 @@ public class QSContainerImpl extends FrameLayout {
 
     private IOverlayManager mOverlayManager;
 
+    private static IntentFilter mTimeIntentFilter;
+
+    static {
+        mTimeIntentFilter = new IntentFilter();
+        mTimeIntentFilter.addAction(Intent.ACTION_TIME_TICK);
+        mTimeIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        mTimeIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+    }
+
+    private final BroadcastReceiver mTimeChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(Intent.ACTION_TIME_CHANGED) ||
+                    action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+                setQsBackgroundImage(null, 0);
+            }
+        }
+    };
+
     public QSContainerImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOverlayManager = IOverlayManager.Stub.asInterface(
@@ -93,6 +124,18 @@ public class QSContainerImpl extends FrameLayout {
         Handler handler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(handler);
         settingsObserver.observe();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mContext.registerReceiver(mTimeChangedReceiver, mTimeIntentFilter);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mContext.unregisterReceiver(mTimeChangedReceiver);
     }
 
     @Override
@@ -106,6 +149,7 @@ public class QSContainerImpl extends FrameLayout {
         mBackground = findViewById(R.id.quick_settings_background);
         mStatusBarBackground = findViewById(R.id.quick_settings_status_bar_background);
         mBackgroundGradient = findViewById(R.id.quick_settings_gradient_view);
+        mQsBackgroundImage = findViewById(R.id.quick_settings_image_background);
         mSideMargins = getResources().getDimensionPixelSize(R.dimen.notification_side_paddings);
         mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
         mColorExtractor = Dependency.get(SysuiColorExtractor.class);
@@ -227,6 +271,27 @@ public class QSContainerImpl extends FrameLayout {
         if (mQsBackGround != null && mBackground != null) {
             mBackground.setBackground(mQsBackGround);
         }
+        setQsBackgroundImage(null, 0);
+    }
+
+    @SuppressWarnings("MagicConstant")
+    private void setQsBackgroundImage(Bitmap bitmap, int tintAlpha) {
+        Calendar c = Calendar.getInstance();
+        if (c.get(Calendar.MONTH) == Calendar.APRIL && c.get(Calendar.DAY_OF_MONTH) == 1) {
+            mQSFooter.setPewdiepieVisibility(View.VISIBLE);
+            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pewdiepie_header);
+            tintAlpha = 50;
+        } else {
+            mQSFooter.setPewdiepieVisibility(View.GONE);
+            if (bitmap == null) {
+                mQsBackgroundImage.setVisibility(View.GONE);
+                return;
+            }
+        }
+        mQsBackgroundImage.setVisibility(View.VISIBLE);
+        mQsBackgroundImage.setImageBitmap(bitmap);
+        mQsBackgroundImage.setColorFilter(Color.argb(tintAlpha, 0, 0, 0));
+        mQsBackgroundImage.setClipToOutline(true);
     }
 
     @Override
@@ -297,6 +362,8 @@ public class QSContainerImpl extends FrameLayout {
         mQSFooter.setTranslationY(height - mQSFooter.getHeight());
         mBackground.setTop(mQSPanel.getTop());
         mBackground.setBottom(height);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(mBackground.getWidth(), mBackground.getHeight());
+        mBackground.post(() -> mBackground.setLayoutParams(layoutParams));
     }
 
     protected int calculateContainerHeight() {

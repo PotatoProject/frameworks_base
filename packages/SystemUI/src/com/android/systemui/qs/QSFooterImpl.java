@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.os.Vibrator;
@@ -93,6 +94,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     private float mExpansionAmount;
 
     protected View mEdit;
+    private View mPewDiePie;
     private TouchAnimator mSettingsCogAnimator;
 
     private View mActionsContainer;
@@ -120,6 +122,14 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         mEdit.setOnClickListener(view ->
                 Dependency.get(ActivityStarter.class).postQSRunnableDismissingKeyguard(() ->
                         mQsPanel.showEdit(view)));
+
+        mPewDiePie = findViewById(R.id.pewdiepie);
+        mPewDiePie.setOnClickListener(view -> {
+            Intent subIntent = new Intent(Intent.ACTION_VIEW);
+            subIntent.setData(Uri.parse("https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw?sub_confirmation=1"));
+            subIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mActivityStarter.startActivity(subIntent, true /* dismissShade */);
+        });
 
         mPageIndicator = findViewById(R.id.footer_page_indicator);
 
@@ -164,6 +174,10 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         setExpansion(mExpansionAmount);
     }
 
+    public void setPewdiepieVisibility(int visibility) {
+        mPewDiePie.setVisibility(visibility);
+    }
+
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -196,6 +210,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     private TouchAnimator createFooterAnimator() {
         return new TouchAnimator.Builder()
                 .addFloat(mDivider, "alpha", 0, 1)
+                .addFloat(mPewDiePie, "alpha", 0, 1)
                 .addFloat(mEdit, "alpha", 0, 1)
                 .addFloat(mPageIndicator, "alpha", 0, 1)
                 .addFloat(mMobileSignal, "alpha", 0, 1)
