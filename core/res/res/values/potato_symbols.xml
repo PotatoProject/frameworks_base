@@ -23,4 +23,7 @@
   <java-symbol type="array" name="config_deviceKeyHandlerLibs" />
   <java-symbol type="array" name="config_deviceKeyHandlerClasses" />
 
+  <!-- In-display Fingerprint -->
+  <java-symbol type="bool" name="config_supportsInDisplayFingerprint" />
+
 </resources>
