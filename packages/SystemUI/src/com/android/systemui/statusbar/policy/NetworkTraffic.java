@@ -189,7 +189,7 @@ public class NetworkTraffic extends TextView {
         final Resources resources = getResources();
         txtSize = resources.getDimensionPixelSize(R.dimen.net_traffic_multi_text_size);
         txtImgPadding = resources.getDimensionPixelSize(R.dimen.net_traffic_txt_img_padding);
-        mTintColor = resources.getColor(android.R.color.white);
+        mTintColor = Utils.getColorAttr(mContext, android.R.attr.textColorPrimary);
         Handler mHandler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(mHandler);
         settingsObserver.observe();
@@ -308,11 +308,10 @@ public class NetworkTraffic extends TextView {
     public void useWallpaperTextColor(boolean shouldUseWallpaperTextColor) {
         if (shouldUseWallpaperTextColor) {
             mTintColor = Utils.getColorAttr(mContext, R.attr.wallpaperTextColor);
-	    updateTrafficDrawable();
+            updateTrafficDrawable();
         } else {
-	    final Resources resources = getResources();
-	    mTintColor = resources.getColor(android.R.color.white);
-	    updateTrafficDrawable();
-	}
+            mTintColor = Utils.getColorAttr(mContext, android.R.attr.textColorPrimary);
+            updateTrafficDrawable();
+	    }
     }
 }

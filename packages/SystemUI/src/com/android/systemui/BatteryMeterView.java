@@ -359,6 +359,15 @@ public class BatteryMeterView extends LinearLayout implements
         }
     }
 
+    public void forceQsPanelColors(boolean shouldForceQsPanelColors) {
+        int bg = Utils.getColorAttr(mContext, android.R.attr.textColorSecondary);
+        int fg = Utils.getColorAttr(mContext, android.R.attr.textColorPrimary);
+
+        if (shouldForceQsPanelColors) {
+            updateColors(fg, bg);
+        }
+    }
+
     private void updateColors(int foregroundColor, int backgroundColor) {
         mDrawable.setColors(foregroundColor, backgroundColor);
         mTextColor = foregroundColor;

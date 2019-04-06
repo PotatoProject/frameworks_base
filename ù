@@ -26,6 +26,7 @@
         android:id="@+id/quick_settings_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:elevation="4dp"
         android:background="@drawable/qs_background_primary" />
 
     <!-- Black part behind the status bar -->
@@ -35,7 +36,7 @@
         android:layout_height="@*android:dimen/quick_qs_offset_height"
         android:clipToPadding="false"
         android:clipChildren="false"
-        android:background="@drawable/qs_detail_bg"
+        android:background="@color/qs_background_dark"
         android:layout_marginLeft="@dimen/notification_side_paddings"
         android:layout_marginRight="@dimen/notification_side_paddings" />
 
@@ -46,7 +47,7 @@
         android:layout_height="174dp"
         android:clipToPadding="false"
         android:clipChildren="false"
-        android:background="#00000000" />
+        android:background="@drawable/qs_bg_gradient" />
 
 
     <com.android.systemui.qs.QSPanel

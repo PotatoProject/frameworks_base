@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.settingslib.Utils;
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
@@ -72,6 +73,7 @@ public class QSContainerImpl extends FrameLayout {
     private boolean mQsDisabled;
 
     private Drawable mQsBackGround;
+    private Drawable mQsStatusBarBackground;
     private int mQsBackGroundAlpha;
     private int mQsBackGroundColor;
     private int mQsBackGroundColorWall;
@@ -108,6 +110,7 @@ public class QSContainerImpl extends FrameLayout {
         mBackgroundGradient = findViewById(R.id.quick_settings_gradient_view);
         mSideMargins = getResources().getDimensionPixelSize(R.dimen.notification_side_paddings);
         mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
+        mQsStatusBarBackground = getContext().getDrawable(R.drawable.qs_detail_bg);
         mColorExtractor = Dependency.get(SysuiColorExtractor.class);
         updateSettings();
 
@@ -215,17 +218,22 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void setQsBackground() {
-
         if (mSetQsFromResources) {
             mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
+            mQsStatusBarBackground = getContext().getDrawable(R.drawable.qs_detail_bg);
         } else {
-            if (mQsBackGround != null) {
+            if (mQsBackGround != null && mQsStatusBarBackground != null) {
                 mQsBackGround.setColorFilter(mCurrentColor, PorterDuff.Mode.SRC_ATOP);
                 mQsBackGround.setAlpha(mQsBackGroundAlpha);
+
+                mQsStatusBarBackground.setColorFilter(mCurrentColor, PorterDuff.Mode.SRC_ATOP);
+                mQsStatusBarBackground.setAlpha(mQsBackGroundAlpha);
             }
         }
+
         if (mQsBackGround != null && mBackground != null) {
             mBackground.setBackground(mQsBackGround);
+            mStatusBarBackground.setBackground(mQsStatusBarBackground);
         }
     }
 
