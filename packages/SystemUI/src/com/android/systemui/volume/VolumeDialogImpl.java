@@ -486,6 +486,7 @@ public class VolumeDialogImpl implements VolumeDialog {
 
         mExpandRows.setOnClickListener(v -> {
             if(!mExpanded) {
+                updateDialogOnExpandH(!mExpanded);
                 VolumeRow row = findRow(AudioManager.STREAM_RING);
                 if (row != null) {
                     Util.setVisOrGone(row.view, /* vis */ true);
@@ -517,6 +518,7 @@ public class VolumeDialogImpl implements VolumeDialog {
                 mExpanded = true;
             } else {
                 cleanExpandRows();
+                updateDialogOnExpandH(!mExpanded);
                 mExpanded = false;
             }
             mExpandRows.setExpanded(mExpanded);
@@ -667,6 +669,7 @@ public class VolumeDialogImpl implements VolumeDialog {
                     mDialog.dismiss();
                     mExpanded = false;
                     mExpandRows.setExpanded(mExpanded);
+                    updateDialogOnExpandH(mExpanded);
                 }, 50));
         if (!isLandscape()) animator.translationX((mDialogView.getWidth() / 2)*(isAudioPanelOnLeftSide() ? -1 : 1));
         animator.start();
@@ -718,12 +721,29 @@ public class VolumeDialogImpl implements VolumeDialog {
         for (final VolumeRow row : mRows) {
             final boolean isActive = row == activeRow;
             final boolean shouldBeVisible = shouldBeVisibleH(row, activeRow);
-            if (!mExpanded)
+            if (!mExpanded) {
+                updateDialogOnExpandH(mExpanded);
                 Util.setVisOrGone(row.view, shouldBeVisible);
+            }
+
             if (row.view.isShown()) {
                 updateVolumeRowTintH(row, isActive);
             }
         }
+    }
+
+    private void updateDialogOnExpandH(boolean isExpanding) {
+        ViewPropertyAnimator animator = mDialogRowsView.animate()
+                .setDuration(100)
+                .setInterpolator(new SystemUIInterpolators.LogDecelerateInterpolator());
+        
+        if (isExpanding) {
+            animator.scaleX((mDialogView.getWidth() * 4)*(isAudioPanelOnLeftSide() ? 1 : -1));
+        } else {
+            animator.scaleX((mDialogView.getWidth())*(isAudioPanelOnLeftSide() ? 1 : -1));
+        }
+
+        animator.start();
     }
 
     protected void updateRingerH() {
