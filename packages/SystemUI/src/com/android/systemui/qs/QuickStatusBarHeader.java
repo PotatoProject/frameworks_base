@@ -178,7 +178,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         int fillColor = fillColorForIntensity(intensity, getContext());
 
         // Set light text on the header icons because they will always be on a black background
-        applyDarkness(R.id.clock, tintArea, 0, DarkIconDispatcher.DEFAULT_ICON_TINT);
+        //applyDarkness(R.id.clock, tintArea, 0, DarkIconDispatcher.DEFAULT_ICON_TINT);
 
         // Set the correct tint for the status icons so they contrast
         mIconManager.setTint(fillColor);
@@ -606,7 +606,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
         // Use SystemUI context to get battery meter colors, and let it use the default tint (white)
         mBatteryMeterView.setColorsFromContext(mHost.getContext());
-        mBatteryMeterView.onDarkChanged(new Rect(), 0, DarkIconDispatcher.DEFAULT_ICON_TINT);
+        mBatteryMeterView.forceQsPanelColors(true);
     }
 
     public void setCallback(Callback qsPanelCallback) {
