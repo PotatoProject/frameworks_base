@@ -2357,14 +2357,16 @@ public class StatusBar extends SystemUI implements DemoMode,
     private void setIconTintOverlay(boolean isDark) {
         final boolean enable = Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SETTINGS_ICON_TINT, 0, UserHandle.USER_CURRENT) == 1;
-        try {
-            mOverlayManager.setEnabled("com.potato.overlay.settingsicontint_dark",
-                    isDark && !enable, mLockscreenUserManager.getCurrentUserId());
-            mOverlayManager.setEnabled("com.potato.overlay.settingsicontint",
+        mUiOffloadThread.submit(() -> {
+            try {
+                mOverlayManager.setEnabled("com.potato.overlay.settingsicontint_dark",
+                        isDark && !enable, mLockscreenUserManager.getCurrentUserId());
+                mOverlayManager.setEnabled("com.potato.overlay.settingsicontint",
                         enable, mLockscreenUserManager.getCurrentUserId());
-        } catch (RemoteException e) {
-            Log.w(TAG, "Failed to handle settings icon tint overlay", e);
-        }
+            } catch (RemoteException e) {
+                Log.w(TAG, "Failed to handle settings icon tint overlay", e);
+            }
+        });
     }
 
     @Nullable
