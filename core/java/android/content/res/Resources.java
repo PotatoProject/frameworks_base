@@ -957,18 +957,24 @@ public class Resources {
     public int getColor(@ColorRes int id, @Nullable Theme theme) throws NotFoundException {
         final TypedValue value = obtainTempTypedValue();
         try {
-            final ResourcesImpl impl = mResourcesImpl;
-            impl.getValue(id, value, true);
-            if (value.type >= TypedValue.TYPE_FIRST_INT
-                    && value.type <= TypedValue.TYPE_LAST_INT) {
-                return value.data;
-            } else if (value.type != TypedValue.TYPE_STRING) {
-                throw new NotFoundException("Resource ID #0x" + Integer.toHexString(id)
-                        + " type #0x" + Integer.toHexString(value.type) + " is not valid");
-            }
+            if(getResourceEntryName(id) == "accent_device_default_light" || 
+               getResourceEntryName(id) == "accent_device_default_dark" ||
+               getResourceEntryName(id) == "accent_device_default_700") {
+                return 0xFFFF0000;
+            } else {
+                final ResourcesImpl impl = mResourcesImpl;
+                impl.getValue(id, value, true);
+                if (value.type >= TypedValue.TYPE_FIRST_INT
+                        && value.type <= TypedValue.TYPE_LAST_INT) {
+                    return value.data;
+                } else if (value.type != TypedValue.TYPE_STRING) {
+                    throw new NotFoundException("Resource ID #0x" + Integer.toHexString(id)
+                            + " type #0x" + Integer.toHexString(value.type) + " is not valid");
+                }
 
-            final ColorStateList csl = impl.loadColorStateList(this, value, id, theme);
-            return csl.getDefaultColor();
+                final ColorStateList csl = impl.loadColorStateList(this, value, id, theme);
+                return csl.getDefaultColor();
+            }
         } finally {
             releaseTempTypedValue(value);
         }
