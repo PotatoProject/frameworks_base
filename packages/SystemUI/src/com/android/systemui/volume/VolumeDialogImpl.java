@@ -455,7 +455,7 @@ public class VolumeDialogImpl implements VolumeDialog {
             final VolumeRow row = mRows.get(i);
             if ((row.stream == AudioManager.STREAM_RING
                     || row.stream == AudioManager.STREAM_NOTIFICATION
-                    || row.stream == AudioManager.STREAM_ALARM) && row.stream != mActiveStream) {
+                    || row.stream == AudioManager.STREAM_ALARM)) {
                 Util.setVisOrGone(row.view, /* vis */ false);
             }
         }
@@ -516,6 +516,9 @@ public class VolumeDialogImpl implements VolumeDialog {
                 }
                 mExpanded = true;
             } else {
+                VolumeRow row = findRow(AudioManager.STREAM_MUSIC);
+                updateVolumeRowTintH(row,
+                            /* isActive */ true);
                 cleanExpandRows();
                 mExpanded = false;
             }
