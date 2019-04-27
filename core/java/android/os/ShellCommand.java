@@ -16,6 +16,7 @@
 
 package android.os;
 
+import android.util.Log;
 import android.util.Slog;
 
 import com.android.internal.util.FastPrintWriter;
@@ -89,6 +90,7 @@ public abstract class ShellCommand {
         }
         init(target, in, out, err, args, callback, start);
         mCmd = cmd;
+        Log.i("YEEEET", mCmd);
         mResultReceiver = resultReceiver;
 
         if (DEBUG) {

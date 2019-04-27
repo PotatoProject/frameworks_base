@@ -20,13 +20,18 @@ import android.annotation.AnyRes;
 import android.annotation.ColorInt;
 import android.annotation.Nullable;
 import android.annotation.StyleableRes;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ActivityInfo.Config;
+import android.content.res.Resources.NotFoundException;
+import android.content.theme.IThemeManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.ServiceManager;
 import android.os.StrictMode;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.android.internal.util.XmlUtils;
@@ -45,6 +50,8 @@ import java.util.Arrays;
  * the positions of the attributes given to obtainStyledAttributes.
  */
 public class TypedArray {
+
+    private static final String TAG = "TypedArray";
 
     static TypedArray obtain(Resources res, int len) {
         TypedArray attrs = res.mTypedArrayPool.acquire();
@@ -84,6 +91,8 @@ public class TypedArray {
     /*package*/ long mIndicesAddress;
     /*package*/ int mLength;
     /*package*/ TypedValue mValue = new TypedValue();
+
+    private IThemeManager mThemeManager;
 
     private void resize(int len) {
         mLength = len;
@@ -458,6 +467,20 @@ public class TypedArray {
 
         final int[] data = mData;
         final int type = data[index + STYLE_TYPE];
+
+        try {
+            int resId = data[index + 3];
+            if (resId > 0) {
+                setThemeManager();
+                if (mThemeManager != null)
+                return mThemeManager.getMaskedColor(this.mAssets.getResourcePackageName(resId),
+                        this.mAssets.getResourceName(resId), defValue);
+            }
+        } catch (NotFoundException nfe) {
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
+
         if (type == TypedValue.TYPE_NULL) {
             return defValue;
         } else if (type >= TypedValue.TYPE_FIRST_INT
@@ -1283,5 +1306,18 @@ public class TypedArray {
     @Override
     public String toString() {
         return Arrays.toString(mData);
+    }
+
+
+    /**
+     * Sets current ThemeManager
+     * @hide
+     */
+    private void setThemeManager() {
+        try {
+            if (mThemeManager == null)
+                mThemeManager = IThemeManager.Stub.asInterface(
+                        ServiceManager.getService(Context.THEMER_SERVICE));
+        } catch (Exception ignored){}
     }
 }

@@ -140,6 +140,7 @@ java_library {
         "core/java/android/content/pm/dex/IArtManager.aidl",
         "core/java/android/content/pm/dex/ISnapshotRuntimeProfileCallback.aidl",
         "core/java/android/content/pm/permission/IRuntimePermissionPresenter.aidl",
+        "core/java/android/content/theme/IThemeManager.aidl",
         "core/java/android/database/IContentObserver.aidl",
         ":libcamera_client_aidl",
         ":libcamera_client_framework_aidl",

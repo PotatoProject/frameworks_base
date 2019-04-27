@@ -25,11 +25,13 @@ import android.annotation.PluralsRes;
 import android.annotation.RawRes;
 import android.annotation.StyleRes;
 import android.annotation.StyleableRes;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ActivityInfo.Config;
 import android.content.res.AssetManager.AssetInputStream;
 import android.content.res.Configuration.NativeConfig;
 import android.content.res.Resources.NotFoundException;
+import android.content.theme.IThemeManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.graphics.Typeface;
@@ -39,6 +41,7 @@ import android.graphics.drawable.DrawableContainer;
 import android.icu.text.PluralRules;
 import android.os.Build;
 import android.os.LocaleList;
+import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.Trace;
@@ -152,6 +155,8 @@ public class ResourcesImpl {
         sPreloadedDrawables[1] = new LongSparseArray<>();
     }
 
+    private IThemeManager mThemeManager;
+
     /**
      * Creates a new ResourcesImpl object with CompatibilityInfo.
      *
@@ -170,6 +175,7 @@ public class ResourcesImpl {
         mDisplayAdjustments = displayAdjustments;
         mConfiguration.setToDefaults();
         updateConfiguration(config, metrics, displayAdjustments.getCompatibilityInfo());
+        setThemeManager();
     }
 
     public DisplayAdjustments getDisplayAdjustments() {
@@ -626,6 +632,15 @@ public class ResourcesImpl {
                 }
                 dr = cs.newDrawable(wrapper);
             } else if (isColorDrawable) {
+                try {
+                    setThemeManager();
+                    if (mThemeManager != null)
+                    value.data = mThemeManager.getMaskedColor(getResourcePackageName(id),
+                            getResourceName(id), value.data);
+                } catch (NotFoundException nfe) {
+                } catch (Exception ex) {
+                    Log.e(TAG, ex.getMessage());
+                }
                 dr = new ColorDrawable(value.data);
             } else {
                 dr = loadDrawableForCookie(wrapper, value, id, density);
@@ -984,6 +999,16 @@ public class ResourcesImpl {
 
         final long key = (((long) value.assetCookie) << 32) | value.data;
 
+        try {
+            setThemeManager();
+            if (mThemeManager != null)
+            value.data = mThemeManager.getMaskedColor(getResourcePackageName(id),
+                    getResourceName(id), value.data);
+        } catch (NotFoundException nfe) {
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
+        }
+
         // Handle inline color definitions.
         if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT
                 && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
@@ -1022,6 +1047,16 @@ public class ResourcesImpl {
                 final String name = getResourceName(id);
                 if (name != null) android.util.Log.d("PreloadColorStateList", name);
             }
+        }
+
+        try {
+            setThemeManager();
+            if (mThemeManager != null)
+            value.data = mThemeManager.getMaskedColor(getResourcePackageName(id),
+                    getResourceName(id), value.data);
+        } catch (NotFoundException nfe) {
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage());
         }
 
         final long key = (((long) value.assetCookie) << 32) | value.data;
@@ -1446,4 +1481,17 @@ public class ResourcesImpl {
             mSize--;
         }
     }
+
+    /**
+     * Sets current ThemeManager
+     * @hide
+     */
+    private void setThemeManager() {
+        try {
+            if (mThemeManager == null)
+                mThemeManager = IThemeManager.Stub.asInterface(
+            ServiceManager.getService(Context.THEMER_SERVICE));
+        } catch (Exception ignored){}
+    }
+
 }
