@@ -27,10 +27,17 @@ import android.compat.annotation.ChangeId;
 import android.compat.annotation.EnabledAfter;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
+import android.content.ContentResolver;
+import android.provider.Settings;
+import android.net.Uri;
+import android.database.ContentObserver;
+import android.os.Looper;
+import android.util.Log;
 
 import com.android.server.SystemConfig;
 
@@ -105,6 +112,7 @@ public class OverlayManager {
     public OverlayManager(Context context, IOverlayManager service) {
         mContext = context;
         mService = service;
+        mObserver.observe();
     }
 
     /** @hide */
@@ -277,6 +285,41 @@ public class OverlayManager {
             throw new IllegalStateException(e);
         } else {
             throw e;
+        }
+    }
+
+    private SettingsObserver mObserver = new SettingsObserver();
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver() {
+            super(new Handler(Looper.getMainLooper()));
+        }
+
+        public void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    "accent_dark"),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    "accent_light"),
+                    false, this, UserHandle.USER_ALL);
+        }
+
+        private void reloadAssets(String packageName) {
+            final String TAG = "OM-Observer";
+            try {
+                mService.reloadAssets(packageName, UserHandle.USER_ALL);
+            } catch (RemoteException e) {
+                Log.i(TAG, "Unable to reload resources for " + packageName);
+            }
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Settings.Secure.getUriFor("accent_dark")) ||
+                    uri.equals(Settings.Secure.getUriFor("accent_light"))) {
+                reloadAssets("android");
+                reloadAssets("com.android.systemui");
+            }
         }
     }
 }
