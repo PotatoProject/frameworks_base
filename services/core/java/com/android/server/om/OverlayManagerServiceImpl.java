@@ -731,6 +731,10 @@ final class OverlayManagerServiceImpl {
         mIdmapManager.removeIdmap(oi, oi.userId);
     }
 
+    public void reloadAndroidAssets(final int userId) {
+        mListener.onOverlaysChanged("android", userId);
+    }
+
     interface OverlayChangeListener {
 
         /**
