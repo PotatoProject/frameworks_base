@@ -40,8 +40,10 @@ import android.annotation.StringRes;
 import android.annotation.StyleRes;
 import android.annotation.StyleableRes;
 import android.annotation.XmlRes;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ActivityInfo.Config;
+import android.content.theme.IThemeManager;
 import android.graphics.Movie;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -49,6 +51,8 @@ import android.graphics.drawable.Drawable.ConstantState;
 import android.graphics.drawable.DrawableInflater;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -119,6 +123,8 @@ public class Resources {
     private TypedValue mTmpValue = new TypedValue();
 
     final ClassLoader mClassLoader;
+
+    private IThemeManager mThemeManager;
 
     /**
      * WeakReferences to Themes that were constructed from this Resources object.
@@ -956,11 +962,19 @@ public class Resources {
     @ColorInt
     public int getColor(@ColorRes int id, @Nullable Theme theme) throws NotFoundException {
         final TypedValue value = obtainTempTypedValue();
+        setThemeManager();
         try {
             final ResourcesImpl impl = mResourcesImpl;
             impl.getValue(id, value, true);
             if (value.type >= TypedValue.TYPE_FIRST_INT
                     && value.type <= TypedValue.TYPE_LAST_INT) {
+                try {
+                    if (mThemeManager != null)
+                    value.data = mThemeManager.getMaskedColor(getResourcePackageName(id),
+                            getResourceName(id), value.data);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 return value.data;
             } else if (value.type != TypedValue.TYPE_STRING) {
                 throw new NotFoundException("Resource ID #0x" + Integer.toHexString(id)
@@ -2201,5 +2215,17 @@ public class Resources {
             return res.obtainAttributes(set, attrs);
         }
         return theme.obtainStyledAttributes(set, attrs, 0, 0);
+    }
+
+    /**
+     * Sets current ThemeManager
+     * @hide
+     */
+    private void setThemeManager() {
+        try {
+            if (mThemeManager == null)
+                mThemeManager = IThemeManager.Stub.asInterface(
+                        ServiceManager.getService(Context.THEMER_SERVICE));
+        } catch (Exception e){}
     }
 }

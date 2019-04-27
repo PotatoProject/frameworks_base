@@ -117,6 +117,7 @@ import com.android.server.statusbar.StatusBarManagerService;
 import com.android.server.storage.DeviceStorageMonitorService;
 import com.android.server.telecom.TelecomLoaderService;
 import com.android.server.textclassifier.TextClassificationManagerService;
+import com.android.server.theme.ThemeManagerService;
 import com.android.server.trust.TrustManagerService;
 import com.android.server.tv.TvInputManagerService;
 import com.android.server.tv.TvRemoteService;
@@ -697,6 +698,13 @@ public final class SystemServer {
         OverlayManagerService overlayManagerService = new OverlayManagerService(
                 mSystemContext, installer);
         mSystemServiceManager.startService(overlayManagerService);
+        traceEnd();
+
+        // Manages Theme packages
+        traceBeginAndSlog("StartThemeManagerService");
+        ThemeManagerService themeManagerService = new ThemeManagerService(
+                mSystemContext);
+        mSystemServiceManager.startService(themeManagerService);
         traceEnd();
 
         if (SystemProperties.getInt("persist.sys.displayinset.top", 0) > 0) {
