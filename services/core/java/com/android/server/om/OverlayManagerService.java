@@ -674,6 +674,18 @@ public final class OverlayManagerService extends SystemService {
             }
         }
 
+        @Override
+        public void reloadAndroidAssets(int userId) {
+            final long ident = Binder.clearCallingIdentity();
+            try {
+                synchronized (mLock) {
+                    mImpl.reloadAndroidAssets(userId);
+                }
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+
         /**
          * Ensure that the caller has permission to interact with the given userId.
          * If the calling user is not the same as the provided user, the caller needs
