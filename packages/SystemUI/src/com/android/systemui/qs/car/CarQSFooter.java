@@ -115,13 +115,20 @@ public class CarQSFooter extends RelativeLayout implements QSFooter,
     }
 
     @Override
-    public void setExpandClickListener(OnClickListener onClickListener) {
-        // No view that should expand/collapse the quick settings.
+    public void setExpanded(boolean expanded) {
+        // Do nothing because the quick settings cannot be expanded.
     }
 
     @Override
-    public void setExpanded(boolean expanded) {
+    public void setExpandClickListener(View.OnClickListener onClickListener) {
         // Do nothing because the quick settings cannot be expanded.
+    }
+
+    @Nullable
+    @Override
+    public View getExpandView() {
+        // No view that should expand/collapse the quick settings.
+        return null;
     }
 
     @Override
