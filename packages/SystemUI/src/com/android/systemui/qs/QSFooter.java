@@ -70,4 +70,7 @@ public interface QSFooter {
     void setExpandClickListener(View.OnClickListener onClickListener);
 
     default void disable(int state1, int state2, boolean animate) {}
+
+    @Nullable
+	View getExpandView();
 }
