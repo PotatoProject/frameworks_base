@@ -18,4 +18,9 @@
         <item name="android:paddingBottom">@dimen/bottom_text_spacing_digital</item>
     </style>
 
+    <style name="customtextclock_thin_thin">
+        <item name="android:textSize">@dimen/customtextclock_fontsize_small</item>
+        <item name="android:paddingBottom">@dimen/bottom_text_spacing_digital</item>
+    </style>
+
 </resources>
