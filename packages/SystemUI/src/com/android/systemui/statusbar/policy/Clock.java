@@ -360,9 +360,7 @@ public class Clock extends TextView implements DemoMode, Tunable, CommandQueue.C
         final char MAGIC2 = '\uEF01';
 
         SimpleDateFormat sdf;
-        String format = /*mShowSeconds
-                ? is24 ? d.timeFormat_Hms : d.timeFormat_hms
-                : */is24 ? d.timeFormat_Hm : d.timeFormat_hm;
+        String format = is24 ? d.timeFormat_Hm : d.timeFormat_hm;
         if (!format.equals(mClockFormatString)) {
             mContentDescriptionFormat = new SimpleDateFormat(format);
             /*
