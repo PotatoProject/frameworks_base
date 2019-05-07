@@ -105,7 +105,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
                         | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
                 PixelFormat.TRANSLUCENT);
         mLp.token = new Binder();
-        mLp.gravity = Gravity.TOP;
+        mLp.gravity = Gravity.BOTTOM;
         mLp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         mLp.setTitle("StatusBar");
         mLp.packageName = mContext.getPackageName();
@@ -258,7 +258,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         }
         if (mHasTopUi != mHasTopUiChanged) {
             try {
-                mActivityManager.setHasTopUi(mHasTopUiChanged);
+                mActivityManager.setHasTopUi(false);
             } catch (RemoteException e) {
                 Log.e(TAG, "Failed to call setHasTopUi", e);
             }
@@ -293,7 +293,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
     }
 
     private void applyHasTopUi(State state) {
-        mHasTopUiChanged = isExpanded(state);
+        mHasTopUiChanged = false;
     }
 
     private void applySleepToken(State state) {

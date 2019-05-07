@@ -120,14 +120,14 @@ public abstract class PanelBar extends FrameLayout {
     public boolean onTouchEvent(MotionEvent event) {
         // Allow subclasses to implement enable/disable semantics
         if (!panelEnabled()) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
                 Log.v(TAG, String.format("onTouch: all panels disabled, ignoring touch at (%d,%d)",
                         (int) event.getX(), (int) event.getY()));
             }
             return false;
         }
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             final PanelView panel = mPanel;
             if (panel == null) {
                 // panel is not there, so we'll eat the gesture
@@ -136,7 +136,7 @@ public abstract class PanelBar extends FrameLayout {
                 return true;
             }
             boolean enabled = panel.isEnabled();
-            if (DEBUG) LOG("PanelBar.onTouch: state=%d ACTION_DOWN: panel %s %s", mState, panel,
+            if (DEBUG) LOG("PanelBar.onTouch: state=%d ACTION_UP: panel %s %s", mState, panel,
                     (enabled ? "" : " (disabled)"));
             if (!enabled) {
                 // panel is disabled, so we'll eat the gesture

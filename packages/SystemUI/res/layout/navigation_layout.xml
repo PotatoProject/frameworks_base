@@ -21,6 +21,7 @@
     android:layout_height="match_parent"
     android:layout_marginStart="@dimen/rounded_corner_content_padding"
     android:layout_marginEnd="@dimen/rounded_corner_content_padding"
+    android:layout_marginBottom="@dimen/status_bar_height"
     android:paddingStart="@dimen/nav_content_padding"
     android:paddingEnd="@dimen/nav_content_padding">
 

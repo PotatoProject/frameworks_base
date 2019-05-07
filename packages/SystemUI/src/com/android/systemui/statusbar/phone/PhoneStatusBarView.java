@@ -316,7 +316,7 @@ public class PhoneStatusBarView extends PanelBar {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mCutoutSpace.getLayoutParams();
 
         Rect bounds = new Rect();
-        boundsFromDirection(mDisplayCutout, Gravity.TOP, bounds);
+        boundsFromDirection(mDisplayCutout, Gravity.BOTTOM, bounds);
 
         bounds.left = bounds.left + mCutoutSideNudge;
         bounds.right = bounds.right - mCutoutSideNudge;
@@ -360,7 +360,7 @@ public class PhoneStatusBarView extends PanelBar {
         display.getRealSize(size);
 
         Rect bounds = new Rect();
-        boundsFromDirection(cutout, Gravity.TOP, bounds);
+        boundsFromDirection(cutout, Gravity.BOTTOM, bounds);
 
         if (bounds.left <= 0) {
             return new Pair<>(bounds.right, 0);
