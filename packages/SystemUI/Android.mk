@@ -54,6 +54,7 @@ LOCAL_STATIC_ANDROID_LIBRARIES := \
     potato-support-lottie
 
 LOCAL_STATIC_JAVA_LIBRARIES := \
+	android-support-v8-renderscript \
     SystemUI-tags \
     SystemUI-proto
 

@@ -21,6 +21,7 @@
 <com.android.systemui.statusbar.phone.StatusBarWindowView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sysui="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -42,6 +43,12 @@
                    android:scaleType="centerCrop"
                    android:visibility="invisible" />
     </com.android.systemui.statusbar.BackDropView>
+
+    <com.android.systemui.statusbar.RealtimeBlurView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:realtimeBlurRadius="60dp"
+        app:realtimeOverlayColor="#80ffff00" />
 
     <com.android.systemui.statusbar.ScrimView
         android:id="@+id/scrim_behind"
