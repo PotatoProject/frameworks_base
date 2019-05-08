@@ -21,6 +21,7 @@ import static android.view.WindowManager.DOCKED_LEFT;
 import static android.view.WindowManager.DOCKED_TOP;
 
 import android.app.ActivityManager;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -28,6 +29,7 @@ import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
+import com.android.systemui.fragments.FragmentHostManager.FragmentListener;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.internal.policy.DividerSnapAlgorithm.SnapTarget;
 import com.android.systemui.Dependency;
@@ -35,6 +37,7 @@ import com.android.systemui.R;
 import com.android.systemui.RecentsComponent;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.plugins.statusbar.phone.NavGesture.GestureHelper;
+import com.android.systemui.plugins.qs.QS;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.tuner.TunerService;
 
@@ -66,6 +69,7 @@ public class NavigationBarGestureHelper implements TunerService.Tunable, Gesture
     private NavigationBarView mNavigationBarView;
     private boolean mIsVertical;
 
+    private QS mQs;
     private final QuickStepController mQuickStepController;
     private final int mScrollTouchSlop;
     private final StatusBar mStatusBar;
@@ -88,6 +92,13 @@ public class NavigationBarGestureHelper implements TunerService.Tunable, Gesture
         mQuickStepController = new QuickStepController(context);
         Dependency.get(TunerService.class).addTunable(this, KEY_DOCK_WINDOW_GESTURE);
     }
+
+    private final FragmentListener mFragmentListener = new FragmentListener() {
+        @Override
+        public void onFragmentViewCreated(String tag, Fragment fragment) {
+            mQs = (QS) fragment;
+        }
+    };
 
     public void destroy() {
         Dependency.get(TunerService.class).removeTunable(this);
@@ -193,6 +204,7 @@ public class NavigationBarGestureHelper implements TunerService.Tunable, Gesture
                         && mTouchDownX <= recentsButton.getRight()
                         && mTouchDownY >= recentsButton.getTop()
                         && mTouchDownY <= recentsButton.getBottom();
+                mQs.setExpanded(true);
             } else {
                 mDownOnRecents = false;
             }
