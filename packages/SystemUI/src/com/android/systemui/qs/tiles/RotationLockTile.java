@@ -48,7 +48,7 @@ public class RotationLockTile extends QSTileImpl<BooleanState> {
             R.drawable.ic_landscape_from_auto_rotate);
     private final AnimationIcon mAutoToLandscape
             = new AnimationIcon(R.drawable.ic_landscape_from_auto_rotate_animation,
-            R.drawable.ic_landscape_to_auto_rotate);
+			R.drawable.ic_landscape_to_auto_rotate);
 
     private final RotationLockController mController;
 
@@ -109,7 +109,7 @@ public class RotationLockTile extends QSTileImpl<BooleanState> {
         state.contentDescription = getAccessibilityString(rotationLocked);
         state.expandedAccessibilityClassName = Switch.class.getName();
         state.state = state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
-    }
+	}
 
     public static boolean isCurrentOrientationLockPortrait(RotationLockController controller,
             Context context) {
