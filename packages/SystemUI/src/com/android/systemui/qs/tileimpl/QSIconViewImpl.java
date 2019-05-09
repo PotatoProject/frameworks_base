@@ -50,6 +50,7 @@ public class QSIconViewImpl extends QSIconView {
     private boolean mAnimationEnabled = true;
     private int mState = -1;
     private int mTint;
+    private boolean mEnableQsTileTinting;
 
     public QSIconViewImpl(Context context) {
         super(context);
@@ -60,6 +61,8 @@ public class QSIconViewImpl extends QSIconView {
 
         mIcon = createIcon();
         addView(mIcon);
+
+        mEnableQsTileTinting = getContext().getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
     }
 
     public void disableAnimation() {
@@ -107,7 +110,7 @@ public class QSIconViewImpl extends QSIconView {
 
             if (iv instanceof SlashImageView) {
                 ((SlashImageView) iv).setAnimationEnabled(shouldAnimate);
-                ((SlashImageView) iv).setState(null, d);
+                ((SlashImageView) iv).setState(mEnableQsTileTinting ? state.slash : null, d);
             } else {
                 iv.setImageDrawable(d);
             }
@@ -173,8 +176,6 @@ public class QSIconViewImpl extends QSIconView {
             final float fromChannel = Color.red(fromColor);
             final float toChannel = Color.red(toColor);
 
-            boolean enableQsTileTinting = getContext().getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
-
             ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
             anim.setDuration(QS_ANIM_LENGTH);
             anim.addUpdateListener(animation -> {
@@ -185,7 +186,7 @@ public class QSIconViewImpl extends QSIconView {
                 boolean setQsFromResources = System.getIntForUser(getContext().getContentResolver(),
                             System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
 
-                if (setQsFromResources && !enableQsTileTinting) {
+                if (setQsFromResources && !mEnableQsTileTinting) {
                     setTint(iv, Color.argb(alpha, channel, channel, channel));
                 } else {
                     setTint(iv, toColor);
