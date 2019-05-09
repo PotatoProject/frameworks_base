@@ -19,42 +19,18 @@
     <set
         android:ordering="sequentially" >
         <objectAnimator
-            android:duration="116"
-            android:propertyName="scaleX"
-            android:valueFrom="0.909"
-            android:valueTo="0.909"
+            android:duration="50"
+            android:propertyName="rotation"
+            android:valueFrom="45.0"
+            android:valueTo="45.0"
             android:valueType="floatType"
             android:interpolator="@android:interpolator/linear" />
         <objectAnimator
-            android:duration="166"
-            android:propertyName="scaleX"
-            android:valueFrom="0.909"
-            android:valueTo="1.0"
+            android:duration="400"
+            android:propertyName="rotation"
+            android:valueFrom="45.0"
+            android:valueTo="0.0"
             android:valueType="floatType"
-            android:interpolator="@interpolator/ic_rotate_to_landscape_animation_interpolator_0" />
-    </set>
-    <set
-        android:ordering="sequentially" >
-        <objectAnimator
-            android:duration="116"
-            android:propertyName="scaleY"
-            android:valueFrom="0.909"
-            android:valueTo="0.909"
-            android:valueType="floatType"
-            android:interpolator="@android:interpolator/linear" />
-        <objectAnimator
-            android:duration="166"
-            android:propertyName="scaleY"
-            android:valueFrom="0.909"
-            android:valueTo="1.0"
-            android:valueType="floatType"
-            android:interpolator="@interpolator/ic_rotate_to_landscape_animation_interpolator_0" />
-    </set>
-    <objectAnimator
-        android:duration="616"
-        android:propertyName="rotation"
-        android:valueFrom="45.0"
-        android:valueTo="0.0"
-        android:valueType="floatType"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
+	</set> 
 </set>

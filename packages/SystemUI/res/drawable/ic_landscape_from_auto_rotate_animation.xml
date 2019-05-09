@@ -14,13 +14,19 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<set
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <objectAnimator
-        android:duration="400"
-        android:propertyName="rotation"
-        android:valueFrom="0.0"
-        android:valueTo="45.0"
-        android:valueType="floatType"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
-</set>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_landscape_from_auto_rotate" >
+    <target
+        android:name="landscape"
+        android:animation="@anim/ic_rotate_to_landscape_landscape_animation" />
+    <target
+        android:name="arrows"
+        android:animation="@anim/ic_rotate_to_landscape_arrows_animation" />
+    <target
+        android:name="arrows_0"
+        android:animation="@anim/ic_rotate_to_landscape_arrows_0_animation" />
+    <target
+        android:name="bottom_merged"
+        android:animation="@anim/ic_rotate_to_landscape_bottom_merged_animation" />
+</animated-vector>
