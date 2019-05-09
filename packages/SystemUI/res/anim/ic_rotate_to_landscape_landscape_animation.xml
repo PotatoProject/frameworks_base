@@ -53,7 +53,7 @@
     <objectAnimator
         android:duration="616"
         android:propertyName="rotation"
-        android:valueFrom="45.0"
+        android:valueFrom="-135.0"
         android:valueTo="0.0"
         android:valueType="floatType"
         android:interpolator="@android:interpolator/fast_out_slow_in" />

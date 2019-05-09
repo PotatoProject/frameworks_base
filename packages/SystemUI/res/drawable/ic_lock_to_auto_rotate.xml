@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2019 The Potato Open Sauce Project
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="ic_rotation_animation"
+    android:height="48dp"
+    android:width="48dp"
+    android:viewportHeight="24"
+    android:viewportWidth="24"
+    android:tint="?android:attr/colorControlNormal" >
+    <path
+        android:name="lock"
+        android:pathData="M14.0834 10.5417H14.5001C14.9584 10.5417 15.3334 10.9167 15.3334 11.375V15.5417C15.3334 16 14.9584 16.375 14.5001 16.375H9.50008C9.04175 16.375 8.66675 16 8.66675 15.5417V11.375C8.66675 10.9167 9.04175 10.5417 9.50008 10.5417H9.91675V9.70833C9.91675 8.55833 10.8501 7.625 12.0001 7.625C13.1501 7.625 14.0834 8.55833 14.0834 9.70833V10.5417ZM12.0001 8.63049C11.3961 8.63049 10.9084 9.15093 10.9084 9.79565V10.5724H13.0918V9.79565C13.0918 9.15093 12.6042 8.63049 12.0001 8.63049ZM14.3138 15.2354H9.68617V11.7646H14.3138V15.2354ZM12.8334 13.4583C12.8334 13.9167 12.4584 14.2917 12.0001 14.2917C11.5417 14.2917 11.1667 13.9167 11.1667 13.4583C11.1667 13 11.5417 12.625 12.0001 12.625C12.4584 12.625 12.8334 13 12.8334 13.4583Z"
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0" />
+    <path
+        android:name="arrows"
+        android:pathData="M7.4,10.94H2.45V5.99l2,0.01v1.53l4.61,-4.61c0.64,-0.64 1.67,-0.66 2.29,-0.04l8.18,8.18h-2.83l-6.48,-6.48L5.86,8.95H7.4V10.94zM16.6,13.06l0.01,2h1.53l-4.36,4.36l-6.48,-6.48H4.46l8.19,8.19c0.62,0.62 1.65,0.6 2.29,-0.04l4.61,-4.61l0.01,0.01v1.53h1.99v-4.95H16.6z"
+        android:fillColor="#FFFFFFFF" />
+</vector>
