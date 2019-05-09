@@ -80,6 +80,10 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+        if (state.slash == null) {
+            state.slash = new SlashState();
+        }
+
         state.state = mPluggedIn ? Tile.STATE_UNAVAILABLE
                 : mPowerSave ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
         BatterySaverIcon bsi = new BatterySaverIcon();
@@ -88,6 +92,8 @@ public class BatterySaverTile extends QSTileImpl<BooleanState> implements
         state.label = mContext.getString(R.string.battery_detail_switch_title);
         state.contentDescription = state.label;
         state.value = mPowerSave;
+        state.slash.isSlashed = mPluggedIn ? true
+                : mPowerSave ? false : true;
         state.expandedAccessibilityClassName = Switch.class.getName();
     }
 
