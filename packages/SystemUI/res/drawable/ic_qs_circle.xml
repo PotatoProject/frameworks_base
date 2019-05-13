@@ -21,9 +21,5 @@
 
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M.1,1.1
-        c0,.55  .45,1   1,1
-        c.55,0  1,-.45  1,-1
-        c0,-.55 -.45,-1 -1,-1
-        c-.55,0 -1,.45  -1,1"/>
+        android:pathData="@*android:string/config_icon_mask"/>
 </vector>
