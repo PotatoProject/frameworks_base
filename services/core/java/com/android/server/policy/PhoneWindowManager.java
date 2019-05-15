@@ -486,6 +486,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     IStatusBarService mStatusBarService;
     StatusBarManagerInternal mStatusBarManagerInternal;
     AudioManagerInternal mAudioManagerInternal;
+    AudioManager mAudioManager;
     boolean mPreloadedRecentApps;
     final Object mServiceAquireLock = new Object();
     Vibrator mVibrator; // Vibrator for giving feedback of orientation changes
@@ -863,6 +864,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private Sensor mProximitySensor;
     private SensorEventListener mProximityListener;
     private android.os.PowerManager.WakeLock mProximityWakeLock;
+    private boolean mSoundSwitchToggle;
 
     private static final int MSG_ENABLE_POINTER_LOCATION = 1;
     private static final int MSG_DISABLE_POINTER_LOCATION = 2;
@@ -897,6 +899,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK = 32;
     private static final int MSG_TOGGLE_TORCH = 33;
     private static final int MSG_CLEAR_PROXIMITY = 34;
+    private static final int MSC_SWITCH_SOUND_MODE = 35;
 
     private boolean mClearedBecauseOfForceShow;
     private boolean mTopWindowIsKeyguard;
@@ -1038,6 +1041,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 case MSG_CLEAR_PROXIMITY:
                     cleanupProximity();
                     break;
+                case MSC_SWITCH_SOUND_MODE:
+                    switchSoundMode();
+                    break;
             }
         }
     }
@@ -1099,6 +1105,43 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             runPostProximityCheck();
         } else {
             toggleFlashLight();
+        }
+    }
+
+    private void switchSoundMode() {
+        int currentSoundMode;
+
+        switch(mAudioManager.getRingerMode()) {
+            case AudioManager.RINGER_MODE_NORMAL:
+                currentSoundMode = 0;
+                break;
+
+            case AudioManager.RINGER_MODE_VIBRATE:
+                currentSoundMode = 1;
+                break;
+
+            case AudioManager.RINGER_MODE_SILENT:
+                currentSoundMode = 2;
+                break;
+
+            default:
+                currentSoundMode = 0;
+                break;
+        }
+
+        switch(currentSoundMode) {
+            case 0:
+                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                currentSoundMode = 1;
+                break;
+            case 1:
+                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                currentSoundMode = 2;
+                break;
+            case 2:
+                mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                currentSoundMode = 0;
+                break;
         }
     }
 
@@ -1181,6 +1224,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.TORCH_POWER_BUTTON_GESTURE), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.SOUND_SWITCH_POWER_BUTTON_GESTURE), false, this,
                     UserHandle.USER_ALL);
             updateSettings();
         }
@@ -1592,8 +1638,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
                     mBeganFromNonInteractive = true;
                 } else {
-                    if ((mTorchActionMode != 1) ||
-                            (mTorchActionMode == 1 && isScreenOn() && !isDozeMode())) {
+                    if ((mTorchActionMode != 1 || !mSoundSwitchToggle) ||
+                                ((mTorchActionMode == 1 || mSoundSwitchToggle) && isScreenOn() && !isDozeMode())) {
                         wakeUpFromPowerKey(event.getDownTime());
                     }
                     final int maxCount = getMaxMultiPressPowerCount();
@@ -1638,7 +1684,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 Message msg = mHandler.obtainMessage(MSG_POWER_DELAYED_PRESS,
                         interactive ? 1 : 0, mPowerKeyPressCounter, eventTime);
                 msg.setAsynchronous(true);
-                mHandler.sendMessageDelayed(msg, (mTorchActionMode == 1)
+                mHandler.sendMessageDelayed(msg, (mTorchActionMode == 1) || mSoundSwitchToggle
                         ? TORCH_DOUBLE_TAP_DELAY : ViewConfiguration.getMultiPressTimeout());
                 return;
             }
@@ -1729,7 +1775,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 }
             }
-        } else if ((mTorchActionMode == 1) && (!isScreenOn() || isDozeMode())) {
+        } else if ((mTorchActionMode == 1 || mSoundSwitchToggle) && (!isScreenOn() || isDozeMode())) {
             wakeUpFromPowerKey(eventTime);
         }
     }
@@ -1753,6 +1799,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case MULTI_PRESS_POWER_NOTHING:
                 if ((mTorchActionMode == 1) && (!isScreenOn() || isDozeMode())) {
                     toggleFlashLightProximityCheck();
+                } else if (mSoundSwitchToggle && (!isScreenOn() || isDozeMode())) {
+                    switchSoundMode();
                 }
                 break;
             case MULTI_PRESS_POWER_THEATER_MODE:
@@ -1792,7 +1840,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mTriplePressOnPowerBehavior != MULTI_PRESS_POWER_NOTHING) {
             return 3;
         }
-        if (mDoublePressOnPowerBehavior != MULTI_PRESS_POWER_NOTHING || (mTorchActionMode == 1)) {
+        if (mDoublePressOnPowerBehavior != MULTI_PRESS_POWER_NOTHING || ((mTorchActionMode == 1) || mSoundSwitchToggle)) {
             return 2;
         }
         return 1;
@@ -2222,6 +2270,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mAppOpsManager = (AppOpsManager) mContext.getSystemService(Context.APP_OPS_SERVICE);
         mHasFeatureWatch = mContext.getPackageManager().hasSystemFeature(FEATURE_WATCH);
         mHasFeatureLeanback = mContext.getPackageManager().hasSystemFeature(FEATURE_LEANBACK);
+        mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         mAccessibilityShortcutController =
                 new AccessibilityShortcutController(mContext, new Handler(), mCurrentUserId);
         mLogger = new MetricsLogger();
@@ -2821,6 +2870,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mTorchActionMode = Settings.Secure.getIntForUser(resolver,
                     Settings.Secure.TORCH_POWER_BUTTON_GESTURE, 0,
                     UserHandle.USER_CURRENT);
+            mSoundSwitchToggle = Settings.Secure.getIntForUser(resolver,
+                    Settings.Secure.SOUND_SWITCH_POWER_BUTTON_GESTURE, 0,
+                    UserHandle.USER_CURRENT) == 1;
         }
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {
             WindowManagerPolicyControl.reloadFromSetting(mContext);

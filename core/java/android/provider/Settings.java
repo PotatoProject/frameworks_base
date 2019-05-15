@@ -8068,6 +8068,17 @@ public final class Settings {
                 NON_NEGATIVE_INTEGER_VALIDATOR;
 
         /**
+         * If enabled allows you to switch sound mode by just double clicking power button
+         *
+         * @hide
+         */
+        public static final String SOUND_SWITCH_POWER_BUTTON_GESTURE =
+                "sound_switch_power_button_gesture";
+
+        private static final Validator SOUND_SWITCH_POWER_BUTTON_GESTURE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Whether the camera double twist gesture to flip between front and back mode should be
          * enabled.
          *
@@ -8763,7 +8774,8 @@ public final class Settings {
             MANUAL_RINGER_TOGGLE_COUNT,
             HUSH_GESTURE_USED,
             STATUS_BAR_BATTERY_STYLE,
-            VOLUME_LINK_NOTIFICATION
+            VOLUME_LINK_NOTIFICATION,
+            SOUND_SWITCH_POWER_BUTTON_GESTURE
         };
 
         /**
@@ -8916,6 +8928,7 @@ public final class Settings {
             VALIDATORS.put(LOCK_SCREEN_SHOW_NOTIFICATIONS, BOOLEAN_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_BATTERY_STYLE, STATUS_BAR_BATTERY_STYLE_VALIDATOR);
             VALIDATORS.put(VOLUME_LINK_NOTIFICATION, VOLUME_LINK_NOTIFICATION_VALIDATOR);
+            VALIDATORS.put(SOUND_SWITCH_POWER_BUTTON_GESTURE, SOUND_SWITCH_POWER_BUTTON_GESTURE_VALIDATOR);
         }
 
         /**
