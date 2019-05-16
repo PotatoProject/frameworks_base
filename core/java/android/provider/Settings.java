@@ -3099,6 +3099,12 @@ public final class Settings {
                 "lockscreen_scramble_pin_layout";
 
         /**
+         * Whether to display our potato logo in the statusbar for extra swag
+         * @hide
+         */
+        public static final String STATUS_BAR_LOGO = "status_bar_logo";
+
+        /**
          * Whether to use the custom quick unlock screen control
          * @hide
          */
@@ -4772,6 +4778,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_FULL_COLOR);
             PRIVATE_SETTINGS.add(BATTERY_LIGHT_REALLYFULL_COLOR);
             PRIVATE_SETTINGS.add(USE_OREO_SETTINGS);
+            PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
         }
 
         /**
