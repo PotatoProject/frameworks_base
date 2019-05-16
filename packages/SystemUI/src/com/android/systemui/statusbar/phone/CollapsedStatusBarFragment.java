@@ -33,6 +33,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.systemui.Dependency;
@@ -77,6 +79,8 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private static final int HIDE_DURATION = 60*1000; // 1 minute
     private static final int SHOW_DURATION = 5*1000; // 5 seconds
     private boolean useSmartClock = false;
+    private ImageView mPOSPLogo;
+    private boolean mShowLogo;
 
     private SignalCallback mSignalCallback = new SignalCallback() {
         @Override
@@ -115,6 +119,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         Dependency.get(StatusBarIconController.class).addIconGroup(mDarkIconManager);
         mSystemIconArea = mStatusBar.findViewById(R.id.system_icon_area);
         mClockView = mStatusBar.findViewById(R.id.clock);
+        mPOSPLogo = (ImageView)mStatusBar.findViewById(R.id.status_bar_logo);
+        Dependency.get(DarkIconDispatcher.class).addDarkReceiver(mPOSPLogo);
+        updateSettings(false);
         showSystemIconArea(false);
         showClock(false);
         initEmergencyCryptkeeperText();
@@ -239,10 +246,16 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     public void hideSystemIconArea(boolean animate) {
         animateHide(mSystemIconArea, animate);
+        if (mShowLogo) {
+            animateHide(mPOSPLogo, animate);
+        }
     }
 
     public void showSystemIconArea(boolean animate) {
         animateShow(mSystemIconArea, animate);
+        if (mShowLogo) {
+            animateShow(mPOSPLogo, animate);
+        }
     }
 
     public void hideClock(boolean animate) {
@@ -252,6 +265,22 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     public void showClock(boolean animate) {
         animateShow(mClockView, animate);
     }
+
+    public void updateSettings(boolean animate) {
+        if (getContext() == null) return;
+        mShowLogo = (Settings.System.getIntForUser(
+                getContext().getContentResolver(), Settings.System.STATUS_BAR_LOGO, 0,
+                UserHandle.USER_CURRENT) == 1);
+        if (mNotificationIconAreaInner != null) {
+            if (mShowLogo) {
+                if (mNotificationIconAreaInner.getVisibility() == View.VISIBLE) {
+                    animateShow(mPOSPLogo, animate);
+                }
+            } else {
+                animateHiddenState(mPOSPLogo, View.GONE, animate);
+            }
+        }
+   }
 
     /**
      * If panel is expanded/expanding it usually means QS shade is opening, so
@@ -405,6 +434,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.SMART_CLOCK_ENABLE), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.STATUS_BAR_LOGO), false,
+                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -418,6 +450,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                     showClock(true);
                 }
             }
+            updateSettings(true);
         }
     }
 }
