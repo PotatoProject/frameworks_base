@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "72cefbbe_76f261dd",
+        "filename": "core/java/android/content/res/AccentUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-05-20T14:57:14Z",
+      "side": 1,
+      "message": "Had tried with IDs earlier, only a few system dialogs got themed. SystemUI and Settings colors weren\u0027t updated. Resource name checking is sorta how OnePlus does it too, on OOS. The main difference being they have one unified color resource that applies to all 4.",
+      "parentUuid": "28f55b28_1b7aac12",
+      "revId": "128ee64e49f702e4c9af64d1a2e0d80d7188acda",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5fa307da_91dea009",
         "filename": "core/java/android/content/res/TypedArray.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2019-05-20T14:38:40Z",
       "side": 1,
       "message": "Fix indent",
+      "revId": "128ee64e49f702e4c9af64d1a2e0d80d7188acda",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2a57a6b_e289c801",
+        "filename": "core/java/android/content/res/TypedArray.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-05-20T14:57:14Z",
+      "side": 1,
+      "message": "oof thx",
+      "parentUuid": "5fa307da_91dea009",
       "revId": "128ee64e49f702e4c9af64d1a2e0d80d7188acda",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
