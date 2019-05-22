@@ -77,7 +77,7 @@
                     android:id="@+id/status_bar_logo"
                     android:layout_width="@dimen/status_bar_icon_size"
                     android:layout_height="@dimen/status_bar_icon_size"
-                    android:src="@drawable/status_bar_logo"
+                    android:src="@drawable/status_bar_logo_posp"
                     android:scaleType="centerInside"
                     android:paddingEnd="@dimen/status_bar_left_clock_end_padding"
                     android:layout_gravity="center_vertical"
