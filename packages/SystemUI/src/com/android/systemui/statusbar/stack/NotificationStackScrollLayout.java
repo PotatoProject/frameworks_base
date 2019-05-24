@@ -887,7 +887,9 @@ public class NotificationStackScrollLayout extends ViewGroup
      * @param height the expanded height of the panel
      */
     public void setExpandedHeight(float height) {
-        mExpandedHeight = height;
+	boolean rollBackToOreo = getContext().getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
+        if(!rollBackToOreo) {
+	mExpandedHeight = height;
         setIsExpanded(height > 0);
         int minExpansionHeight = getMinExpansionHeight();
         if (height < minExpansionHeight) {
@@ -950,6 +952,46 @@ public class NotificationStackScrollLayout extends ViewGroup
             BiConsumer<Float, Float> listener = mExpandedHeightListeners.get(i);
             listener.accept(mExpandedHeight, appearFraction);
         }
+	} else {
+             mExpandedHeight = height;
+        setIsExpanded(height > 0);
+        int minExpansionHeight = getMinExpansionHeight();
+        if (height < minExpansionHeight) {
+            mClipRect.left = 0;
+            mClipRect.right = getWidth();
+            mClipRect.top = 0;
+            mClipRect.bottom = (int) height;
+            height = minExpansionHeight;
+            setRequestedClipBounds(mClipRect);
+        } else {
+            setRequestedClipBounds(null);
+        }
+        int stackHeight;
+        float translationY;
+        float appearEndPosition = getAppearEndPosition();
+        float appearStartPosition = getAppearStartPosition();
+        if (height >= appearEndPosition) {
+            translationY = 0;
+            stackHeight = (int) height;
+        } else {
+            float appearFraction = getAppearFraction(height);
+            if (appearFraction >= 0) {
+                translationY = NotificationUtils.interpolate(getExpandTranslationStart(), 0,
+                        appearFraction);
+            } else {
+                // This may happen when pushing up a heads up. We linearly push it up from the
+                // start
+                translationY = height - appearStartPosition + getExpandTranslationStart();
+            }
+            stackHeight = (int) (height - translationY);
+        }
+        if (stackHeight != mCurrentStackHeight) {
+            mCurrentStackHeight = stackHeight;
+            updateAlgorithmHeightAndPadding();
+            requestChildrenUpdate();
+        }
+        setStackTranslation(translationY);
+	}
     }
 
     private void setRequestedClipBounds(Rect clipRect) {
