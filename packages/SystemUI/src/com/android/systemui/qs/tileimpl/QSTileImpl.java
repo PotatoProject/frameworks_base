@@ -427,7 +427,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile {
                         }
                     }
                 } else {
-                    return context.getColor(R.color.accent_device_default_light);
+                    return Utils.getColorAttr(context, android.R.attr.colorAccent);
                 }
             default:
                 Log.e("QSTile", "Invalid state " + state);
