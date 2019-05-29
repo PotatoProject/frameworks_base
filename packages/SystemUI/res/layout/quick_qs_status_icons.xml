@@ -29,48 +29,61 @@
     android:minHeight="20dp" >
 
     <LinearLayout
-        android:id="@+id/container_clock_oreo"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical|start"
-        android:visibility="gone">
+        android:id="@+id/pie_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <com.android.systemui.statusbar.policy.DateView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_gravity="start"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.QS.TileLabel"
+            systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm" />
+
+        <com.android.systemui.statusbar.phone.StatusIconContainer
+            android:id="@+id/statusIcons"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/oreo_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
         <com.android.systemui.statusbar.policy.Clock
-            android:id="@+id/clock_oreo"
+            android:id="@+id/oreo_layout_clock"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:minWidth="48dp"
-            android:gravity="center_vertical|start"
             android:singleLine="true"
             android:textColor="?android:attr/textColorPrimary"
             android:fontFamily="sans-serif-medium"
             android:textSize="@dimen/status_bar_clock_size"
-            android:layout_margin="0dp"
+            android:paddingEnd="@dimen/status_bar_left_clock_end_padding"
+            android:layout_marginEnd="4dp"
+            android:gravity="center_vertical|start"
             systemui:showDark="false" />
+
+        <com.android.keyguard.CarrierText
+            android:id="@+id/oreo_layout_carrier_text"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|start"
+            android:ellipsize="marquee"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textDirection="locale"
+            android:singleLine="true" />
+
+        <com.android.systemui.BatteryMeterView
+            android:id="@+id/oreo_layout_battery"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content" />
     </LinearLayout>
-
-    <com.android.systemui.statusbar.policy.DateView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_gravity="start"
-        android:gravity="center_vertical"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.QS.TileLabel"
-        systemui:datePattern="@string/abbrev_wday_month_day_no_year_alarm" />
-
-    <com.android.systemui.statusbar.phone.StatusIconContainer
-        android:id="@+id/statusIcons"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-    <com.android.systemui.BatteryMeterView
-        android:id="@+id/battery_oreo"
-        android:layout_height="match_parent"
-        android:layout_width="wrap_content"
-        android:gravity="center_vertical|end"
-        android:visibility="gone"
-        android:layout_marginLeft="4dp" />
 
 </LinearLayout>
