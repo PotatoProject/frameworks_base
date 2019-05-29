@@ -115,6 +115,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private int mRingerMode = AudioManager.RINGER_MODE_NORMAL;
     private AlarmManager.AlarmClockInfo mNextAlarm;
 
+    private boolean mSwitchToOreo;
+
     private ImageView mNextAlarmIcon;
     /** {@link TextView} containing the actual text indicating when the next alarm will go off. */
     private TextView mNextAlarmTextView;
@@ -123,10 +125,14 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private TextView mRingerModeTextView;
     private BatteryMeterView mBatteryMeterView;
     private Clock mClockView;
-    private BatteryMeterView mOreoBatteryMeterView;
-    private Clock mOreoClockView;
-    private LinearLayout mContainerOreoClockView;
     private DateView mDateView;
+
+    private LinearLayout mOreoLayout;
+    private LinearLayout mPieLayout;
+
+    /* OL = Oreo Layout */
+    private BatteryMeterView mBatteryMeterViewOL;
+    private Clock mClockViewOL;
 
     private NextAlarmController mAlarmController;
     private ZenModeController mZenController;
@@ -170,6 +176,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         iconContainer.setShouldRestrictIcons(false);
         mIconManager = new TintedIconManager(iconContainer);
 
+        mOreoLayout = findViewById(R.id.oreo_layout_container);
+        mPieLayout = findViewById(R.id.pie_layout_container);
+
         // Views corresponding to the header info section (e.g. tooltip and next alarm).
         mHeaderTextContainerView = findViewById(R.id.header_text_container);
         mLongPressTooltipView = findViewById(R.id.long_press_tooltip);
@@ -198,18 +207,17 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mClockView.setOnClickListener(this);
         mClockView.setQsHeader();
 
-        mOreoClockView = findViewById(R.id.clock_oreo);
-        mOreoClockView.setOnClickListener(this);
-        mContainerOreoClockView = findViewById(R.id.container_clock_oreo);
+        mClockViewOL = findViewById(R.id.oreo_layout_clock);
+        mClockViewOL.setOnClickListener(this);
 
-        mOreoBatteryMeterView = findViewById(R.id.battery_oreo);
-        mOreoBatteryMeterView.setForceShowPercent(true);
-        mOreoBatteryMeterView.setOnClickListener(this);
-        mBatteryManager = new TintedIconManager(mOreoBatteryMeterView);
+        mBatteryMeterViewOL = findViewById(R.id.oreo_layout_battery);
+        mBatteryMeterViewOL.setForceShowPercent(true);
+        mBatteryMeterViewOL.setOnClickListener(this);
+        mBatteryManager = new TintedIconManager(mBatteryMeterViewOL);
         mBatteryManager.setTint(fillColor);
 
         mDateView = findViewById(R.id.date);
-	mTraffic = findViewById(R.id.networkTraffic);
+        mTraffic = findViewById(R.id.networkTraffic);
 
         updateResources();
         updateSettings();
@@ -233,24 +241,24 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     }
 
     private void updateSettings() {
-        boolean useOreoStyle = Settings.System.getIntForUser(getContext().getContentResolver(),
+        mSwitchToOreo = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_USE_OREO_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1;
 
-        toggleViews(useOreoStyle);
+        toggleViews();
     }
 
-    private void toggleViews(boolean toggle) {
-        if(toggle) {
+    private void toggleViews() {
+        if(mSwitchToOreo) {
             mSystemIconsView.setVisibility(View.INVISIBLE);
 
-            mContainerOreoClockView.setVisibility(View.VISIBLE);
-            mOreoBatteryMeterView.setVisibility(View.VISIBLE);
+            mOreoLayout.setVisibility(View.VISIBLE);
+            mPieLayout.setVisibility(View.GONE);
         } else {
             mSystemIconsView.setVisibility(View.VISIBLE);
 
-            mContainerOreoClockView.setVisibility(View.GONE);
-            mOreoBatteryMeterView.setVisibility(View.GONE);
+            mOreoLayout.setVisibility(View.GONE);
+            mPieLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -330,7 +338,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                 newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
         mBatteryMeterView.useWallpaperTextColor(shouldUseWallpaperTextColor);
         mClockView.useWallpaperTextColor(shouldUseWallpaperTextColor);
-	mTraffic.useWallpaperTextColor(shouldUseWallpaperTextColor);
+        mTraffic.useWallpaperTextColor(shouldUseWallpaperTextColor);
     }
 
     @Override
@@ -382,13 +390,13 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     private void updateStatusIconAlphaAnimator() {
         mStatusIconsAlphaAnimator = new TouchAnimator.Builder()
-                .addFloat(mQuickQsStatusIcons, "alpha", 1, 0)
+                .addFloat(mQuickQsStatusIcons, "alpha", 1, mSwitchToOreo ? 1 : 0)
                 .build();
     }
 
     private void updateHeaderTextContainerAlphaAnimator() {
         mHeaderTextContainerAlphaAnimator = new TouchAnimator.Builder()
-                .addFloat(mHeaderTextContainerView, "alpha", 0, 1)
+                .addFloat(mHeaderTextContainerView, "alpha", 0, mSwitchToOreo ? 0 : 1)
                 .setStartDelay(.5f)
                 .build();
     }
@@ -505,10 +513,10 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
     @Override
     public void onClick(View v) {
-        if (v == mClockView || v == mOreoClockView) {
+        if (v == mClockView) {
             Dependency.get(ActivityStarter.class).postStartActivityDismissingKeyguard(new Intent(
                     AlarmClock.ACTION_SHOW_ALARMS),0);
-        } else if (v == mBatteryMeterView || v == mOreoBatteryMeterView) {
+        } else if (v == mBatteryMeterView || v == mBatteryMeterViewOL) {
             Dependency.get(ActivityStarter.class).postStartActivityDismissingKeyguard(new Intent(
                     Intent.ACTION_POWER_USAGE_SUMMARY),0);
         }
@@ -673,8 +681,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         float intensity = getColorIntensity(colorForeground);
         int fillColor = fillColorForIntensity(intensity, getContext());
 
-        mOreoBatteryMeterView.setColorsFromContext(mHost.getContext());
-        mOreoBatteryMeterView.onDarkChanged(rect, intensity, fillColor);
+        mBatteryMeterViewOL.setColorsFromContext(mHost.getContext());
+        mBatteryMeterViewOL.onDarkChanged(rect, intensity, fillColor);
     }
 
     public void setCallback(Callback qsPanelCallback) {

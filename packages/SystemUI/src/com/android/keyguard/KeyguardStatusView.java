@@ -19,6 +19,7 @@ package com.android.keyguard;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.IActivityManager;
 import android.content.Context;
 import android.content.ContentResolver;
@@ -393,6 +394,17 @@ public class KeyguardStatusView extends GridLayout implements
 
     public float getClockTextSize() {
         return mClockView.getTextSize();
+    }
+
+	public static String formatNextAlarm(Context context, AlarmManager.AlarmClockInfo info) {
+        if (info == null) {
+            return "";
+        }
+        String skeleton = DateFormat.is24HourFormat(context, ActivityManager.getCurrentUser())
+                ? "EHm"
+                : "Ehma";
+        String pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton);
+        return DateFormat.format(pattern, info.getTriggerTime()).toString();
     }
 
     private void updateLogoutView() {
