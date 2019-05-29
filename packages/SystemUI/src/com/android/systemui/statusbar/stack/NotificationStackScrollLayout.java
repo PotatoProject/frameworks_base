@@ -887,6 +887,8 @@ public class NotificationStackScrollLayout extends ViewGroup
      * @param height the expanded height of the panel
      */
     public void setExpandedHeight(float height) {
+        boolean rollBackToOreo = getContext().getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
+
         mExpandedHeight = height;
         setIsExpanded(height > 0);
         int minExpansionHeight = getMinExpansionHeight();
@@ -909,19 +911,23 @@ public class NotificationStackScrollLayout extends ViewGroup
         mAmbientState.setAppearing(appearing);
         if (!appearing) {
             translationY = 0;
-            if (mShouldShowShelfOnly) {
-                stackHeight = mTopPadding + mShelf.getIntrinsicHeight();
-            } else if (mQsExpanded) {
-                int stackStartPosition = mContentHeight - mTopPadding + mIntrinsicPadding;
-                int stackEndPosition = mMaxTopPadding + mShelf.getIntrinsicHeight();
-                if (stackStartPosition <= stackEndPosition) {
-                    stackHeight = stackEndPosition;
-                } else {
-                    stackHeight = (int) NotificationUtils.interpolate(stackStartPosition,
-                            stackEndPosition, mQsExpansionFraction);
-                }
-            } else {
+            if(rollBackToOreo) {
                 stackHeight = (int) height;
+            } else {
+                if (mShouldShowShelfOnly) {
+                    stackHeight = mTopPadding + mShelf.getIntrinsicHeight();
+                } else if (mQsExpanded) {
+                    int stackStartPosition = mContentHeight - mTopPadding + mIntrinsicPadding;
+                    int stackEndPosition = mMaxTopPadding + mShelf.getIntrinsicHeight();
+                    if (stackStartPosition <= stackEndPosition) {
+                        stackHeight = stackEndPosition;
+                    } else {
+                        stackHeight = (int) NotificationUtils.interpolate(stackStartPosition,
+                                stackEndPosition, mQsExpansionFraction);
+                    }
+                } else {
+                    stackHeight = (int) height;
+                }
             }
         } else {
             appearFraction = getAppearFraction(height);
