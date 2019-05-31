@@ -134,6 +134,9 @@ public class QSIconViewImpl extends QSIconView {
     }
 
     protected void setIcon(ImageView iv, QSTile.State state) {
+        if(mEnableQsTileTinting)
+            updateIcon(iv, state);
+
         if (state.disabledByPolicy) {
             iv.setColorFilter(getContext().getColor(R.color.qs_tile_disabled_color));
         } else {
