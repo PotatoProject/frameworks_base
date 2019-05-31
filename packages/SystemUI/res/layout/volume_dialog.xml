@@ -83,15 +83,17 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg_bottom_background">
                 <com.android.keyguard.AlphaOptimizedImageButton
-                    android:id="@+id/settings"
-                    android:src="@drawable/ic_settings_16dp"
-                    android:layout_width="@dimen/volume_dialog_tap_target_size"
-                    android:layout_height="@dimen/volume_dialog_tap_target_size"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/accessibility_volume_settings"
-                    android:background="@drawable/ripple_drawable_20dp"
-                    android:tint="?android:attr/textColorSecondary"
-                    android:soundEffectsEnabled="false" />
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/volume_expand_button"
+                    style="@style/VolumeButtons"
+                    android:layout_width="@dimen/volume_button_size"
+                    android:layout_height="@dimen/volume_button_size"
+                    android:clickable="true"
+                    android:soundEffectsEnabled="false"
+                    android:src="@drawable/ic_volume_collapse_animation"
+                    android:background="@drawable/ripple_drawable"
+                    android:rotation="90"
+                    tools:ignore="RtlHardcoded" />
             </FrameLayout>
         </LinearLayout>
 

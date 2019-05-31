@@ -124,8 +124,6 @@ public class VolumeDialogImpl implements VolumeDialog {
     private ViewGroup mDialogRowsView;
     private ViewGroup mRinger;
     private ImageButton mRingerIcon;
-    private View mSettingsView;
-    private ImageButton mSettingsIcon;
     private FrameLayout mZenIcon;
     private final List<VolumeRow> mRows = new ArrayList<>();
     private ConfigurableTexts mConfigurableTexts;
@@ -141,6 +139,12 @@ public class VolumeDialogImpl implements VolumeDialog {
 
     private boolean mShowing;
     private boolean mShowA11yStream;
+
+    private ImageButton mExpandButton;
+    private int mExpandButtonAnimationDuration;
+    private boolean mExpandButtonAnimationRunning;
+    private long mCollapseTime;
+    private boolean mExpanded;
 
     private int mActiveStream;
     private int mPrevActiveStream;
@@ -222,6 +226,11 @@ public class VolumeDialogImpl implements VolumeDialog {
                     })
                     .start();
         });
+
+        mExpanded = false;
+        mExpandButton = (ImageButton) mDialogView.findViewById(R.id.volume_expand_button);
+        mExpandButton.setOnClickListener(mClickExpand);
+
         mDialogView = mDialog.findViewById(R.id.volume_dialog);
         mDialogView.setOnHoverListener((v, event) -> {
             int action = event.getActionMasked();
@@ -230,6 +239,10 @@ public class VolumeDialogImpl implements VolumeDialog {
             rescheduleTimeoutH();
             return true;
         });
+
+        mExpandButton.setVisibility(
+                AudioSystem.isSingleVolume(mContext) ? View.GONE : View.VISIBLE);
+        updateExpandButtonH();
 
         mActiveTint = ColorStateList.valueOf(Utils.getColorAccent(mContext));
         mActiveAlpha = Color.alpha(mActiveTint.getDefaultColor());
@@ -246,8 +259,6 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
         mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
         mZenIcon = mRinger.findViewById(R.id.dnd_icon);
-        mSettingsView = mDialog.findViewById(R.id.settings_container);
-        mSettingsIcon = mDialog.findViewById(R.id.settings);
 
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
@@ -279,7 +290,6 @@ public class VolumeDialogImpl implements VolumeDialog {
 
         updateRowsH(getActiveRow());
         initRingerH();
-        initSettingsH();
     }
 
     protected ViewGroup getDialogView() {
@@ -442,18 +452,6 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public void initSettingsH() {
-        mSettingsView.setVisibility(
-                mDeviceProvisionedController.isCurrentUserSetup() ? VISIBLE : GONE);
-        mSettingsIcon.setOnClickListener(v -> {
-            Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
-            Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            dismissH(DISMISS_REASON_SETTINGS_CLICKED);
-            Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade */);
-        });
-    }
-
     public void initRingerH() {
         mRingerIcon.setOnClickListener(v -> {
             Prefs.putBoolean(mContext, Prefs.Key.TOUCHED_RINGER_TOGGLE, true);
@@ -559,7 +557,6 @@ public class VolumeDialogImpl implements VolumeDialog {
         rescheduleTimeoutH();
         mShowing = true;
 
-        initSettingsH();
         mDialog.show();
         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
         mController.notifyVisible(true);
