@@ -133,6 +133,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     /* OL = Oreo Layout */
     private BatteryMeterView mBatteryMeterViewOL;
     private Clock mClockViewOL;
+    private NetworkTraffic mTrafficOL;
 
     private NextAlarmController mAlarmController;
     private ZenModeController mZenController;
@@ -215,6 +216,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mBatteryMeterViewOL.setOnClickListener(this);
         mBatteryManager = new TintedIconManager(mBatteryMeterViewOL);
         mBatteryManager.setTint(fillColor);
+
+        mTrafficOL = findViewById(R.id.oreo_layout_networkTraffic);
 
         mDateView = findViewById(R.id.date);
         mTraffic = findViewById(R.id.networkTraffic);
@@ -683,6 +686,9 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
         mBatteryMeterViewOL.setColorsFromContext(mHost.getContext());
         mBatteryMeterViewOL.onDarkChanged(rect, intensity, fillColor);
+
+        mTrafficOL.setColorsFromContext(mHost.getContext());
+        mTrafficOL.onDarkChanged(rect, intensity, fillColor);
     }
 
     public void setCallback(Callback qsPanelCallback) {

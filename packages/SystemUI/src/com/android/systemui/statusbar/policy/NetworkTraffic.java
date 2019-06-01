@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.policy;
 
 import java.text.DecimalFormat;
 
+import android.animation.ArgbEvaluator;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -23,8 +24,11 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
+
+import com.android.systemui.statusbar.policy.DarkIconDispatcher.DarkReceiver;
 
 import com.android.systemui.R;
 import com.android.settingslib.Utils;
@@ -35,7 +39,7 @@ import com.android.settingslib.Utils;
 * to only use it for a single boolean. 32-bits is plenty of room for what we need it to do.
 *
 */
-public class NetworkTraffic extends TextView {
+public class NetworkTraffic extends TextView implements DarkReceiver {
 
     private static final int INTERVAL = 1500; //ms
     private static final int KB = 1024;
@@ -59,6 +63,9 @@ public class NetworkTraffic extends TextView {
     private boolean mHideArrow;
     private int mAutoHideThreshold;
     private int mTintColor;
+
+    private int mLightModeSingleToneColor;
+    private int mDarkModeSingleToneColor;
 
     private boolean mScreenOn = true;
 
@@ -308,11 +315,36 @@ public class NetworkTraffic extends TextView {
     public void useWallpaperTextColor(boolean shouldUseWallpaperTextColor) {
         if (shouldUseWallpaperTextColor) {
             mTintColor = Utils.getColorAttr(mContext, R.attr.wallpaperTextColor);
-	    updateTrafficDrawable();
+            updateTrafficDrawable();
         } else {
-	    final Resources resources = getResources();
-	    mTintColor = resources.getColor(android.R.color.white);
-	    updateTrafficDrawable();
-	}
+            final Resources resources = getResources();
+            mTintColor = resources.getColor(android.R.color.white);
+            updateTrafficDrawable();
+        }
+    }
+
+    public void setColorsFromContext(Context context) {
+        if (context == null) {
+            return;
+        }
+
+        Context dualToneDarkTheme = new ContextThemeWrapper(context,
+                Utils.getThemeAttr(context, R.attr.darkIconTheme));
+        Context dualToneLightTheme = new ContextThemeWrapper(context,
+                Utils.getThemeAttr(context, R.attr.lightIconTheme));
+        mDarkModeSingleToneColor = Utils.getColorAttr(dualToneDarkTheme, R.attr.singleToneColor);
+        mLightModeSingleToneColor = Utils.getColorAttr(dualToneLightTheme, R.attr.singleToneColor);
+    }
+
+    @Override
+    public void onDarkChanged(Rect area, float darkIntensity, int tint) {
+        float intensity = DarkIconDispatcher.isInArea(area, this) ? darkIntensity : 0;
+        mTintColor = getColorForDarkIntensity(
+                intensity, mLightModeSingleToneColor, mDarkModeSingleToneColor);
+		updateTrafficDrawable();
+    }
+
+    private int getColorForDarkIntensity(float darkIntensity, int lightColor, int darkColor) {
+        return (int) ArgbEvaluator.getInstance().evaluate(darkIntensity, lightColor, darkColor);
     }
 }
