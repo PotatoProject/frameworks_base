@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7120ffe8_9c0e3e38",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "Redundant import",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "354b50a8_144c4d06",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "tab",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44e9842d_f47a0064",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "Ensure indent \u003d 4 spaces.",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ebd41f0_d9de8f8f",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "tabs everywhere",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ea3ef81_da91e6dc",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "Can be combined with above line.",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1013062b_e5d16732",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:31:43Z",
+      "side": 1,
+      "message": "moar tab",
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
