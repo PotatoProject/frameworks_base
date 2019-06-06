@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3da7bd55_d097b279",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/stack/NotificationStackScrollLayout.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-06T15:41:15Z",
+      "side": 1,
+      "message": "Split into 2 lines for readability.",
+      "revId": "0736b60ff7f516826c3358534ff2dde602f758af",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
