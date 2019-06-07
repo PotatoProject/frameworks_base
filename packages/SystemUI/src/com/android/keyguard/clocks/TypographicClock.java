@@ -21,14 +21,12 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
 import com.android.keyguard.R;
-import com.android.systemui.statusbar.policy.ConfigurationController;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-public class TypographicClock extends TextView implements
-        ConfigurationController.ConfigurationListener {
+public class TypographicClock extends TextView {
 
     private int mAccentColor;
     private String mDescFormat;
