@@ -2,6 +2,7 @@ package com.android.keyguard.clocks;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.res.AccentUtils;
 import android.content.res.Resources;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -65,7 +66,8 @@ public class TypographicClock extends TextView {
         mResources = context.getResources();
         mHours = mResources.getStringArray(R.array.type_clock_hours);
         mMinutes = mResources.getStringArray(R.array.type_clock_minutes);
-        mAccentColor = mResources.getColor(R.color.custom_text_clock_top_color, null);
+        mAccentColor = AccentUtils.getAccentColor(mResources
+                .getColor(R.color.custom_text_clock_top_color, null));
 
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator());
