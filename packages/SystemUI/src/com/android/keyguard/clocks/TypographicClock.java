@@ -19,7 +19,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
-import android.util.Log;
 
 import com.android.keyguard.R;
 import com.android.systemui.statusbar.policy.ConfigurationController;
@@ -90,7 +89,7 @@ public class TypographicClock extends TextView implements
         int hours = mTime.get(Calendar.HOUR) % 12;
         int minutes = mTime.get(Calendar.MINUTE) % 60;
         SpannedString rawFormat = (SpannedString) mResources.getQuantityText(R.plurals.type_clock_header, hours);
-        Annotation[] annotationArr = (Annotation[]) rawFormat.getSpans(0, rawFormat.length(), Annotation.class);
+        Annotation[] annotationArr = rawFormat.getSpans(0, rawFormat.length(), Annotation.class);
         SpannableString colored = new SpannableString(rawFormat);
         for (Annotation annotation : annotationArr) {
             if ("color".equals(annotation.getValue())) {
@@ -105,7 +104,7 @@ public class TypographicClock extends TextView implements
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                setText(TextUtils.expandTemplate(colored, new CharSequence[]{mHours[hours], mMinutes[minutes]}));
+                setText(TextUtils.expandTemplate(colored, mHours[hours], mMinutes[minutes]));
                 startAnimation(fadeIn);
             }
 
@@ -133,12 +132,8 @@ public class TypographicClock extends TextView implements
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        Calendar calendar = mTime;
-        TimeZone timeZone = mTimeZone;
-        if (timeZone == null) {
-            timeZone = TimeZone.getDefault();
-        }
-        calendar.setTimeZone(timeZone);
+        TimeZone timeZone = mTimeZone == null ? TimeZone.getDefault() : mTimeZone;
+        mTime.setTimeZone(timeZone);
         onTimeChanged();
 
         IntentFilter filter = new IntentFilter();
