@@ -2,6 +2,8 @@ package com.android.keyguard.clocks;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.res.AccentUtils;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -49,6 +51,12 @@ public class TypographicClock extends TextView {
         }
     };
 
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        onTimeChanged();
+    }
+
     public TypographicClock(Context context) {
         this(context, null);
     }
@@ -65,7 +73,8 @@ public class TypographicClock extends TextView {
         mResources = context.getResources();
         mHours = mResources.getStringArray(R.array.type_clock_hours);
         mMinutes = mResources.getStringArray(R.array.type_clock_minutes);
-        mAccentColor = mResources.getColor(R.color.custom_text_clock_top_color, null);
+        mAccentColor = AccentUtils.getAccentColor(mResources
+                .getColor(R.color.custom_text_clock_top_color, null));
 
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator());
@@ -79,6 +88,8 @@ public class TypographicClock extends TextView {
 
     public void onTimeChanged() {
         mTime.setTimeInMillis(System.currentTimeMillis());
+        mAccentColor = AccentUtils.getAccentColor(mResources
+                .getColor(R.color.custom_text_clock_top_color, null));
         setContentDescription(DateFormat.format(mDescFormat, mTime));
         int hours = mTime.get(Calendar.HOUR) % 12;
         int minutes = mTime.get(Calendar.MINUTE) % 60;
@@ -116,11 +127,6 @@ public class TypographicClock extends TextView {
     public void onTimeZoneChanged(TimeZone timeZone) {
         mTimeZone = timeZone;
         mTime.setTimeZone(timeZone);
-    }
-
-    public void setClockColor(int i) {
-        mAccentColor = i;
-        onTimeChanged();
     }
 
     @Override
