@@ -70,6 +70,29 @@
     },
     {
       "key": {
+        "uuid": "7ee74f84_d9c499a6",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-06-09T16:04:38Z",
+      "side": 1,
+      "message": "Assigned but never used",
+      "range": {
+        "startLine": 343,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 39
+      },
+      "revId": "754fbedabba76bd9d72265edd28810f025c05c4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7ea3ef81_da91e6dc",
         "filename": "packages/SystemUI/src/com/android/systemui/statusbar/policy/NetworkTraffic.java",
         "patchSetId": 1
