@@ -23,6 +23,7 @@ import android.telephony.SubscriptionInfo;
 import com.android.settingslib.net.DataUsageController;
 import com.android.settingslib.wifi.AccessPoint;
 import com.android.systemui.DemoMode;
+import com.android.systemui.statusbar.phone.NetworkSpeedController;
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
 
 import java.util.List;
@@ -101,4 +102,6 @@ public interface NetworkController extends CallbackController<SignalCallback>, D
             void onSettingsActivityTriggered(Intent settingsIntent);
         }
     }
+
+    void setNetworkSpeedController(NetworkSpeedController networkSpeedController);
 }

@@ -31,10 +31,12 @@ public class StatusBarIconHolder {
     public static final int TYPE_ICON = 0;
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;
+    public static final int TYPE_NETIND = 3;
 
     private StatusBarIcon mIcon;
     private WifiIconState mWifiState;
     private MobileIconState mMobileState;
+    private int mResourceId;
     private int mType = TYPE_ICON;
     private int mTag = 0;
     private boolean mVisible = true;
@@ -68,6 +70,15 @@ public class StatusBarIconHolder {
         holder.mTag = state.subId;
         return holder;
     }
+
+    public static StatusBarIconHolder fromOPCustView(int resourceId, boolean visible) {
+        StatusBarIconHolder holder = new StatusBarIconHolder();
+        holder.mType = TYPE_NETIND;
+        holder.mResourceId = resourceId;
+        holder.mVisible = visible;
+        return holder;
+    }
+    
 
     public int getType() {
         return mType;

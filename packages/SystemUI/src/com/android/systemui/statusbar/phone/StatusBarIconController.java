@@ -64,6 +64,7 @@ public interface StatusBarIconController {
     public void setSignalIcon(String slot, WifiIconState state);
     public void setMobileIcons(String slot, List<MobileIconState> states);
     public void setIconVisibility(String slot, boolean b);
+    void setOPCustView(String str, int i, boolean z);
     /**
      * If you don't know what to pass for `tag`, either remove all icons for slot, or use
      * TAG_PRIMARY to refer to the first icon at a given slot.

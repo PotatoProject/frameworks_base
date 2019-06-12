@@ -604,6 +604,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private KeyguardUserSwitcher mKeyguardUserSwitcher;
     protected UserSwitcherController mUserSwitcherController;
     private NetworkController mNetworkController;
+    private NetworkSpeedController mNetworkSpeedController;
     private KeyguardMonitorImpl mKeyguardMonitor
             = (KeyguardMonitorImpl) Dependency.get(KeyguardMonitor.class);
     private BatteryController mBatteryController;
@@ -878,7 +879,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         mNotificationIconAreaController.setupShelf(mNotificationShelf);
         mStackScroller.setIconAreaController(mNotificationIconAreaController);
         Dependency.get(DarkIconDispatcher.class).addDarkReceiver(mNotificationIconAreaController);
-        FragmentHostManager.get(mStatusBarWindow)
+        mNetworkSpeedController = Dependency.get(NetworkSpeedController.class);
+	mNetworkController.setNetworkSpeedController(mNetworkSpeedController);
+	FragmentHostManager.get(mStatusBarWindow)
                 .addTagListener(CollapsedStatusBarFragment.TAG, (tag, fragment) -> {
                     CollapsedStatusBarFragment statusBarFragment =
                             (CollapsedStatusBarFragment) fragment;

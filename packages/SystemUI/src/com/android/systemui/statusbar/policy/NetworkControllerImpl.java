@@ -53,6 +53,7 @@ import com.android.systemui.DemoMode;
 import com.android.systemui.Dumpable;
 import com.android.systemui.R;
 import com.android.systemui.settings.CurrentUserTracker;
+import com.android.systemui.statusbar.phone.NetworkSpeedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
 
 import com.android.systemui.statusbar.policy.MobileSignalController.MobileState;
@@ -105,6 +106,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
     final SparseArray<MobileSignalController> mMobileSignalControllers = new SparseArray<>();
     // When no SIMs are around at setup, and one is added later, it seems to default to the first
     // SIM for most actions.  This may be null if there aren't any SIMs around.
+    private NetworkSpeedController mNetworkSpeedController;
     private MobileSignalController mDefaultSignalController;
     private final AccessPointControllerImpl mAccessPoints;
     private final DataUsageController mDataUsageController;
@@ -661,6 +663,13 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
     }
 
+    public void setNetworkSpeedController(NetworkSpeedController controller) {
+        mNetworkSpeedController = controller;
+        if (mNetworkSpeedController != null) {
+            mNetworkSpeedController.updateConnectivity(mConnectedTransports, mValidatedTransports);
+        }
+    }
+
     private void refreshLocale() {
         Locale current = mContext.getResources().getConfiguration().locale;
         if (!current.equals(mLocale)) {
@@ -731,6 +740,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
         }
         mWifiSignalController.updateConnectivity(mConnectedTransports, mValidatedTransports);
         mEthernetSignalController.updateConnectivity(mConnectedTransports, mValidatedTransports);
+        if (mNetworkSpeedController != null) {
+            mNetworkSpeedController.updateConnectivity(mConnectedTransports, mValidatedTransports);
+        }
     }
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {

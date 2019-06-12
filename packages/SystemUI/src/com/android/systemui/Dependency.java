@@ -53,6 +53,8 @@ import com.android.systemui.statusbar.phone.DarkIconDispatcherImpl;
 import com.android.systemui.statusbar.phone.LightBarController;
 import com.android.systemui.statusbar.phone.ManagedProfileController;
 import com.android.systemui.statusbar.phone.ManagedProfileControllerImpl;
+import com.android.systemui.statusbar.phone.NetworkSpeedController;
+import com.android.systemui.statusbar.phone.NetworkSpeedControllerImpl;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.phone.StatusBarIconControllerImpl;
 import com.android.systemui.statusbar.phone.StatusBarWindowManager;
@@ -302,6 +304,8 @@ public class Dependency extends SystemUI {
         mProviders.put(SysuiColorExtractor.class, () -> new SysuiColorExtractor(mContext));
 
         mProviders.put(TunablePaddingService.class, () -> new TunablePaddingService());
+
+	mProviders.put(NetworkSpeedController.class, () -> new NetworkSpeedControllerImpl(mContext));
 
         mProviders.put(ForegroundServiceController.class,
                 () -> new ForegroundServiceControllerImpl(mContext));
