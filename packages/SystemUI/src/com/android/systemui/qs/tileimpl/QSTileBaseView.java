@@ -19,14 +19,18 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.PathShape;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.service.quicksettings.Tile;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.PathParser;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,15 +74,24 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         super(context);
         // Default to Quick Tile padding, and QSTileView will specify its own padding.
         int padding = context.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_padding);
+        boolean enableQsTileTinting = context.getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
 
         mIconFrame = new FrameLayout(context);
         mIconFrame.setForegroundGravity(Gravity.CENTER);
         int size = context.getResources().getDimensionPixelSize(R.dimen.qs_quick_tile_size);
+	int sizeBg = context.getResources().getDimensionPixelSize(R.dimen.qs_tile_background_size);
+        FrameLayout.LayoutParams bgparams = new FrameLayout.LayoutParams(sizeBg, sizeBg, 17);
+	int iconPath = context.getResources().getSystem().getIdentifier("config_icon_mask", "string", "android");
         addView(mIconFrame, new LayoutParams(size, size));
         mBg = new ImageView(getContext());
-        mBg.setScaleType(ScaleType.FIT_CENTER);
-        mBg.setImageResource(R.drawable.ic_qs_circle);
-        mIconFrame.addView(mBg);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(new PathShape(new Path(
+                PathParser.createPathFromPathData(enableQsTileTinting ? "M 0,0 Z" : context.getResources().getString(iconPath))), 100.0f, 100.0f));
+        shapeDrawable.setTintList(ColorStateList.valueOf(0));
+        shapeDrawable.setIntrinsicHeight(sizeBg);
+        shapeDrawable.setIntrinsicWidth(sizeBg);
+        mBg.setImageDrawable(shapeDrawable);
+        mIconFrame.addView(mBg, bgparams);
+        mBg.setLayoutParams(bgparams);
         mIcon = icon;
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -94,7 +107,6 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         setBackground(mTileBackground);
 
-        boolean enableQsTileTinting = context.getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
         if (!enableQsTileTinting) {
             mColorActive = Utils.getColorAttr(context, android.R.attr.colorAccent);
             mColorDisabled = Utils.getDisabled(context,
