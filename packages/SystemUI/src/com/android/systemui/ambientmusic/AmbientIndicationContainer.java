@@ -71,8 +71,6 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
     public void setDozing(boolean dozing) {
         if (dozing == mDozing) return;
 
-        mDozing = dozing;
-        setTickerMarquee(dozing, false);
         if (dozing && mInfoAvailable) {
             mText.setText(mInfoToSet);
             mLastInfo = mInfoToSet;
@@ -83,6 +81,10 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
             mAmbientIndication.setVisibility(View.INVISIBLE);
             mText.setText(null);
         }
+        if (mDozing != dozing) {
+            setTickerMarquee(dozing, false);
+        }
+        mDozing = dozing;
     }
 
     private void setTickerMarquee(boolean enable, boolean extendPulseOnNewTrack) {
@@ -92,7 +94,7 @@ public class AmbientIndicationContainer extends AutoReinflateContainer {
                 @Override
                 public void run() {
                     mText.setEllipsize(TruncateAt.MARQUEE);
-                    mText.setMarqueeRepeatLimit(2);
+                    mText.setMarqueeRepeatLimit(3);
                     boolean rtl = TextUtils.getLayoutDirectionFromLocale(
                             Locale.getDefault()) == View.LAYOUT_DIRECTION_RTL;
                     mText.setCompoundDrawables(rtl ? null : mAnimatedIcon, null, rtl ?
