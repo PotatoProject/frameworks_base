@@ -14,4 +14,7 @@
 
     <!-- Config to enable/diaable qs tile tinting -->
     <bool name="config_enable_qs_tile_tinting">false</bool>
+
+    <!-- Color of the FOD view -->
+    <color name="config_fodColor">#00ff00</color>
 </resources>
