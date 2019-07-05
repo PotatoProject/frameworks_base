@@ -169,6 +169,7 @@ import com.android.systemui.SystemUIFactory;
 import com.android.systemui.UiOffloadThread;
 import com.android.systemui.ambientmusic.AmbientIndicationContainer;
 import com.android.systemui.assist.AssistManager;
+import com.android.systemui.blur.opengl.drawable.BlurDrawable;
 import com.android.systemui.charging.WirelessChargingAnimation;
 import com.android.systemui.classifier.FalsingLog;
 import com.android.systemui.classifier.FalsingManager;
@@ -1033,6 +1034,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             mBackdrop.setOnVisibilityChangedRunnable(runnable);
             runnable.run();
         }
+        mScrimController.setScrimBehindDrawable(new BlurDrawable());
         mStackScroller.setScrimController(mScrimController);
         mDozeScrimController = new DozeScrimController(mScrimController, context,
                 DozeParameters.getInstance(context));
