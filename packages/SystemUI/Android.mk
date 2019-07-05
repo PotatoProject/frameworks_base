@@ -57,6 +57,8 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
     SystemUI-tags \
     SystemUI-proto
 
+LOCAL_SHARED_LIBRARIES := libhoko_blur
+
 LOCAL_JAVA_LIBRARIES := telephony-common \
     android.car \
     ims-common

@@ -1,0 +1,47 @@
+cc_library_shared {
+
+    name: "libhoko_blur",
+    include_dirs: ["frameworks/base/packages/SystemUI/jni/include"],
+    srcs: [
+        "BoxBlurFilter.cpp",
+        "StackBlurFilter.cpp",
+        "GaussianBlurFilter.cpp",
+        "BlurDrawable.cpp",
+        "DrawFunctor.cpp",
+        "BlurUtil.cpp",
+        "ScopeJEnv.cpp",
+    ],
+    host_ldlibs: [
+        "-llog",
+        "-lm",
+        "-ljnigraphics",
+    ],
+
+    cflags: [
+        "-Wno-unused-parameter",
+        "-Wno-non-virtual-dtor",
+        "-Wno-maybe-uninitialized",
+        "-Wno-parentheses",
+        "-Wno-unused-variable",
+
+        "-DGL_GLEXT_PROTOTYPES",
+        "-DEGL_EGLEXT_PROTOTYPES",
+
+        "-DU_USING_ICU_NAMESPACE=0",
+
+        "-Wall",
+        "-Wno-error",
+        "-Wno-error=deprecated-declarations",
+        "-Wunused",
+        "-Wunreachable-code",
+    ],
+
+    cppflags: ["-Wno-conversion-null"],
+    cpp_std: "c++17",
+
+    shared_libs: [
+        "libjnigraphics",
+        "liblog",
+    ],
+    compile_multilib: "64",
+}
