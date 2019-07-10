@@ -43,6 +43,7 @@ import com.android.systemui.plugins.qs.DetailAdapter;
 import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
 import com.android.systemui.qs.CellTileView;
+import com.android.systemui.qs.CellTileView.SignalIcon;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
@@ -168,10 +169,14 @@ public class CellularTile extends QSTileImpl<SignalState> {
             cb = mSignalCallback.mInfo;
         }
 
+        boolean useOreoTile = mContext.getResources().getBoolean(R.bool.config_enable_qs_tile_tinting);
+
         DataUsageController.DataUsageInfo carrierLabelInfo = mDataController.getDataUsageInfo();
         final Resources r = mContext.getResources();
         state.activityIn = cb.enabled && cb.activityIn;
         state.activityOut = cb.enabled && cb.activityOut;
+        state.isOverlayIconWide = cb.isDataTypeIconWide;
+        state.overlayIconId = useOreoTile ? cb.dataTypeIconId : 0;
         state.dualTarget = true;
         state.label = r.getString(R.string.mobile_data);
         boolean mobileDataEnabled = mDataController.isMobileDataSupported()
@@ -187,7 +192,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
             } else {
                 state.label = r.getString(R.string.mobile_data);
             }
-            state.icon = ResourceIcon.get(R.drawable.ic_swap_vert);
+            state.icon = useOreoTile ? new SignalIcon(cb.mobileSignalIconId) : ResourceIcon.get(R.drawable.ic_swap_vert);
         }
 
         if (cb.noSim) {
@@ -239,13 +244,29 @@ public class CellularTile extends QSTileImpl<SignalState> {
         return mController.hasMobileDataFeature();
     }
 
+    // Remove the period from the network name
+    public static String removeTrailingPeriod(String string) {
+        if (string == null) return null;
+        final int length = string.length();
+        if (string.endsWith(".")) {
+            return string.substring(0, length - 1);
+        }
+        return string;
+    }
+
     private static final class CallbackInfo {
         boolean enabled;
+        boolean wifiEnabled;
         boolean airplaneModeEnabled;
+        int mobileSignalIconId;
+        String signalContentDescription;
+        int dataTypeIconId;
         String dataContentDescription;
         boolean activityIn;
         boolean activityOut;
+        String enabledDesc;
         boolean noSim;
+        boolean isDataTypeIconWide;
         boolean roaming;
     }
 
@@ -261,9 +282,14 @@ public class CellularTile extends QSTileImpl<SignalState> {
                 return;
             }
             mInfo.enabled = qsIcon.visible;
+            mInfo.mobileSignalIconId = qsIcon.icon;
+            mInfo.signalContentDescription = qsIcon.contentDescription;
+            mInfo.dataTypeIconId = qsType;
             mInfo.dataContentDescription = typeContentDescription;
             mInfo.activityIn = activityIn;
             mInfo.activityOut = activityOut;
+            mInfo.enabledDesc = description;
+            mInfo.isDataTypeIconWide = qsType != 0 && isWide;
             mInfo.roaming = roaming;
             refreshState(mInfo);
         }
@@ -271,6 +297,16 @@ public class CellularTile extends QSTileImpl<SignalState> {
         @Override
         public void setNoSims(boolean show, boolean simDetected) {
             mInfo.noSim = show;
+			if (mInfo.noSim) {
+                // Make sure signal gets cleared out when no sims.
+                mInfo.mobileSignalIconId = 0;
+                mInfo.dataTypeIconId = 0;
+                // Show a No SIMs description to avoid emergency calls message.
+                mInfo.enabled = true;
+                mInfo.enabledDesc = mContext.getString(
+                        R.string.keyguard_missing_sim_message_short);
+                mInfo.signalContentDescription = mInfo.enabledDesc;
+            }
             refreshState(mInfo);
         }
 

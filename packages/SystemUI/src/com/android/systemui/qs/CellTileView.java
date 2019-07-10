@@ -15,6 +15,7 @@
 package com.android.systemui.qs;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.service.quicksettings.Tile;
 import android.widget.ImageView;
@@ -36,9 +37,12 @@ public class CellTileView extends SignalTileView {
 
     public CellTileView(Context context) {
         super(context);
+
+        int mainTileColor = QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE);
+        int mainDimmed = Color.argb(0x7f, Color.red(mainTileColor), Color.green(mainTileColor), Color.blue(mainTileColor));
+
         mSignalDrawable = new SignalDrawable(mContext);
-        mSignalDrawable.setColors(QSTileImpl.getColorForState(context, Tile.STATE_UNAVAILABLE),
-                QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE));
+        mSignalDrawable.setColors(mainDimmed, QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE));
         mSignalDrawable.setIntrinsicSize(context.getResources().getDimensionPixelSize(
                 R.dimen.qs_tile_icon_size));
     }
@@ -69,9 +73,11 @@ public class CellTileView extends SignalTileView {
         @Override
         public Drawable getDrawable(Context context) {
             //TODO: Not the optimal solution to create this drawable
+            int mainTileColor = QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE);
+            int mainDimmed = Color.argb(0x7f, Color.red(mainTileColor), Color.green(mainTileColor), Color.blue(mainTileColor));
+
             SignalDrawable d = new SignalDrawable(context);
-            d.setColors(QSTileImpl.getColorForState(context, Tile.STATE_UNAVAILABLE),
-                    QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE));
+            d.setColors(mainDimmed, QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE));
             d.setLevel(getState());
             return d;
         }

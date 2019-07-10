@@ -19,6 +19,7 @@ package com.android.systemui.qs;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
 import com.android.systemui.qs.tileimpl.QSIconViewImpl;
+import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.qs.tileimpl.SlashImageView;
 
 /** View that represents a custom quick settings tile for displaying signal info (wifi/cell). **/
@@ -122,6 +124,8 @@ public class SignalTileView extends QSIconViewImpl {
     public void setIcon(QSTile.State state) {
         final SignalState s = (SignalState) state;
         setIcon(mSignal, s);
+
+        mOverlay.setColorFilter(QSTileImpl.getColorForState(mContext, 2), PorterDuff.Mode.SRC_IN);
 
         if (s.overlayIconId > 0) {
             mOverlay.setVisibility(VISIBLE);
