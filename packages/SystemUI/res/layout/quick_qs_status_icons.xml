@@ -18,20 +18,19 @@
     xmlns:systemui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/quick_qs_status_icons"
     android:layout_width="match_parent"
-    android:layout_height="20dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="14dp"
     android:layout_marginStart="@dimen/status_bar_padding_start"
     android:layout_marginEnd="@dimen/status_bar_padding_end"
     android:layout_below="@id/quick_status_bar_system_icons"
     android:clipChildren="false"
-    android:clipToPadding="false"
-    android:minHeight="20dp" >
+    android:clipToPadding="false">
 
     <LinearLayout
         android:id="@+id/pie_layout_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="20dp">
 
         <com.android.systemui.statusbar.policy.DateView
             android:id="@+id/date"
@@ -53,8 +52,10 @@
     <LinearLayout
         android:id="@+id/oreo_layout_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@*android:dimen/status_bar_height"
+        android:gravity="top|center_horizontal"
         android:visibility="gone" >
+        
         <com.android.systemui.statusbar.policy.Clock
             android:id="@+id/oreo_layout_clock"
             android:layout_width="wrap_content"
@@ -70,15 +71,21 @@
 
         <com.android.keyguard.CarrierText
             android:id="@+id/oreo_layout_carrier_text"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="center_vertical|start"
             android:ellipsize="marquee"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:attr/textColorPrimary"
             android:textDirection="locale"
             android:singleLine="true" />
+
+        <android.widget.Space
+            android:id="@+id/space"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal" />
 
         <com.android.systemui.statusbar.policy.NetworkTraffic
             android:id="@+id/oreo_layout_networkTraffic"
@@ -91,12 +98,12 @@
             android:textColor="?android:attr/textColorPrimary"
             android:lineSpacingMultiplier="1.2"
             systemui:showDark="false"
-            android:gravity="right|center_vertical"/>
+            android:layout_gravity="right|center_vertical"/>
 
         <com.android.systemui.BatteryMeterView
             android:id="@+id/oreo_layout_battery"
             android:layout_height="match_parent"
-            android:layout_width="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_gravity="right|center_vertical"/>
     </LinearLayout>
-
 </LinearLayout>

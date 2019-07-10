@@ -4335,23 +4335,17 @@ public class StatusBar extends SystemUI implements DemoMode,
         final boolean toggleOreoPanel = (Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.QS_PANEL_USE_OREO_STYLE, 0, UserHandle.USER_CURRENT) == 1);
 
-        final boolean cutoutBool = mContext.getResources().getBoolean(
-                        com.android.internal.R.bool.config_physicalDisplayCutout);
+        mUiOffloadThread.submit(() -> {
+            try {
+                mOverlayManager.setEnabled("com.potato.overlay.oreopanel.android",
+                            toggleOreoPanel, mLockscreenUserManager.getCurrentUserId());
 
-        final boolean hideCutoutMode = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 2;
-
-        final boolean useAndroidOverlay = toggleOreoPanel && (!cutoutBool || hideCutoutMode);
-
-        try {
-            mOverlayManager.setEnabled("com.potato.overlay.oreopanel.android",
-                        useAndroidOverlay, mLockscreenUserManager.getCurrentUserId());
-
-            mOverlayManager.setEnabled("com.potato.overlay.oreopanel.systemui",
-                        toggleOreoPanel, mLockscreenUserManager.getCurrentUserId());
-        } catch (RemoteException e) {
-            Log.w(TAG, "Failed to handle oreo qs panel overlays", e);
-        }
+                mOverlayManager.setEnabled("com.potato.overlay.oreopanel.systemui",
+                            toggleOreoPanel, mLockscreenUserManager.getCurrentUserId());
+            } catch (RemoteException e) {
+                Log.w(TAG, "Failed to handle oreo qs panel overlays", e);
+            }
+        });
     }
 
     private void updateDozingState() {

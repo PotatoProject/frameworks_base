@@ -64,10 +64,11 @@ import com.android.systemui.statusbar.phone.StatusIconContainer;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher;
 import com.android.systemui.statusbar.policy.DarkIconDispatcher.DarkReceiver;
 import com.android.systemui.statusbar.policy.DateView;
+import com.android.systemui.statusbar.policy.NetworkTraffic;
 import com.android.systemui.statusbar.policy.NextAlarmController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 
-import com.android.systemui.statusbar.policy.NetworkTraffic;
+import com.android.keyguard.CarrierText;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -116,6 +117,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private AlarmManager.AlarmClockInfo mNextAlarm;
 
     private boolean mSwitchToOreo;
+    private boolean mUseNotchLayout;
 
     private ImageView mNextAlarmIcon;
     /** {@link TextView} containing the actual text indicating when the next alarm will go off. */
@@ -134,6 +136,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
     private BatteryMeterView mBatteryMeterViewOL;
     private Clock mClockViewOL;
     private NetworkTraffic mTrafficOL;
+    private CarrierText mCarrierOL;
 
     private NextAlarmController mAlarmController;
     private ZenModeController mZenController;
@@ -218,6 +221,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         mBatteryManager.setTint(fillColor);
 
         mTrafficOL = findViewById(R.id.oreo_layout_networkTraffic);
+        mCarrierOL = findViewById(R.id.oreo_layout_carrier_text);
 
         mDateView = findViewById(R.id.date);
         mTraffic = findViewById(R.id.networkTraffic);
@@ -233,7 +237,10 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
         void observe() {
             getContext().getContentResolver().registerContentObserver(Settings.System
-                            .getUriFor(Settings.System.QS_PANEL_USE_OREO_STYLE), false,
+                    .getUriFor(Settings.System.QS_PANEL_USE_OREO_STYLE), false,
+                    this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.DISPLAY_CUTOUT_MODE), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -248,6 +255,12 @@ public class QuickStatusBarHeader extends RelativeLayout implements
                 Settings.System.QS_PANEL_USE_OREO_STYLE, 0,
                 UserHandle.USER_CURRENT) == 1;
 
+        final boolean cutoutBool = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_physicalDisplayCutout);
+        final boolean hideCutoutMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 2;
+		mUseNotchLayout = cutoutBool && !hideCutoutMode; 
+
         toggleViews();
     }
 
@@ -257,6 +270,12 @@ public class QuickStatusBarHeader extends RelativeLayout implements
 
             mOreoLayout.setVisibility(View.VISIBLE);
             mPieLayout.setVisibility(View.GONE);
+
+            if(!mUseNotchLayout) {
+                mCarrierOL.setVisibility(View.GONE);
+            } else {
+                mCarrierOL.setVisibility(View.VISIBLE);
+            }
         } else {
             mSystemIconsView.setVisibility(View.VISIBLE);
 
@@ -355,11 +374,15 @@ public class QuickStatusBarHeader extends RelativeLayout implements
      * when there is a notch involved the status bar can remain a fixed pixel size.
      */
     private void updateMinimumHeight() {
+        int qsCellHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_height_wo_label);
+        int qsCellMarginTop = mContext.getResources().getDimensionPixelSize(R.dimen.qs_tile_margin_top);
+        int qsFooterHeight = mContext.getResources().getDimensionPixelSize(R.dimen.qs_footer_height);
         int sbHeight = mContext.getResources().getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
-        int qqsHeight = mContext.getResources().getDimensionPixelSize(
-                R.dimen.qs_quick_header_panel_height);
-        setMinimumHeight(sbHeight + qqsHeight);
+        int sbLandHeight = mContext.getResources().getDimensionPixelSize(
+                com.android.internal.R.dimen.status_bar_height_landscape);
+
+        setMinimumHeight(qsCellHeight + qsCellMarginTop + qsFooterHeight + sbHeight + sbLandHeight);
     }
 
     private void updateResources() {
@@ -379,6 +402,8 @@ public class QuickStatusBarHeader extends RelativeLayout implements
         if (mQsDisabled) {
             lp.height = resources.getDimensionPixelSize(
                     com.android.internal.R.dimen.quick_qs_offset_height);
+        } else if (mSwitchToOreo) {
+            lp.height = getMinimumHeight();
         } else {
             lp.height = Math.max(getMinimumHeight(),
                     resources.getDimensionPixelSize(
