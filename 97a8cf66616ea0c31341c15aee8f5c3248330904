@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c07a519f_a1aceb0c",
+        "filename": "packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-07-16T17:27:41Z",
+      "side": 1,
+      "message": "Convert to lambda expression",
+      "range": {
+        "startLine": 637,
+        "startChar": 0,
+        "endLine": 641,
+        "endChar": 17
+      },
+      "revId": "97a8cf66616ea0c31341c15aee8f5c3248330904",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45c9ad2d_da3eaa78",
+        "filename": "packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialog.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-07-16T17:27:41Z",
+      "side": 1,
+      "message": "nit: Make this a private static final int",
+      "range": {
+        "startLine": 642,
+        "startChar": 0,
+        "endLine": 642,
+        "endChar": 20
+      },
+      "revId": "97a8cf66616ea0c31341c15aee8f5c3248330904",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
