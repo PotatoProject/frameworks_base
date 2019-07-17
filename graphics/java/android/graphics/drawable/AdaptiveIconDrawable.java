@@ -152,12 +152,13 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
     AdaptiveIconDrawable(@Nullable LayerState state, @Nullable Resources res) {
         mLayerState = createConstantState(state, res);
 
+        String configIconMaskData = res == null
+                ? Resources.getSystem().getString(R.string.config_icon_mask)
+                : res.getString(R.string.config_icon_mask);
         if (sMask == null) {
-            sMask = PathParser.createPathFromPathData(
-                Resources.getSystem().getString(R.string.config_icon_mask));
+            sMask = PathParser.createPathFromPathData(configIconMaskData);
         }
-        mMask = PathParser.createPathFromPathData(
-            Resources.getSystem().getString(R.string.config_icon_mask));
+        mMask = PathParser.createPathFromPathData(configIconMaskData);
         mMaskMatrix = new Matrix();
         mCanvas = new Canvas();
         mTransparentRegion = new Region();
