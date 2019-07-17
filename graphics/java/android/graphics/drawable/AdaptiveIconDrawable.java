@@ -19,6 +19,8 @@ package android.graphics.drawable;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.annotation.TestApi;
+import android.app.ActivityThread;
+import android.app.Application;
 import android.content.pm.ActivityInfo.Config;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -152,12 +154,12 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
     AdaptiveIconDrawable(@Nullable LayerState state, @Nullable Resources res) {
         mLayerState = createConstantState(state, res);
 
+        Application application = ActivityThread.currentActivityThread().getApplication();
+        String configIconMaskData = application.getResources().getString(R.string.config_icon_mask);
         if (sMask == null) {
-            sMask = PathParser.createPathFromPathData(
-                Resources.getSystem().getString(R.string.config_icon_mask));
+            sMask = PathParser.createPathFromPathData(configIconMaskData);
         }
-        mMask = PathParser.createPathFromPathData(
-            Resources.getSystem().getString(R.string.config_icon_mask));
+        mMask = PathParser.createPathFromPathData(configIconMaskData);
         mMaskMatrix = new Matrix();
         mCanvas = new Canvas();
         mTransparentRegion = new Region();
