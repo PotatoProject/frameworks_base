@@ -92,6 +92,7 @@ public abstract class BiometricServiceBase extends SystemService
     private final ResetClientStateRunnable mResetClientState = new ResetClientStateRunnable();
     private final ArrayList<LockoutResetMonitor> mLockoutMonitors = new ArrayList<>();
     private final boolean mCleanupUnusedFingerprints;
+    private final boolean mPostResetRunnableForAllClients;
 
     protected final IStatusBarService mStatusBarService;
     protected final Map<Integer, Long> mAuthenticatorIds =
@@ -662,6 +663,8 @@ public abstract class BiometricServiceBase extends SystemService
         mMetricsLogger = new MetricsLogger();
         mCleanupUnusedFingerprints = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_cleanupUnusedFingerprints);
+        mPostResetRunnableForAllClients = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_fingerprintPostResetRunnableForAllClients);
     }
 
     @Override
@@ -1069,6 +1072,10 @@ public abstract class BiometricServiceBase extends SystemService
                             + newClient.getClass().getSuperclass().getSimpleName()
                             + "(" + newClient.getOwnerString() + ")"
                             + ", initiatedByClient = " + initiatedByClient);
+                }
+                if (mPostResetRunnableForAllClients) {
+                    mHandler.removeCallbacks(mResetClientState);
+                    mHandler.postDelayed(mResetClientState, CANCEL_TIMEOUT_LIMIT);
                 }
             } else {
                 currentClient.stop(initiatedByClient);
