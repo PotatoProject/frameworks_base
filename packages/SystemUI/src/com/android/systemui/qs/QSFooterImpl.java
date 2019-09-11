@@ -170,7 +170,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
                     com.android.internal.R.string.bugreport_status,
                     Build.VERSION.RELEASE,
                     Build.ID));
-            v.setVisibility(View.VISIBLE);
+            v.setVisibility(View.GONE);
         } else {
             v.setVisibility(View.GONE);
         }
