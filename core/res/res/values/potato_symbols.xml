@@ -65,4 +65,7 @@
   <!-- Bluetooth service -->
   <java-symbol type="string" name="bluetooth_airplane_mode_toast" />
 
+  <!-- Whether to use scaled brightness (set -1 to disable) -->
+  <java-symbol type="integer" name="config_useScaleBrightness" />
+>>>>>>> ab78a29af3f... fwb: Conditionally set scaled brightness
 </resources>
