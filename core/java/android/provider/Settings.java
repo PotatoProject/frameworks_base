@@ -4716,6 +4716,17 @@ public final class Settings {
         public static final String NETWORK_TRAFFIC_HIDEARROW = "network_traffic_hidearrow";
 
         /**
+         * @hide
+         */
+        public static final String CUSTOM_FP_ICON = "custom_fingerprint_icon";
+
+        /**
+         * @hide
+         */
+        private static final Validator CUSTOM_FP_ICON_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4790,6 +4801,7 @@ public final class Settings {
             QS_PANEL_BG_USE_WALL,
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
+            CUSTOM_FP_ICON,
         };
 
         /**
@@ -4923,6 +4935,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
             PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
             PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
+            PRIVATE_SETTINGS.add(CUSTOM_FP_ICON);
         }
 
         /**
@@ -5030,6 +5043,7 @@ public final class Settings {
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_LOGO, STATUS_BAR_LOGO_VALIDATOR);
             VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
+            VALIDATORS.put(CUSTOM_FP_ICON, CUSTOM_FP_ICON_VALIDATOR);
         }
 
         /**
