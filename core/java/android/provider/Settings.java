@@ -4697,6 +4697,15 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
+         * @hide
+         */
+        public static final String CUSTOM_FP_ICON = "custom_fingerprint_icon";
+
+        /** @hide */
+        private static final Validator CUSTOM_FP_ICON_VALIDATOR =
+                ANY_STRING_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4773,6 +4782,7 @@ public final class Settings {
             CUSTOM_BACK_GESTURE_HEIGHT,
             STATUSBAR_PRIVACY_INDICATORS,
             USE_OLD_MOBILETYPE,
+            CUSTOM_FP_ICON,
         };
 
         /**
@@ -4906,6 +4916,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
             PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
             PRIVATE_SETTINGS.add(USE_OLD_MOBILETYPE);
+            PRIVATE_SETTINGS.add(CUSTOM_FP_ICON);
         }
 
         /**
@@ -5013,6 +5024,7 @@ public final class Settings {
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
             VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
             VALIDATORS.put(USE_OLD_MOBILETYPE, USE_OLD_MOBILETYPE_VALIDATOR);
+            VALIDATORS.put(CUSTOM_FP_ICON, CUSTOM_FP_ICON_VALIDATOR);
         }
 
         /**
