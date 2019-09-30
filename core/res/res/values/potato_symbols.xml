@@ -55,4 +55,8 @@
   <java-symbol type="string" name="reboot_message" />
   <java-symbol type="array" name="config_custom_globalActionsList" />
 
+  <!-- Alert Slider -->
+  <java-symbol type="bool" name="config_hasAlertSlider" />
+  <java-symbol type="integer" name="config_alertSliderLocation" />
+
 </resources>
