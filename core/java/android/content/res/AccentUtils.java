@@ -8,26 +8,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AccentUtils {
-    private static ArrayList<String> accentResources = new ArrayList<>(
-            Arrays.asList("user_icon_1",
-                    "accent_device_default_700",
-                    "accent_device_default_light",
-                    "accent_device_default_dark"));
-
-    private static final String ACCENT_COLOR_PROP = "persist.sys.theme.accentcolor";
-
     private static final String TAG = "AccentUtils";
 
-    static boolean isResourceAccent(String resName) {
-        for (String ar : accentResources)
-            if (resName.contains(ar))
-                return true;
-        return false;
+    private static final String ACCENT_DARK_PROP = "persist.sys.theme.accent_dark";
+    private static final String ACCENT_LIGHT_PROP = "persist.sys.theme.accent_light";
+
+    public static boolean isResourceDarkAccent(String resName) {
+        return resName.contains("accent_device_default_dark");
     }
 
-    public static int getAccentColor(int defaultColor) {
+    public static boolean isResourceLightAccent(String resName) {
+        return resName.contains("accent_device_default_light");
+    }
+
+    public static int getDarkAccentColor(int defaultColor) {
+        return getAccentColor(defaultColor, ACCENT_DARK_PROP);
+    }
+
+    public static int getLightAccentColor(int defaultColor) {
+        return getAccentColor(defaultColor, ACCENT_LIGHT_PROP);
+    }
+
+    private static int getAccentColor(int defaultColor, String property) {
         try {
-            String colorValue = SystemProperties.get(ACCENT_COLOR_PROP, "-1");
+            String colorValue = SystemProperties.get(property, "-1");
             return "-1".equals(colorValue)
                     ? defaultColor
                     : Color.parseColor("#" + colorValue);

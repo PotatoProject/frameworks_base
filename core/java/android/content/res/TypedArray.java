@@ -516,13 +516,16 @@ public class TypedArray {
         try {
             int resId = data[index + 3];
             if (resId > 0) {
-                if (AccentUtils.isResourceAccent(this.mAssets.getResourceName(resId))) {
-                    int newColor = AccentUtils.getAccentColor(defValue);
-                    if (newColor != defValue)
-                        return newColor;
-                }
+                String resName = this.mAssets.getResourceName(resId);
+                int newColor = defValue;
+                if (AccentUtils.isResourceDarkAccent(resName))
+                    newColor = AccentUtils.getDarkAccentColor(defValue);
+                else if (AccentUtils.isResourceLightAccent(resName))
+                    newColor = AccentUtils.getLightAccentColor(defValue);
+                if (newColor != defValue)
+                    return newColor;
             }
-        } catch (NotFoundException nfe) {
+        } catch (NotFoundException ignored) {
         } catch (Exception ex) {
             Log.e(TAG, ex.getMessage());
         }

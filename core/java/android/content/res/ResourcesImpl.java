@@ -654,12 +654,17 @@ public class ResourcesImpl {
                 }
                 dr = cs.newDrawable(wrapper);
             } else if (isColorDrawable) {
-                try {
-                    if (AccentUtils.isResourceAccent(getResourceName(id)))
-                        value.data = AccentUtils.getAccentColor(value.data);
-                } catch (NotFoundException nfe) {
-                } catch (Exception ex) {
-                    Log.e(TAG, ex.getMessage());
+                if (id != 0) {
+                    try {
+                        String resName = getResourceName(id);
+                        if (AccentUtils.isResourceDarkAccent(resName))
+                            value.data = AccentUtils.getDarkAccentColor(value.data);
+                        else if (AccentUtils.isResourceLightAccent(resName))
+                            value.data = AccentUtils.getLightAccentColor(value.data);
+                    } catch (NotFoundException ignored) {
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage());
+                    }
                 }
                 dr = new ColorDrawable(value.data);
             } else {
@@ -1048,12 +1053,17 @@ public class ResourcesImpl {
 
         final long key = (((long) value.assetCookie) << 32) | value.data;
 
-        try {
-            if (AccentUtils.isResourceAccent(getResourceName(id)))
-                value.data = AccentUtils.getAccentColor(value.data);
-        } catch (NotFoundException nfe) {
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage());
+        if (id != 0) {
+            try {
+                String resName = getResourceName(id);
+                if (AccentUtils.isResourceDarkAccent(resName))
+                    value.data = AccentUtils.getDarkAccentColor(value.data);
+                else if (AccentUtils.isResourceLightAccent(resName))
+                    value.data = AccentUtils.getLightAccentColor(value.data);
+            } catch (NotFoundException ignored) {
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage());
+            }
         }
 
         // Handle inline color definitions.
@@ -1096,12 +1106,17 @@ public class ResourcesImpl {
             }
         }
 
-        try {
-            if (AccentUtils.isResourceAccent(getResourceName(id)))
-                value.data = AccentUtils.getAccentColor(value.data);
-        } catch (NotFoundException nfe) {
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage());
+        if (id != 0) {
+            try {
+                String resName = getResourceName(id);
+                if (AccentUtils.isResourceDarkAccent(resName))
+                    value.data = AccentUtils.getDarkAccentColor(value.data);
+                else if (AccentUtils.isResourceLightAccent(resName))
+                    value.data = AccentUtils.getLightAccentColor(value.data);
+            } catch (NotFoundException ignored) {
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage());
+            }
         }
 
         final long key = (((long) value.assetCookie) << 32) | value.data;
