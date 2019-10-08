@@ -7432,5 +7432,8 @@ message MetricsEvent {
      // Panel for Bluetooth
     PANEL_BLUETOOTH = 9004;
 
+    // posp metrics
+    POTATO = 9999;
+
   }
 }
