@@ -4511,6 +4511,16 @@ public final class Settings {
                 ANY_STRING_VALIDATOR;
 
         /**
+         * Whether to show media art on lockscreen
+         * Boolean setting. 0 = off, 1 = on.
+         * @hide
+         */
+        public static final String LOCKSCREEN_MEDIA_METADATA = "lockscreen_media_metadata";
+
+        /** @hide */
+        public static final Validator LOCKSCREEN_MEDIA_METADATA_VALIDATOR = BOOLEAN_VALIDATOR;
+
+        /**
          * Enable proxi check for wake keys - must be implemented in a device
          * KeyHandler
          * @hide
@@ -4810,6 +4820,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SIP_ALWAYS);
             PRIVATE_SETTINGS.add(SIP_ADDRESS_ONLY);
             PRIVATE_SETTINGS.add(SIP_ASK_ME_EACH_TIME);
+            PRIVATE_SETTINGS.add(LOCKSCREEN_MEDIA_METADATA);
             PRIVATE_SETTINGS.add(POINTER_SPEED);
             PRIVATE_SETTINGS.add(LOCK_TO_APP_ENABLED);
             PRIVATE_SETTINGS.add(EGG_MODE);
@@ -4930,6 +4941,7 @@ public final class Settings {
             VALIDATORS.put(QS_PANEL_BG_USE_WALL, QS_PANEL_BG_USE_WALL_VALIDATOR);
             VALIDATORS.put(QS_PANEL_BG_USE_FW, QS_PANEL_BG_USE_FW_VALIDATOR);
             VALIDATORS.put(CUSTOM_BACK_GESTURE_HEIGHT, CUSTOM_BACK_GESTURE_HEIGHT_VALIDATOR);
+            VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
         }
 
         /**
