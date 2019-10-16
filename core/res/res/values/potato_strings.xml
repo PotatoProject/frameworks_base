@@ -29,4 +29,7 @@
     <string name="reboot_title">Reboot</string>
     <string name="reboot_message">Rebooting system</string>
 
+    <!-- Bluetooth service -->
+    <string name="bluetooth_airplane_mode_toast">Bluetooth will stay on during airplane mode</string>
+
 </resources>
