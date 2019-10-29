@@ -30,4 +30,6 @@
          causes a poor experience. -->
     <bool name="config_fingerprintWakeAndUnlock">true</bool>
 
+    <!-- Whether to use the mask for the quicksettings icons-->
+    <bool name="config_useMaskForQs">true</bool>
 </resources>
