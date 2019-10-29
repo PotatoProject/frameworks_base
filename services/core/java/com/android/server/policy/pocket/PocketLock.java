@@ -153,7 +153,7 @@ public class PocketLock {
 
     private void addView() {
         if (mWindowManager != null && !mAttached) {
-            mWindowManager.addView(mView, mLayoutParams);          
+            mWindowManager.addView(mView, mLayoutParams);
             mView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
@@ -163,6 +163,7 @@ public class PocketLock {
 
     private void removeView() {
         if (mWindowManager != null && mAttached) {
+            mView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             mWindowManager.removeView(mView);
             mAnimating = false;
             mAttached = false;
