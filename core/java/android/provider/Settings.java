@@ -4515,6 +4515,12 @@ public final class Settings {
         private static final Validator CUSTOM_DEVICE_PROXI_CHECK_ENABLED_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
+        /** Whether to pulse ambient on new music tracks
+         *
+         * @hide
+         */
+        public static final String PULSE_ON_NEW_TRACKS = "pulse_on_new_tracks";
+
         /**
          * Enable Gesture Haptic feedback
          * KeyHandler
