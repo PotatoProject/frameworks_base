@@ -142,9 +142,10 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
     private static final String GLOBAL_ACTION_KEY_SCREENRECORD = "screenrecord";
 
     private static final int SHOW_TOGGLES_BUTTON = 1;
-    private static final int RESTART_RECOVERY_BUTTON = 2;
-    private static final int RESTART_BOOTLOADER_BUTTON = 3;
-    private static final int RESTART_UI_BUTTON = 4;
+    private static final int RESTART_BUTTON = 2;
+    private static final int RESTART_RECOVERY_BUTTON = 3;
+    private static final int RESTART_BOOTLOADER_BUTTON = 4;
+    private static final int RESTART_UI_BUTTON = 5;
 
     private final Context mContext;
     private final GlobalActionsManager mWindowManagerFuncs;
@@ -162,6 +163,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
     private ToggleAction.State mAirplaneState = ToggleAction.State.Off;
 
     private AdvancedAction mShowAdvancedToggles;
+    private AdvancedAction mRestart;
     private AdvancedAction mRestartRecovery;
     private AdvancedAction mRestartBootloader;
     private AdvancedAction mRestartSystemUI;
@@ -371,6 +373,21 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
             }
         };
 
+        mRestart = new AdvancedAction(
+                RESTART_BUTTON,
+                R.drawable.ic_restart,
+                R.string.global_action_restart,
+                mWindowManagerFuncs, mHandler) {
+
+            public boolean showDuringKeyguard() {
+                return true;
+            }
+
+            public boolean showBeforeProvisioning() {
+                return true;
+            }
+        };
+
         mRestartRecovery = new AdvancedAction(
                 RESTART_RECOVERY_BUTTON,
                 com.android.systemui.R.drawable.ic_restart_recovery,
@@ -459,8 +476,8 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
                 mItems.add(getVoiceAssistAction());
             } else if (GLOBAL_ACTION_KEY_ASSIST.equals(actionKey)) {
                 mItems.add(getAssistAction());
-            } else if (GLOBAL_ACTION_KEY_RESTART.equals(actionKey)) {
-                mItems.add(new RestartAction());
+            /*} else if (GLOBAL_ACTION_KEY_RESTART.equals(actionKey)) {
+                mItems.add(new RestartAction());*/
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
                 mItems.add(new ScreenshotAction());
             } else if (GLOBAL_ACTION_KEY_SCREENRECORD.equals(actionKey)) {
@@ -652,7 +669,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
         }
     }
 
-    private final class RestartAction extends SinglePressAction implements LongPressAction {
+    /*private final class RestartAction extends SinglePressAction implements LongPressAction {
         private RestartAction() {
             super(R.drawable.ic_restart, R.string.global_action_restart);
         }
@@ -682,7 +699,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
         public void onPress() {
             mWindowManagerFuncs.reboot(false);
         }
-    }
+    }*/
 
     private class ScreenshotAction extends SinglePressAction implements LongPressAction {
         public ScreenshotAction() {
@@ -1484,6 +1501,17 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
 
         @Override
         public boolean onLongPress() {
+            if (mActionType == RESTART_BUTTON) {
+                // safe mode reboot on longpress
+                UserManager um = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
+                if (!um.hasUserRestriction(UserManager.DISALLOW_SAFE_BOOT)) {
+                    mRefresh.sendEmptyMessage(MESSAGE_DISMISS);
+                    mWmFuncs.reboot(true);
+                    return true;
+                }
+                // otherwise pass to onPress action for a normal reboot
+                return false;
+            }
             // pass to onClick listener (onPress action)
             return false;
         }
@@ -1499,6 +1527,10 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
 
     private static void triggerAction(int type, Handler h, GlobalActionsManager funcs, Context ctx) {
         switch (type) {
+            case RESTART_BUTTON:
+                h.sendEmptyMessage(MESSAGE_DISMISS);
+                funcs.reboot(false);
+                break;
             case RESTART_RECOVERY_BUTTON:
                 h.sendEmptyMessage(MESSAGE_DISMISS);
                 funcs.advancedReboot(PowerManager.REBOOT_RECOVERY);
@@ -1700,6 +1732,7 @@ public class GlobalActionsDialog implements DialogInterface.OnDismissListener,
 
     private void addNewItems() {
         mItems.clear();
+        mItems.add(mRestart);
         mItems.add(mRestartRecovery);
         mItems.add(mRestartBootloader);
         mItems.add(mRestartSystemUI);
