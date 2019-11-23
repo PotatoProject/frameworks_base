@@ -59,5 +59,10 @@
     <dimen name="right_tri_state_up_top_right_radius">24.0dip</dimen>
 
     <!-- Volume panel -->
-    <dimen name="volume_dialog_panel_transparent_padding_left">20dp</dimen>    
+    <dimen name="volume_dialog_panel_transparent_padding_left">20dp</dimen>
+    
+    <!-- The width/height of the charging indicator view on keyguard. -->
+    <dimen name="keyguard_charging_indication_height">60dp</dimen>
+    <dimen name="keyguard_charging_indication_width">32dp</dimen>
+
 </resources>
