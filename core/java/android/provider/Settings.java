@@ -4688,6 +4688,15 @@ public final class Settings {
         private static final Validator STATUSBAR_PRIVACY_INDICATORS_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
+         * Pre-P Mobile data statusbar indicators
+         * @hide
+         */
+        public static final String USE_OLD_MOBILETYPE = "use_old_mobiletype";
+
+        private static final Validator USE_OLD_MOBILETYPE_VALIDATOR =
+                BOOLEAN_VALIDATOR;
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4763,6 +4772,7 @@ public final class Settings {
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
             STATUSBAR_PRIVACY_INDICATORS,
+            USE_OLD_MOBILETYPE,
         };
 
         /**
@@ -4895,6 +4905,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(QS_PANEL_BG_USE_FW);
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
             PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
+            PRIVATE_SETTINGS.add(USE_OLD_MOBILETYPE);
         }
 
         /**
@@ -5001,6 +5012,7 @@ public final class Settings {
             VALIDATORS.put(CUSTOM_BACK_GESTURE_HEIGHT, CUSTOM_BACK_GESTURE_HEIGHT_VALIDATOR);
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
             VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
+            VALIDATORS.put(USE_OLD_MOBILETYPE, USE_OLD_MOBILETYPE_VALIDATOR);
         }
 
         /**
