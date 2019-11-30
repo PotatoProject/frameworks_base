@@ -111,8 +111,6 @@ class QuickStatusBarHeaderController extends ViewController<QuickStatusBarHeader
         };
         mColorExtractor.addOnColorsChangedListener(mOnColorsChangedListener);
 
-        // Don't need to worry about tuner settings for this icon
-        mBatteryMeterViewController.ignoreTunerUpdates();
     }
 
     @Override
