@@ -174,5 +174,18 @@ public class PotatoUtils {
                 }
             }
         }
+
+        public static void setPartialScreenshot(boolean active) {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.setPartialScreenshot(active);
+                } catch (RemoteException e) {}
+            }
+        }
+    }
+
+    public static void setPartialScreenshot(boolean active) {
+        FireActions.setPartialScreenshot(active);
     }
 }
