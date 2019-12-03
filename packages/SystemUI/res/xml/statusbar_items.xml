@@ -22,10 +22,6 @@
             android:key="headset"
             android:title="@string/headset" />
 
-        <!-- ime -->
-        <!-- sync_failing -->
-        <!-- sync_active -->
-
         <com.android.systemui.tuner.StatusBarSwitch
             android:key="cast"
             android:title="@string/quick_settings_cast_title" />
@@ -38,15 +34,9 @@
             android:key="bluetooth"
             android:title="@string/quick_settings_bluetooth_label" />
 
-        <!-- nfc -->
-        <!-- tty -->
-        <!-- speakerphone -->
-
         <com.android.systemui.tuner.StatusBarSwitch
             android:key="zen"
             android:title="@string/quick_settings_dnd_label" />
-
-        <!-- mute -->
 
         <com.android.systemui.tuner.StatusBarSwitch
             android:key="volume"
@@ -68,21 +58,8 @@
             android:key="airplane"
             android:title="@string/status_bar_airplane" />
 
-        <!-- other weird signal stuff -->
-
-        <com.android.systemui.tuner.BatteryPreference
-            android:title="@string/battery"
-            android:summary="%s"
-            android:entries="@array/battery_options" />
-
         <com.android.systemui.tuner.StatusBarSwitch
             android:key="alarm_clock"
             android:title="@string/status_bar_alarm" />
 
-        <!-- secure -->
-
-        <com.android.systemui.tuner.ClockPreference
-            android:title="@string/tuner_time"
-            android:summary="%s"
-            android:entries="@array/clock_options" />
 </PreferenceScreen>
