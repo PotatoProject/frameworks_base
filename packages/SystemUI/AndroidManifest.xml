@@ -370,7 +370,7 @@
                   android:theme="@style/ExTunerSettings"
                   android:label="@string/statusbar_items_title"
                   android:process=":tuner"
-                  android:parentActivityName="com.android.settings.arrow.HardwareKeys"
+                  android:parentActivityName="com.potatoproject.fries.MainActivity"
                   android:exported="true">
         </activity>
 
