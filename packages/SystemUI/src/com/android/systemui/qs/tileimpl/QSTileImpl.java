@@ -411,7 +411,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     public abstract CharSequence getTileLabel();
 
     public static int getColorForState(Context context, int state) {
-        int activeDefault = Utils.getColorAttr(context, android.R.attr.colorPrimary);
+        int activeDefault = Utils.getColorAttrDefaultColor(context, android.R.attr.colorPrimary);
 
         boolean setQsFromWall = System.getIntForUser(context.getContentResolver(),
                     System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT) == 1;
