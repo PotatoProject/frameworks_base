@@ -67,8 +67,12 @@ public class QSContainerImpl extends FrameLayout {
     private boolean mSetQsFromWall;
     private boolean mSetQsFromResources;
 
+    private IOverlayManager mOverlayManager;
+
     public QSContainerImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mOverlayManager = IOverlayManager.Stub.asInterface(
+                ServiceManager.getService(Context.OVERLAY_SERVICE));
         Handler handler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(handler);
         settingsObserver.observe();
@@ -154,10 +158,22 @@ public class QSContainerImpl extends FrameLayout {
 
         if (mSetQsFromResources) {
             mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
+            try {
+                mOverlayManager.setEnabled("com.android.systemui.qstheme.color",
+                        false, ActivityManager.getCurrentUser());
+            } catch (RemoteException e) {
+                Log.w("QSContainerImpl", "Can't change qs theme", e);
+            }
         } else {
             if (mQsBackGround != null) {
                 mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
                 mQsBackGround.setAlpha(mQsBackGroundAlpha);
+            }
+            try {
+                mOverlayManager.setEnabled("com.android.systemui.qstheme.color",
+                        true, ActivityManager.getCurrentUser());
+            } catch (RemoteException e) {
+                Log.w("QSContainerImpl", "Can't change qs theme", e);
             }
         }
 
