@@ -50,4 +50,13 @@
     <bool name="config_needCustomFODView">false</bool>
 
     <bool name="config_has_Soli">false</bool>
+
+    <!-- Advanced reboot menu -->
+    <string-array translatable="false" name="config_custom_globalActionsList">
+        <item>power</item>
+        <item>restart</item>
+        <item>advanced</item>
+        <item>screenshot</item>
+    </string-array>
+
 </resources>
