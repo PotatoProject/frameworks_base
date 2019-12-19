@@ -1773,7 +1773,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PULSE_ON_NEW_TRACKS),
                     false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
+            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_PANEL_BG_USE_WALL),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -1808,7 +1808,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         public void update() {
             setFpToDismissNotifications();
             setPulseOnNewTracks();
-	    updateQSPanel();
+        updateQSPanel();
         }
     }
 
@@ -3369,7 +3369,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (mContext.getThemeResId() != themeResId) {
             mContext.setTheme(themeResId);
             Dependency.get(ConfigurationController.class).notifyThemeChanged();
-	}
+    }
         updateQSPanel();
     }
 
@@ -3803,7 +3803,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             mWakeUpCoordinator.setFullyAwake(false);
             mBypassHeadsUpNotifier.setFullyAwake(false);
             mKeyguardBypassController.onStartedGoingToSleep();
-	}
+    }
 
         @Override
         public void onStartedWakingUp() {
