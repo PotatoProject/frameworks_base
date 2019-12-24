@@ -572,6 +572,22 @@ public class ResourcesImpl {
         }
     }
 
+    public int accentStatus(TypedValue value, int id){
+        if (id != 0) {
+            try {
+                String resName = getResourceName(id);
+                if (AccentUtils.isResourceDarkAccent(resName))
+                    value.data = AccentUtils.getDarkAccentColor(value.data);
+                else if (AccentUtils.isResourceLightAccent(resName))
+                    value.data = AccentUtils.getLightAccentColor(value.data);
+            } catch (NotFoundException ignored) {
+            } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage());
+            }
+        }
+        return value.data;
+    }
+
     @Nullable
     Drawable loadDrawable(@NonNull Resources wrapper, @NonNull TypedValue value, int id,
             int density, @Nullable Resources.Theme theme)
@@ -654,18 +670,7 @@ public class ResourcesImpl {
                 }
                 dr = cs.newDrawable(wrapper);
             } else if (isColorDrawable) {
-                if (id != 0) {
-                    try {
-                        String resName = getResourceName(id);
-                        if (AccentUtils.isResourceDarkAccent(resName))
-                            value.data = AccentUtils.getDarkAccentColor(value.data);
-                        else if (AccentUtils.isResourceLightAccent(resName))
-                            value.data = AccentUtils.getLightAccentColor(value.data);
-                    } catch (NotFoundException ignored) {
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.getMessage());
-                    }
-                }
+                value.data = accentStatus(value,id);
                 dr = new ColorDrawable(value.data);
             } else {
                 dr = loadDrawableForCookie(wrapper, value, id, density);
@@ -1051,20 +1056,8 @@ public class ResourcesImpl {
             }
         }
 
+        value.data = accentStatus(value,id);
         final long key = (((long) value.assetCookie) << 32) | value.data;
-
-        if (id != 0) {
-            try {
-                String resName = getResourceName(id);
-                if (AccentUtils.isResourceDarkAccent(resName))
-                    value.data = AccentUtils.getDarkAccentColor(value.data);
-                else if (AccentUtils.isResourceLightAccent(resName))
-                    value.data = AccentUtils.getLightAccentColor(value.data);
-            } catch (NotFoundException ignored) {
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage());
-            }
-        }
 
         // Handle inline color definitions.
         if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT
@@ -1106,19 +1099,7 @@ public class ResourcesImpl {
             }
         }
 
-        if (id != 0) {
-            try {
-                String resName = getResourceName(id);
-                if (AccentUtils.isResourceDarkAccent(resName))
-                    value.data = AccentUtils.getDarkAccentColor(value.data);
-                else if (AccentUtils.isResourceLightAccent(resName))
-                    value.data = AccentUtils.getLightAccentColor(value.data);
-            } catch (NotFoundException ignored) {
-            } catch (Exception ex) {
-                Log.e(TAG, ex.getMessage());
-            }
-        }
-
+        value.data = accentStatus(value,id);
         final long key = (((long) value.assetCookie) << 32) | value.data;
 
         // Handle inline color definitions.
