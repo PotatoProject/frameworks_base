@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1049180_93c4c413",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/EdgeBackGestureHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2019-12-24T11:18:53Z",
+      "side": 1,
+      "message": "oMnI aDdiTIonS StARt",
+      "range": {
+        "startLine": 172,
+        "startChar": 7,
+        "endLine": 172,
+        "endChar": 27
+      },
+      "revId": "170eae8e182aa9d482ff5443becada43f3a24855",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
