@@ -132,6 +132,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private Window mWindow;
     private CustomDialog mDialog;
     private ViewGroup mDialogView;
+    private ViewGroup mDialogContainerView;
     private ViewGroup mDialogRowsView;
     private ViewGroup mRinger;
     private ImageButton mRingerIcon;
@@ -305,10 +306,11 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
 
-        /*if(mExpandRows != null) {
-            mExpandRows.setForegroundGravity(Gravity.RIGHT);
-            mExpandRows.setRotation(90);
-        }*/
+        mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
+
+        mDialogContainerView.setOnClickListener(v -> {
+            dismissH(0);
+        });
 
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
@@ -720,6 +722,20 @@ public class VolumeDialogImpl implements VolumeDialog,
         updateCaptionsIcon();
     }
 
+    public void setDialogWidth(int newWidth) {
+        FrameLayout frameLayout = (FrameLayout) mDialog.findViewById(R.id.volume_dialog_container);
+        ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
+        layoutParams.width = newWidth;
+        frameLayout.setLayoutParams(layoutParams);
+        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) getDialogView().getLayoutParams();
+        layoutParams2.gravity = 21;
+        getDialogView().setLayoutParams(layoutParams2);
+        WindowManager.LayoutParams attributes = mDialog.getWindow().getAttributes();
+        attributes.width = newWidth;
+        attributes.gravity = 21;
+        mDialog.getWindow().setAttributes(attributes);
+    }
+
     private void incrementManualToggleCount() {
         ContentResolver cr = mContext.getContentResolver();
         int ringerCount = Settings.Secure.getInt(cr, Settings.Secure.MANUAL_RINGER_TOGGLE_COUNT, 0);
@@ -785,6 +801,8 @@ public class VolumeDialogImpl implements VolumeDialog,
 
     private void showH(int reason) {
         if (D.BUG) Log.d(TAG, "showH r=" + Events.SHOW_REASONS[reason]);
+        final int rowWidth = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_ringer_size) +
+                (mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_stream_padding) * 2);
         mHandler.removeMessages(H.SHOW);
         mHandler.removeMessages(H.DISMISS);
         rescheduleTimeoutH();
@@ -797,6 +815,7 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         initSettingsH();
         mShowing = true;
+        setDialogWidth(rowWidth * 3);
         mDialog.show();
         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
         mController.notifyVisible(true);
