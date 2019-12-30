@@ -1,0 +1,358 @@
+From c08beb22a7998b826bb1888e60c53fe6808f142e Mon Sep 17 00:00:00 2001
+From: HrX03 <dn.bianco03@gmail.com>
+Date: Mon, 30 Dec 2019 17:48:30 +0100
+Subject: [PATCH 1/3] base: Visual fixes for expanded volume panel
+
+[ @HrX03 - POSP ]
+
+Change-Id: I7862cfc6b1125ceea85980a990445184b9f37879
+---
+ .../res/layout-land/volume_dialog.xml         | 147 ------------------
+ .../SystemUI/res/layout/volume_dialog.xml     |   8 +-
+ .../systemui/volume/VolumeDialogImpl.java     | 109 ++++++-------
+ 3 files changed, 61 insertions(+), 203 deletions(-)
+ delete mode 100644 packages/SystemUI/res/layout-land/volume_dialog.xml
+
+diff --git a/packages/SystemUI/res/layout-land/volume_dialog.xml b/packages/SystemUI/res/layout-land/volume_dialog.xml
+deleted file mode 100644
+index 5da7819c3d7..00000000000
+--- a/packages/SystemUI/res/layout-land/volume_dialog.xml
++++ /dev/null
+@@ -1,147 +0,0 @@
+-<!--
+-  ~ Copyright (C) 2019 The Android Open Source Project
+-  ~
+-  ~ Licensed under the Apache License, Version 2.0 (the "License");
+-  ~ you may not use this file except in compliance with the License.
+-  ~ You may obtain a copy of the License at
+-  ~
+-  ~      http://www.apache.org/licenses/LICENSE-2.0
+-  ~
+-  ~ Unless required by applicable law or agreed to in writing, software
+-  ~ distributed under the License is distributed on an "AS IS" BASIS,
+-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-  ~ See the License for the specific language governing permissions and
+-  ~ limitations under the License
+-  -->
+-<FrameLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:sysui="http://schemas.android.com/apk/res-auto"
+-    android:id="@+id/volume_dialog_container"
+-    android:layout_width="wrap_content"
+-    android:layout_height="wrap_content"
+-    android:gravity="right"
+-    android:layout_gravity="right"
+-    android:background="@android:color/transparent"
+-    android:theme="@style/qs_theme">
+-
+-    <FrameLayout
+-        android:id="@+id/volume_dialog"
+-        android:minWidth="@dimen/volume_dialog_panel_width"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:gravity="right"
+-        android:layout_gravity="right"
+-        android:background="@android:color/transparent"
+-        android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
+-        android:paddingTop="@dimen/volume_dialog_panel_transparent_padding"
+-        android:paddingBottom="@dimen/volume_dialog_panel_transparent_padding"
+-        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding"
+-        android:clipToPadding="false">
+-
+-        <FrameLayout
+-            android:id="@+id/ringer"
+-            android:layout_width="@dimen/volume_dialog_ringer_size"
+-            android:layout_height="@dimen/volume_dialog_ringer_size"
+-            android:layout_marginBottom="@dimen/volume_dialog_spacer"
+-            android:gravity="right"
+-            android:layout_gravity="right"
+-            android:translationZ="@dimen/volume_dialog_elevation"
+-            android:clipToPadding="false"
+-            android:background="@drawable/rounded_bg_full">
+-            <com.android.keyguard.AlphaOptimizedImageButton
+-                android:id="@+id/ringer_icon"
+-                style="@style/VolumeButtons"
+-                android:background="@drawable/rounded_ripple"
+-                android:layout_width="match_parent"
+-                android:layout_height="match_parent"
+-                android:scaleType="fitCenter"
+-                android:padding="@dimen/volume_dialog_ringer_icon_padding"
+-                android:tint="@color/accent_tint_color_selector"
+-                android:layout_gravity="center"
+-                android:soundEffectsEnabled="false" />
+-
+-            <include layout="@layout/volume_dnd_icon"
+-                     android:layout_width="match_parent"
+-                     android:layout_height="wrap_content"
+-                     android:layout_marginRight="@dimen/volume_dialog_stream_padding"
+-                     android:layout_marginTop="6dp"/>
+-        </FrameLayout>
+-
+-        <LinearLayout
+-            android:id="@+id/main"
+-            android:layout_width="wrap_content"
+-            android:minWidth="@dimen/volume_dialog_panel_width"
+-            android:layout_height="wrap_content"
+-            android:layout_marginTop="68dp"
+-            android:gravity="right"
+-            android:layout_gravity="right"
+-            android:orientation="vertical"
+-            android:translationZ="@dimen/volume_dialog_elevation"
+-            android:clipChildren="false"
+-            android:clipToPadding="false"
+-            android:background="@drawable/rounded_bg_full" >
+-            <LinearLayout
+-                android:id="@+id/volume_dialog_rows"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:minWidth="@dimen/volume_dialog_panel_width"
+-                android:gravity="center"
+-                android:orientation="horizontal"
+-                android:paddingRight="@dimen/volume_dialog_stream_padding"
+-                android:paddingLeft="@dimen/volume_dialog_stream_padding">
+-                <!-- volume rows added and removed here! :-) -->
+-            </LinearLayout>
+-            <FrameLayout
+-                android:id="@+id/settings_container"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:background="@drawable/rounded_bg_bottom_background">
+-                <com.android.keyguard.AlphaOptimizedImageButton
+-                    android:id="@+id/settings"
+-                    android:src="@drawable/ic_tune_black_16dp"
+-                    android:layout_width="@dimen/volume_dialog_tap_target_size"
+-                    android:layout_height="@dimen/volume_dialog_tap_target_size"
+-                    android:layout_gravity="center"
+-                    android:contentDescription="@string/accessibility_volume_settings"
+-                    android:background="@drawable/ripple_drawable_20dp"
+-                    android:tint="?android:attr/textColorSecondary"
+-                    android:soundEffectsEnabled="false" />
+-            </FrameLayout>
+-        </LinearLayout>
+-
+-        <FrameLayout
+-            android:id="@+id/odi_captions"
+-            android:layout_width="@dimen/volume_dialog_caption_size"
+-            android:layout_height="@dimen/volume_dialog_caption_size"
+-            android:layout_marginRight="68dp"
+-            android:gravity="right"
+-            android:layout_gravity="right"
+-            android:clipToPadding="false"
+-            android:translationZ="@dimen/volume_dialog_elevation"
+-            android:background="@drawable/rounded_bg_full">
+-            <com.android.systemui.volume.CaptionsToggleImageButton
+-                android:id="@+id/odi_captions_icon"
+-                android:src="@drawable/ic_volume_odi_captions_disabled"
+-                style="@style/VolumeButtons"
+-                android:background="@drawable/rounded_ripple"
+-                android:layout_width="match_parent"
+-                android:layout_height="match_parent"
+-                android:tint="@color/caption_tint_color_selector"
+-                android:layout_gravity="center"
+-                android:soundEffectsEnabled="false"
+-                sysui:optedOut="false"/>
+-        </FrameLayout>
+-
+-        <ViewStub
+-            android:id="@+id/odi_captions_tooltip_stub"
+-            android:inflatedId="@+id/odi_captions_tooltip_view"
+-            android:layout="@layout/volume_tool_tip_view"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:layout_marginRight="@dimen/volume_tool_tip_right_margin"
+-            android:layout_marginTop="@dimen/volume_tool_tip_top_margin"
+-            android:layout_gravity="right"/>
+-
+-    </FrameLayout>
+-
+-</FrameLayout>
+\ No newline at end of file
+diff --git a/packages/SystemUI/res/layout/volume_dialog.xml b/packages/SystemUI/res/layout/volume_dialog.xml
+index 0f2a4fbb481..07ab4a77a9b 100644
+--- a/packages/SystemUI/res/layout/volume_dialog.xml
++++ b/packages/SystemUI/res/layout/volume_dialog.xml
+@@ -96,7 +96,7 @@
+                     <!-- volume rows added and removed here! :-) -->
+             </LinearLayout>
+             <FrameLayout
+-                android:id="@+id/expandable_indicator_container"
++                android:id="@+id/settings_container"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/rounded_bg_bottom_background">
+@@ -110,17 +110,21 @@
+                     android:contentDescription="@string/accessibility_volume_settings"
+                     android:background="@drawable/ripple_drawable_20dp"
+                     android:tint="?android:attr/textColorSecondary"
+-                    android:soundEffectsEnabled="false" />
++                    android:soundEffectsEnabled="false"
++                    android:visibility="gone" />
+ 
+                 <com.android.systemui.statusbar.phone.ExpandableIndicator
+                     android:id="@+id/expandable_indicator"
+                     android:layout_width="48dp"
+                     android:layout_height="48dp"
++                    android:layout_gravity="right"
++                    android:rotation="90"
+                     android:clipToPadding="false"
+                     android:clickable="true"
+                     android:focusable="true"
+                     android:layout_marginRight="8dp"
+                     android:layout_marginLeft="8dp"
++                    android:tint="?android:attr/textColorSecondary"
+                     android:background="?android:attr/selectableItemBackgroundBorderless"
+                     android:contentDescription="@string/accessibility_quick_settings_expand"
+                     android:padding="14dp" />
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+index 64d35ec4d86..8f7763476d1 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+@@ -139,7 +139,6 @@ public class VolumeDialogImpl implements VolumeDialog,
+     private CaptionsToggleImageButton mODICaptionsIcon;
+     private View mSettingsView;
+     private ImageButton mSettingsIcon;
+-    private View mExpandRowsView;
+     private ExpandableIndicator mExpandRows;
+     private FrameLayout mZenIcon;
+     private final List<VolumeRow> mRows = new ArrayList<>();
+@@ -285,9 +284,13 @@ public class VolumeDialogImpl implements VolumeDialog,
+         mSettingsView = mDialog.findViewById(R.id.settings_container);
+         mSettingsIcon = mDialog.findViewById(R.id.settings);
+ 
+-        mExpandRowsView = mDialog.findViewById(R.id.expandable_indicator_container);
+         mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
+ 
++        /*if(mExpandRows != null) {
++            mExpandRows.setForegroundGravity(Gravity.RIGHT);
++            mExpandRows.setRotation(90);
++        }*/
++
+         if (mRows.isEmpty()) {
+             if (!AudioSystem.isSingleVolume(mContext)) {
+                 addRow(STREAM_ACCESSIBILITY, R.drawable.ic_volume_accessibility,
+@@ -485,8 +488,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+                     mDeviceProvisionedController.isCurrentUserSetup() &&
+                             mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
+                             VISIBLE : GONE);
+-        }
+-        if (mSettingsIcon != null) {
++
+             mSettingsIcon.setOnClickListener(v -> {
+                 Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+                 Intent intent = new Intent(Settings.Panel.ACTION_VOLUME);
+@@ -494,63 +496,62 @@ public class VolumeDialogImpl implements VolumeDialog,
+                 Dependency.get(ActivityStarter.class).startActivity(intent,
+                         true /* dismissShade */);
+             });
+-        }
+ 
+-        mExpandRowsView.setVisibility(
+-                mDeviceProvisionedController.isCurrentUserSetup() ? VISIBLE : GONE);
+-        mExpandRows.setOnLongClickListener(v -> {
+-            Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+-            Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
+-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+-            dismissH(DISMISS_REASON_SETTINGS_CLICKED);
+-            Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade */);
+-            return true;
+-        });
+-
+-        // We need to track the ally stream only if it's not equal
+-        // to our "hardcoded" extra elements.
+-        int watchAllyStream;
+-        if (mActiveStream != AudioManager.STREAM_RING
+-                || mActiveStream != AudioManager.STREAM_ALARM) {
+-            watchAllyStream = mActiveStream;
+-        } else {
+-            watchAllyStream = -1;
+-        }
++            /*mExpandRows.setOnLongClickListener(v -> {
++                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
++                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
++                Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
++                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
++                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
++                Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade );
++                return true;
++            });*/
++
++            // We need to track the ally stream only if it's not equal
++            // to our "hardcoded" extra elements.
++            int watchAllyStream;
++            if (mActiveStream != AudioManager.STREAM_RING
++                    || mActiveStream != AudioManager.STREAM_ALARM) {
++                watchAllyStream = mActiveStream;
++            } else {
++                watchAllyStream = -1;
++            }
+ 
+-        mExpandRows.setOnClickListener(v -> {
+-            if(!mExpanded) {
+-                VolumeRow row = findRow(AudioManager.STREAM_RING);
+-                if (row != null) {
+-                    Util.setVisOrGone(row.view, /* vis */ true);
+-                    updateVolumeRowTintH(row,
+-                            /* isActive */ row.stream == mActiveStream);
+-                }
+-                row = findRow(AudioManager.STREAM_ALARM);
+-                if (row != null) {
+-                    Util.setVisOrGone(row.view, /* vis */ true);
+-                    updateVolumeRowTintH(row,
+-                            /* isActive */ row.stream == mActiveStream);
+-                }
+-                // Track ally stream, basically whatever is active next
+-                // to the default one (media stream). e.g call stream.
+-                if (watchAllyStream != -1) {
+-                    row = findRow(watchAllyStream);
++            mExpandRows.setOnClickListener(v -> {
++                if(!mExpanded) {
++                    VolumeRow row = findRow(AudioManager.STREAM_RING);
+                     if (row != null) {
+                         Util.setVisOrGone(row.view, /* vis */ true);
+                         updateVolumeRowTintH(row,
+-                            /* isActive */ row.stream == mActiveStream);
++                                /* isActive */ row.stream == mActiveStream);
+                     }
+-                }
+-                mExpanded = true;
+-            } else {
+-                VolumeRow row = findRow(AudioManager.STREAM_MUSIC);
+-                updateVolumeRowTintH(row,
++                    row = findRow(AudioManager.STREAM_ALARM);
++                    if (row != null) {
++                        Util.setVisOrGone(row.view, /* vis */ true);
++                        updateVolumeRowTintH(row,
++                                /* isActive */ row.stream == mActiveStream);
++                    }
++                    // Track ally stream, basically whatever is active next
++                    // to the default one (media stream). e.g call stream.
++                    if (watchAllyStream != -1) {
++                        row = findRow(watchAllyStream);
++                        if (row != null) {
++                            Util.setVisOrGone(row.view, /* vis */ true);
++                            updateVolumeRowTintH(row,
++                                    /* isActive */ row.stream == mActiveStream);
++                        }
++                    }
++                    mExpanded = true;
++                } else {
++                    VolumeRow row = findRow(AudioManager.STREAM_MUSIC);
++                    updateVolumeRowTintH(row,
+                             /* isActive */ true);
+-                cleanExpandRows();
+-                mExpanded = false;
+-            }
+-            mExpandRows.setExpanded(mExpanded);
+-        });
++                    cleanExpandRows();
++                    mExpanded = false;
++                }
++                mExpandRows.setExpanded(mExpanded);
++            });
++        }
+     }
+ 
+     public void initRingerH() {
+-- 
+2.24.0
+

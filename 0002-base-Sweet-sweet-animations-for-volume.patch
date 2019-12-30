@@ -1,0 +1,115 @@
+From 77682e3fb8bb8ade09b78d940149c9a21984eab4 Mon Sep 17 00:00:00 2001
+From: HrX03 <dn.bianco03@gmail.com>
+Date: Mon, 30 Dec 2019 19:38:00 +0100
+Subject: [PATCH 2/3] base: Sweet sweet animations for volume
+
+[ @HrX03 - POSP ]
+
+- We finally get some deserved animations on expanded volume panel (took me long enough)
+- There are still some jankies but they are pretty minor and they dont really matter for now
+
+Change-Id: I2e0182f27a8605f122aad5c047afd58fc54f0293
+---
+ .../SystemUI/res/layout/volume_dialog.xml     |  5 ++--
+ .../systemui/volume/VolumeDialogImpl.java     | 27 ++++++++++++++++---
+ 2 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/packages/SystemUI/res/layout/volume_dialog.xml b/packages/SystemUI/res/layout/volume_dialog.xml
+index 07ab4a77a9b..f8f27aa4abc 100644
+--- a/packages/SystemUI/res/layout/volume_dialog.xml
++++ b/packages/SystemUI/res/layout/volume_dialog.xml
+@@ -19,6 +19,7 @@
+     android:id="@+id/volume_dialog_container"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
++    android:clickable="true"
+     android:gravity="right"
+     android:layout_gravity="right"
+     android:background="@android:color/transparent"
+@@ -47,7 +48,7 @@
+             android:layout_height="@dimen/volume_dialog_ringer_size"
+             android:layout_marginBottom="@dimen/volume_dialog_spacer"
+             android:gravity="right"
+-            android:layout_gravity="right"
++            android:layout_gravity="left"
+             android:translationZ="@dimen/volume_dialog_elevation"
+             android:clipToPadding="false"
+             android:background="@drawable/rounded_bg_full">
+@@ -117,7 +118,7 @@
+                     android:id="@+id/expandable_indicator"
+                     android:layout_width="48dp"
+                     android:layout_height="48dp"
+-                    android:layout_gravity="right"
++                    android:layout_gravity="left"
+                     android:rotation="90"
+                     android:clipToPadding="false"
+                     android:clickable="true"
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+index 8f7763476d1..6881a368fda 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+@@ -132,6 +132,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+     private Window mWindow;
+     private CustomDialog mDialog;
+     private ViewGroup mDialogView;
++    private ViewGroup mDialogContainerView;
+     private ViewGroup mDialogRowsView;
+     private ViewGroup mRinger;
+     private ImageButton mRingerIcon;
+@@ -286,10 +287,11 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+         mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
+ 
+-        /*if(mExpandRows != null) {
+-            mExpandRows.setForegroundGravity(Gravity.RIGHT);
+-            mExpandRows.setRotation(90);
+-        }*/
++        mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
++
++        mDialogContainerView.setOnClickListener(v -> {
++            dismissH(0);
++        });
+ 
+         if (mRows.isEmpty()) {
+             if (!AudioSystem.isSingleVolume(mContext)) {
+@@ -693,6 +695,20 @@ public class VolumeDialogImpl implements VolumeDialog,
+         updateCaptionsIcon();
+     }
+ 
++    public void setDialogWidth(int newWidth) {
++        FrameLayout frameLayout = (FrameLayout) mDialog.findViewById(R.id.volume_dialog_container);
++        ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
++        layoutParams.width = newWidth;
++        frameLayout.setLayoutParams(layoutParams);
++        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) getDialogView().getLayoutParams();
++        layoutParams2.gravity = 21;
++        getDialogView().setLayoutParams(layoutParams2);
++        WindowManager.LayoutParams attributes = mDialog.getWindow().getAttributes();
++        attributes.width = newWidth;
++        attributes.gravity = 21;
++        mDialog.getWindow().setAttributes(attributes);
++    }
++
+     private void incrementManualToggleCount() {
+         ContentResolver cr = mContext.getContentResolver();
+         int ringerCount = Settings.Secure.getInt(cr, Settings.Secure.MANUAL_RINGER_TOGGLE_COUNT, 0);
+@@ -758,6 +774,8 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+     private void showH(int reason) {
+         if (D.BUG) Log.d(TAG, "showH r=" + Events.SHOW_REASONS[reason]);
++        final int rowWidth = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_ringer_size) +
++                (mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_stream_padding) * 2);
+         mHandler.removeMessages(H.SHOW);
+         mHandler.removeMessages(H.DISMISS);
+         rescheduleTimeoutH();
+@@ -770,6 +788,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+         initSettingsH();
+         mShowing = true;
++        setDialogWidth(rowWidth * 3);
+         mDialog.show();
+         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
+         mController.notifyVisible(true);
+-- 
+2.24.0
+
