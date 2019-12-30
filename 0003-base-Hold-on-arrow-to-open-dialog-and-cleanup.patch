@@ -1,0 +1,121 @@
+From 3f907bf259ade6fc31d24512ec0ac4db7c2d1d47 Mon Sep 17 00:00:00 2001
+From: HrX03 <dn.bianco03@gmail.com>
+Date: Mon, 30 Dec 2019 20:19:18 +0100
+Subject: [PATCH 3/3] base: Hold on arrow to open dialog and cleanup
+
+[ @HrX03 - POSP ]
+
+- Now holding down on the expand rows icons results in the android 10 dialog to open
+- Clean up code and shit
+
+Change-Id: Ie0169f789448be578f11e672d6764d1541ee89c7
+---
+ .../SystemUI/res/layout/volume_dialog.xml     | 16 ++---------
+ .../systemui/volume/VolumeDialogImpl.java     | 28 ++++++-------------
+ 2 files changed, 10 insertions(+), 34 deletions(-)
+
+diff --git a/packages/SystemUI/res/layout/volume_dialog.xml b/packages/SystemUI/res/layout/volume_dialog.xml
+index f8f27aa4abc..728a6065286 100644
+--- a/packages/SystemUI/res/layout/volume_dialog.xml
++++ b/packages/SystemUI/res/layout/volume_dialog.xml
+@@ -97,25 +97,13 @@
+                     <!-- volume rows added and removed here! :-) -->
+             </LinearLayout>
+             <FrameLayout
+-                android:id="@+id/settings_container"
++                android:id="@+id/volume_expand_rows_container"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/rounded_bg_bottom_background">
+ 
+-                <com.android.keyguard.AlphaOptimizedImageButton
+-                    android:id="@+id/settings"
+-                    android:src="@drawable/ic_tune_black_16dp"
+-                    android:layout_width="@dimen/volume_dialog_tap_target_size"
+-                    android:layout_height="@dimen/volume_dialog_tap_target_size"
+-                    android:layout_gravity="center"
+-                    android:contentDescription="@string/accessibility_volume_settings"
+-                    android:background="@drawable/ripple_drawable_20dp"
+-                    android:tint="?android:attr/textColorSecondary"
+-                    android:soundEffectsEnabled="false"
+-                    android:visibility="gone" />
+-
+                 <com.android.systemui.statusbar.phone.ExpandableIndicator
+-                    android:id="@+id/expandable_indicator"
++                    android:id="@+id/volume_expand_rows"
+                     android:layout_width="48dp"
+                     android:layout_height="48dp"
+                     android:layout_gravity="left"
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+index 6881a368fda..c56db0c9aa6 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+@@ -138,8 +138,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+     private ImageButton mRingerIcon;
+     private ViewGroup mODICaptionsView;
+     private CaptionsToggleImageButton mODICaptionsIcon;
+-    private View mSettingsView;
+-    private ImageButton mSettingsIcon;
++    private View mExpandRowsView;
+     private ExpandableIndicator mExpandRows;
+     private FrameLayout mZenIcon;
+     private final List<VolumeRow> mRows = new ArrayList<>();
+@@ -282,10 +281,8 @@ public class VolumeDialogImpl implements VolumeDialog,
+             mODICaptionsTooltipViewStub = null;
+         }
+ 
+-        mSettingsView = mDialog.findViewById(R.id.settings_container);
+-        mSettingsIcon = mDialog.findViewById(R.id.settings);
+-
+-        mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
++        mExpandRowsView = mDialog.findViewById(R.id.volume_expand_rows_container);
++        mExpandRows = mDialog.findViewById(R.id.volume_expand_rows);
+ 
+         mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
+ 
+@@ -304,7 +301,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+                 addRow(AudioManager.STREAM_RING,
+                         R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, false);
+                 addRow(STREAM_ALARM,
+-                        R.drawable.ic_alarm, R.drawable.ic_volume_alarm_mute, true, false);
++                        R.drawable.ic_volume_alarm, R.drawable.ic_volume_alarm_mute, true, false);
+                 addRow(AudioManager.STREAM_VOICE_CALL,
+                         com.android.internal.R.drawable.ic_phone,
+                         com.android.internal.R.drawable.ic_phone, false, false);
+@@ -485,29 +482,20 @@ public class VolumeDialogImpl implements VolumeDialog,
+     }
+ 
+     public void initSettingsH() {
+-        if (mSettingsView != null) {
+-            mSettingsView.setVisibility(
++        if (mExpandRowsView != null) {
++            mExpandRowsView.setVisibility(
+                     mDeviceProvisionedController.isCurrentUserSetup() &&
+                             mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
+                             VISIBLE : GONE);
+ 
+-            mSettingsIcon.setOnClickListener(v -> {
++            mExpandRows.setOnLongClickListener(v -> {
+                 Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+                 Intent intent = new Intent(Settings.Panel.ACTION_VOLUME);
+                 dismissH(DISMISS_REASON_SETTINGS_CLICKED);
+                 Dependency.get(ActivityStarter.class).startActivity(intent,
+                         true /* dismissShade */);
+-            });
+-
+-            /*mExpandRows.setOnLongClickListener(v -> {
+-                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+-                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+-                Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
+-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+-                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
+-                Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade );
+                 return true;
+-            });*/
++            });
+ 
+             // We need to track the ally stream only if it's not equal
+             // to our "hardcoded" extra elements.
+-- 
+2.24.0
+

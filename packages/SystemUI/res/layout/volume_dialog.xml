@@ -92,13 +92,13 @@
                     <!-- volume rows added and removed here! :-) -->
             </LinearLayout>
             <FrameLayout
-                android:id="@+id/settings_container"
+                android:id="@+id/bottom_action_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg_bottom_background">
 
                 <com.android.keyguard.AlphaOptimizedImageButton
-                    android:id="@+id/settings"
+                    android:id="@+id/q_dialog"
                     android:src="@drawable/ic_tune_black_16dp"
                     android:layout_width="@dimen/volume_dialog_tap_target_size"
                     android:layout_height="@dimen/volume_dialog_tap_target_size"
@@ -110,7 +110,7 @@
                     android:visibility="gone" />
 
                 <com.android.systemui.statusbar.phone.ExpandableIndicator
-                    android:id="@+id/expandable_indicator"
+                    android:id="@+id/volume_expand_rows"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_gravity="left"
