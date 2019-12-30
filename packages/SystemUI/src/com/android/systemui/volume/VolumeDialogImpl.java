@@ -138,8 +138,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private ImageButton mRingerIcon;
     private ViewGroup mODICaptionsView;
     private CaptionsToggleImageButton mODICaptionsIcon;
-    private View mSettingsView;
-    private ImageButton mSettingsIcon;
+    private View mExpandRowsView;
     private ExpandableIndicator mExpandRows;
     private FrameLayout mZenIcon;
     private final List<VolumeRow> mRows = new ArrayList<>();
@@ -282,10 +281,8 @@ public class VolumeDialogImpl implements VolumeDialog,
             mODICaptionsTooltipViewStub = null;
         }
 
-        mSettingsView = mDialog.findViewById(R.id.settings_container);
-        mSettingsIcon = mDialog.findViewById(R.id.settings);
-
-        mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
+        mExpandRowsView = mDialog.findViewById(R.id.volume_expand_rows_container);
+        mExpandRows = mDialog.findViewById(R.id.volume_expand_rows);
 
         mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
 
@@ -304,7 +301,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                 addRow(AudioManager.STREAM_RING,
                         R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, false);
                 addRow(STREAM_ALARM,
-                        R.drawable.ic_alarm, R.drawable.ic_volume_alarm_mute, true, false);
+                        R.drawable.ic_volume_alarm, R.drawable.ic_volume_alarm_mute, true, false);
                 addRow(AudioManager.STREAM_VOICE_CALL,
                         com.android.internal.R.drawable.ic_phone,
                         com.android.internal.R.drawable.ic_phone, false, false);
@@ -485,29 +482,20 @@ public class VolumeDialogImpl implements VolumeDialog,
     }
 
     public void initSettingsH() {
-        if (mSettingsView != null) {
-            mSettingsView.setVisibility(
+        if (mExpandRowsView != null) {
+            mExpandRowsView.setVisibility(
                     mDeviceProvisionedController.isCurrentUserSetup() &&
                             mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
                             VISIBLE : GONE);
 
-            mSettingsIcon.setOnClickListener(v -> {
+            mExpandRows.setOnLongClickListener(v -> {
                 Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
                 Intent intent = new Intent(Settings.Panel.ACTION_VOLUME);
                 dismissH(DISMISS_REASON_SETTINGS_CLICKED);
                 Dependency.get(ActivityStarter.class).startActivity(intent,
                         true /* dismissShade */);
-            });
-
-            /*mExpandRows.setOnLongClickListener(v -> {
-                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
-                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
-                Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
-                Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade );
                 return true;
-            });*/
+            });
 
             // We need to track the ally stream only if it's not equal
             // to our "hardcoded" extra elements.
