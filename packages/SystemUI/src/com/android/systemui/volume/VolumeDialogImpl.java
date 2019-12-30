@@ -139,7 +139,6 @@ public class VolumeDialogImpl implements VolumeDialog,
     private CaptionsToggleImageButton mODICaptionsIcon;
     private View mSettingsView;
     private ImageButton mSettingsIcon;
-    private View mExpandRowsView;
     private ExpandableIndicator mExpandRows;
     private FrameLayout mZenIcon;
     private final List<VolumeRow> mRows = new ArrayList<>();
@@ -304,8 +303,12 @@ public class VolumeDialogImpl implements VolumeDialog,
         mSettingsView = mDialog.findViewById(R.id.settings_container);
         mSettingsIcon = mDialog.findViewById(R.id.settings);
 
-        mExpandRowsView = mDialog.findViewById(R.id.expandable_indicator_container);
         mExpandRows = mDialog.findViewById(R.id.expandable_indicator);
+
+        /*if(mExpandRows != null) {
+            mExpandRows.setForegroundGravity(Gravity.RIGHT);
+            mExpandRows.setRotation(90);
+        }*/
 
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
@@ -512,8 +515,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                     mDeviceProvisionedController.isCurrentUserSetup() &&
                             mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
                             VISIBLE : GONE);
-        }
-        if (mSettingsIcon != null) {
+
             mSettingsIcon.setOnClickListener(v -> {
                 Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
                 Intent intent = new Intent(Settings.Panel.ACTION_VOLUME);
@@ -521,63 +523,62 @@ public class VolumeDialogImpl implements VolumeDialog,
                 Dependency.get(ActivityStarter.class).startActivity(intent,
                         true /* dismissShade */);
             });
-        }
 
-        mExpandRowsView.setVisibility(
-                mDeviceProvisionedController.isCurrentUserSetup() ? VISIBLE : GONE);
-        mExpandRows.setOnLongClickListener(v -> {
-            Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
-            Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            dismissH(DISMISS_REASON_SETTINGS_CLICKED);
-            Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade */);
-            return true;
-        });
+            /*mExpandRows.setOnLongClickListener(v -> {
+                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+                Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
+                Dependency.get(ActivityStarter.class).startActivity(intent, true /* dismissShade );
+                return true;
+            });*/
 
-        // We need to track the ally stream only if it's not equal
-        // to our "hardcoded" extra elements.
-        int watchAllyStream;
-        if (mActiveStream != AudioManager.STREAM_RING
-                || mActiveStream != AudioManager.STREAM_ALARM) {
-            watchAllyStream = mActiveStream;
-        } else {
-            watchAllyStream = -1;
-        }
+            // We need to track the ally stream only if it's not equal
+            // to our "hardcoded" extra elements.
+            int watchAllyStream;
+            if (mActiveStream != AudioManager.STREAM_RING
+                    || mActiveStream != AudioManager.STREAM_ALARM) {
+                watchAllyStream = mActiveStream;
+            } else {
+                watchAllyStream = -1;
+            }
 
-        mExpandRows.setOnClickListener(v -> {
-            if(!mExpanded) {
-                VolumeRow row = findRow(AudioManager.STREAM_RING);
-                if (row != null) {
-                    Util.setVisOrGone(row.view, /* vis */ true);
-                    updateVolumeRowTintH(row,
-                            /* isActive */ row.stream == mActiveStream);
-                }
-                row = findRow(AudioManager.STREAM_ALARM);
-                if (row != null) {
-                    Util.setVisOrGone(row.view, /* vis */ true);
-                    updateVolumeRowTintH(row,
-                            /* isActive */ row.stream == mActiveStream);
-                }
-                // Track ally stream, basically whatever is active next
-                // to the default one (media stream). e.g call stream.
-                if (watchAllyStream != -1) {
-                    row = findRow(watchAllyStream);
+            mExpandRows.setOnClickListener(v -> {
+                if(!mExpanded) {
+                    VolumeRow row = findRow(AudioManager.STREAM_RING);
                     if (row != null) {
                         Util.setVisOrGone(row.view, /* vis */ true);
                         updateVolumeRowTintH(row,
-                            /* isActive */ row.stream == mActiveStream);
+                                /* isActive */ row.stream == mActiveStream);
                     }
-                }
-                mExpanded = true;
-            } else {
-                VolumeRow row = findRow(AudioManager.STREAM_MUSIC);
-                updateVolumeRowTintH(row,
+                    row = findRow(AudioManager.STREAM_ALARM);
+                    if (row != null) {
+                        Util.setVisOrGone(row.view, /* vis */ true);
+                        updateVolumeRowTintH(row,
+                                /* isActive */ row.stream == mActiveStream);
+                    }
+                    // Track ally stream, basically whatever is active next
+                    // to the default one (media stream). e.g call stream.
+                    if (watchAllyStream != -1) {
+                        row = findRow(watchAllyStream);
+                        if (row != null) {
+                            Util.setVisOrGone(row.view, /* vis */ true);
+                            updateVolumeRowTintH(row,
+                                    /* isActive */ row.stream == mActiveStream);
+                        }
+                    }
+                    mExpanded = true;
+                } else {
+                    VolumeRow row = findRow(AudioManager.STREAM_MUSIC);
+                    updateVolumeRowTintH(row,
                             /* isActive */ true);
-                cleanExpandRows();
-                mExpanded = false;
-            }
-            mExpandRows.setExpanded(mExpanded);
-        });
+                    cleanExpandRows();
+                    mExpanded = false;
+                }
+                mExpandRows.setExpanded(mExpanded);
+            });
+        }
     }
 
     public void initRingerH() {

@@ -91,7 +91,7 @@
                     <!-- volume rows added and removed here! :-) -->
             </LinearLayout>
             <FrameLayout
-                android:id="@+id/expandable_indicator_container"
+                android:id="@+id/settings_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg_bottom_background">
@@ -105,17 +105,21 @@
                     android:contentDescription="@string/accessibility_volume_settings"
                     android:background="@drawable/ripple_drawable_20dp"
                     android:tint="?android:attr/textColorSecondary"
-                    android:soundEffectsEnabled="false" />
+                    android:soundEffectsEnabled="false"
+                    android:visibility="gone" />
 
                 <com.android.systemui.statusbar.phone.ExpandableIndicator
                     android:id="@+id/expandable_indicator"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_gravity="right"
+                    android:rotation="90"
                     android:clipToPadding="false"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_marginRight="8dp"
                     android:layout_marginLeft="8dp"
+                    android:tint="?android:attr/textColorSecondary"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/accessibility_quick_settings_expand"
                     android:padding="14dp" />
