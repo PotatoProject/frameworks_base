@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c15c83a0_22c41ef5",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4521,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-01-05T17:08:18Z",
+      "side": 1,
+      "message": "Add boolean_validator for this setting.",
+      "range": {
+        "startLine": 4521,
+        "startChar": 0,
+        "endLine": 4521,
+        "endChar": 71
+      },
+      "revId": "695dbec26698195a666cf1ce2fa7c223b93bed75",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d777ccad_0413b8b8",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4607,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-01-05T17:08:18Z",
+      "side": 1,
+      "message": "nit: might wanna append it to the end of custom additions. I.e. here.",
+      "revId": "695dbec26698195a666cf1ce2fa7c223b93bed75",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abfe9017_4c0b4b80",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-01-05T17:08:18Z",
+      "side": 1,
+      "message": "nit: Leave space after a cast",
+      "range": {
+        "startLine": 142,
+        "startChar": 32,
+        "endLine": 142,
+        "endChar": 34
+      },
+      "revId": "695dbec26698195a666cf1ce2fa7c223b93bed75",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7e82775_78b65401",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/CollapsedStatusBarFragment.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-01-05T17:08:18Z",
+      "side": 1,
+      "message": "nit: could avoid braces and possibly simplify some conditions\nWill let others review this.",
+      "range": {
+        "startLine": 436,
+        "startChar": 0,
+        "endLine": 442,
+        "endChar": 13
+      },
+      "revId": "695dbec26698195a666cf1ce2fa7c223b93bed75",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
