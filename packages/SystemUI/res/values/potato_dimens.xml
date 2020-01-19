@@ -22,4 +22,7 @@
     <!-- Qs visibility -->
     <dimen name="qs_tile_height_wo_label">64dp</dimen>
 
+    <!-- Volume panel -->
+    <dimen name="volume_dialog_panel_transparent_padding_left">20dp</dimen>
+
 </resources>
