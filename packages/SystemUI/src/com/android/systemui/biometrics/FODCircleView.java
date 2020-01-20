@@ -25,7 +25,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.biometrics.BiometricSourceType;
-import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.IHwBinder;
 import android.os.Looper;
@@ -66,7 +65,6 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
     private final Paint mPaintShow = new Paint();
     private final WindowManager.LayoutParams mParams = new WindowManager.LayoutParams();
     private final WindowManager mWindowManager;
-    private final DisplayManager mDisplayManager;
 
     private IFingerprintInscreen mFingerprintInscreenDaemon;
 
@@ -80,6 +78,7 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
     private boolean mIsPulsing;
     private boolean mIsScreenOn;
     private boolean mIsViewAdded;
+    private boolean mIsRemoving;
 
     private Handler mHandler;
 
@@ -126,20 +125,11 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
             } else if (mBurnInProtectionTimer != null) {
                 mBurnInProtectionTimer.cancel();
             }
+
             if (mIsViewAdded) {
                 resetPosition();
                 invalidate();
             }
-        }
-
-        @Override
-        public void onPulsing(boolean pulsing) {
-            super.onPulsing(pulsing);
-            mIsPulsing = pulsing;
-	    if (mIsPulsing) {
-                mIsDreaming = false;
-	    }
-            mIsInsideCircle = false;
         }
 
         @Override
@@ -257,12 +247,9 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
 
         mUpdateMonitor = KeyguardUpdateMonitor.getInstance(context);
         mUpdateMonitor.registerCallback(mMonitorCallback);
-
         updateCutoutFlags();
 
         Dependency.get(ConfigurationController.class).addCallback(this);
-
-        mDisplayManager = context.getSystemService(DisplayManager.class);
     }
 
     @Override
@@ -283,7 +270,7 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
         // the HAL is expected (if supported) to set the screen brightness
         // to maximum / minimum immediately when called
         if (mIsInsideCircle) {
-            if (mIsDreaming || mIsPulsing) {
+            if (mIsDreaming) {
                 setAlpha(1.0f);
             }
             if (!mIsPressed) {
@@ -298,7 +285,7 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
                 mIsPressed = true;
             }
         } else {
-            setAlpha(mIsDreaming ? (mIsPulsing ? 1.0f : 0.8f) : 1.0f);
+            setAlpha(mIsDreaming ? 0.5f : 1.0f);
             if (mIsPressed) {
                 IFingerprintInscreen daemon = getFingerprintInScreenDaemon();
                 if (daemon != null) {
@@ -309,6 +296,11 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
                     }
                 }
                 mIsPressed = false;
+            }
+
+            if (mIsRemoving) {
+                mIsRemoving = false;
+                mWindowManager.removeView(this);
             }
         }
     }
@@ -401,6 +393,12 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
     }
 
     public void show() {
+        if (mIsRemoving) {
+            // Last removal hasn't been finished yet
+            mIsRemoving = false;
+            mWindowManager.removeView(this);
+        }
+
         if (mIsViewAdded) {
             return;
         }
@@ -420,7 +418,6 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
         mParams.type = WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY;
         mParams.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH |
-                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND |
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         mParams.gravity = Gravity.TOP | Gravity.LEFT;
@@ -441,8 +438,8 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
 
         mIsInsideCircle = false;
         mIsViewAdded = false;
-        mWindowManager.removeView(this);
-        mIsPressed = false;
+        // Postpone removal to next re-layout to avoid blinking
+        mIsRemoving = true;
         setDim(false);
         invalidate();
     }
@@ -501,12 +498,12 @@ public class FODCircleView extends ImageView implements OnTouchListener,Configur
             }
 
             if (mShouldBoostBrightness) {
-                mDisplayManager.setTemporaryBrightness(255);
+                mParams.screenBrightness = 1.0f;
             }
 
             mParams.dimAmount = ((float) dimAmount) / 255.0f;
         } else {
-            mDisplayManager.setTemporaryBrightness(-1);
+            mParams.screenBrightness = 0.0f;
             mParams.dimAmount = 0.0f;
         }
 
