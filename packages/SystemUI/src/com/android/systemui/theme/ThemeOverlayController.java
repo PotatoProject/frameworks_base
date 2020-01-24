@@ -94,6 +94,34 @@ public class ThemeOverlayController extends SystemUI {
                     }
                 },
                 UserHandle.USER_ALL);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.SYS_ACCENT_LIGHT),
+                false,
+                new ContentObserver(bgHandler) {
+                    @Override
+                    public void onChange(boolean selfChange, Uri uri, int userId) {
+                        final String accentLight = Settings.Secure.getStringForUser(
+                                mContext.getContentResolver(),
+                                Settings.Secure.SYS_ACCENT_LIGHT,
+                                UserHandle.USER_ALL);
+                        SystemProperties.set("persist.sys.theme.accent_light", accentLight);
+                    }
+                },
+                UserHandle.USER_ALL);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.SYS_ACCENT_DARK),
+                false,
+                new ContentObserver(bgHandler) {
+                    @Override
+                    public void onChange(boolean selfChange, Uri uri, int userId) {
+                        final String accentDark = Settings.Secure.getStringForUser(
+                                mContext.getContentResolver(),
+                                Settings.Secure.SYS_ACCENT_DARK,
+                                UserHandle.USER_ALL);
+                        SystemProperties.set("persist.sys.theme.accent_dark", accentDark);
+                    }
+                },
+                UserHandle.USER_ALL);
     }
 
     private void updateThemeOverlays() {
