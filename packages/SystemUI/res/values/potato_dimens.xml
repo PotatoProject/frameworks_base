@@ -37,17 +37,25 @@
     <dimen name="tri_state_dialog_text_size">34.125px</dimen>
     <dimen name="tri_state_dialog_triangle_long">189.0px</dimen>
     <dimen name="tri_state_dialog_triangle_short">63.0px</dimen>
-    <dimen name="tri_state_down_bottom_left_radius">63.0px</dimen>
-    <dimen name="tri_state_down_bottom_right_radius">63.0px</dimen>
-    <dimen name="tri_state_down_top_left_radius">63.0px</dimen>
-    <dimen name="tri_state_down_top_right_radius">0.0px</dimen>
     <dimen name="tri_state_mid_bottom_left_radius">63.0px</dimen>
     <dimen name="tri_state_mid_bottom_right_radius">63.0px</dimen>
     <dimen name="tri_state_mid_top_left_radius">63.0px</dimen>
     <dimen name="tri_state_mid_top_right_radius">63.0px</dimen>
-    <dimen name="tri_state_up_bottom_left_radius">63.0px</dimen>
-    <dimen name="tri_state_up_bottom_right_radius">0.0px</dimen>
-    <dimen name="tri_state_up_top_left_radius">63.0px</dimen>
-    <dimen name="tri_state_up_top_right_radius">63.0px</dimen>
+    <dimen name="left_tri_state_down_bottom_left_radius">24.0dip</dimen>
+    <dimen name="left_tri_state_down_bottom_right_radius">24.0dip</dimen>
+    <dimen name="left_tri_state_down_top_left_radius">0.0dip</dimen>
+    <dimen name="left_tri_state_down_top_right_radius">24.0dip</dimen>
+    <dimen name="left_tri_state_up_bottom_left_radius">0.0dip</dimen>
+    <dimen name="left_tri_state_up_bottom_right_radius">24.0dip</dimen>
+    <dimen name="left_tri_state_up_top_left_radius">24.0dip</dimen>
+    <dimen name="left_tri_state_up_top_right_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_down_bottom_left_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_down_bottom_right_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_down_top_left_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_down_top_right_radius">0.0dip</dimen>
+    <dimen name="right_tri_state_up_bottom_left_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_up_bottom_right_radius">0.0dip</dimen>
+    <dimen name="right_tri_state_up_top_left_radius">24.0dip</dimen>
+    <dimen name="right_tri_state_up_top_right_radius">24.0dip</dimen>
     
 </resources>
