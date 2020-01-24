@@ -4679,6 +4679,18 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
 
+	/**
+	 * Accent color (light)
+	 * @hide
+	 */
+        public static final String SYS_ACCENT_LIGHT = "sys_accent_light";
+
+	/**
+	 * Accent color (dark)
+	 * @hide
+	 */
+        public static final String SYS_ACCENT_DARK = "sys_accent_dark";
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
