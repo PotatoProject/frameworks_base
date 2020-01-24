@@ -9244,6 +9244,18 @@ public final class Settings {
 
         private static final Validator AWARE_LOCK_ENABLED_VALIDATOR = BOOLEAN_VALIDATOR;
 
+	/**
+	 * Accent color (light)
+	 * @hide
+	 */
+        public static final String SYS_ACCENT_LIGHT = "sys_accent_light";
+
+	/**
+	 * Accent color (dark)
+	 * @hide
+	 */
+        public static final String SYS_ACCENT_DARK = "sys_accent_dark";
+
         /**
          * This are the settings to be backed up.
          *
