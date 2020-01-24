@@ -310,6 +310,8 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
     private static final String TAG_LOCKTASK = TAG + POSTFIX_LOCKTASK;
     private static final String TAG_CONFIGURATION = TAG + POSTFIX_CONFIGURATION;
 
+    private static final boolean NO_WARN = true;
+
     // How long we wait until we timeout on key dispatching.
     public static final int KEY_DISPATCHING_TIMEOUT_MS = 5 * 1000;
     // How long we wait until we timeout on key dispatching during instrumentation.
@@ -6516,9 +6518,10 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
                 }
 
                 if (!Build.isBuildConsistent()) {
-                    Slog.e(TAG, "Build fingerprint is not consistent, warning user");
+                    Slog.e(TAG, "Build fingerprint is not consistent, " + (NO_WARN ? "not" : "")
+                                    + " warning user");
                     mUiHandler.post(() -> {
-                        if (mShowDialogs) {
+                        if (mShowDialogs && !NO_WARN) {
                             AlertDialog d = new BaseErrorDialog(mUiContext);
                             d.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
                             d.setCancelable(false);
