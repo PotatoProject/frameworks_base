@@ -73,6 +73,8 @@ final class UiModeManagerService extends SystemService {
     // Enable launching of applications when entering the dock.
     private static final boolean ENABLE_LAUNCH_DESK_DOCK_APP = true;
     private static final String SYSTEM_PROPERTY_DEVICE_THEME = "persist.sys.theme";
+    private static final String SYS_ACCENT_DARK = "persist.sys.theme.accent_dark";
+    private static final String SYS_ACCENT_LIGHT = "persist.sys.theme.accent_light";
 
     final Object mLock = new Object();
     private int mDockState = Intent.EXTRA_DOCK_STATE_UNDOCKED;
@@ -226,6 +228,21 @@ final class UiModeManagerService extends SystemService {
         }
     };
 
+    private final ContentObserver mAccentObserver = new ContentObserver(mHandler) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            if (uri.equals(Secure.getUriFor(Secure.SYS_ACCENT_DARK) {
+                final String accentDark = Secure.getStringForUser(
+                        getContext().getContentResolver(), Secure.SYS_ACCENT_DARK, 0);
+	        SystemProperties.set(SYS_ACCENT_DARK, accentDark);
+	    } else if (uri.equals(Secure.getUriFor(Secure.SYS_ACCENT_LIGHT) {
+                final String accentLight = Secure.getStringForUser(
+                        getContext().getContentResolver(), Secure.SYS_ACCENT_LIGHT, 0);
+	        SystemProperties.set(SYS_ACCENT_LIGHT, accentLight);
+	    }
+        }
+    };
+
     @Override
     public void onSwitchUser(int userHandle) {
         super.onSwitchUser(userHandle);
@@ -304,6 +321,10 @@ final class UiModeManagerService extends SystemService {
 
         context.getContentResolver().registerContentObserver(Secure.getUriFor(Secure.UI_NIGHT_MODE),
                 false, mDarkThemeObserver, 0);
+        context.getContentResolver().registerContentObserver(Secure.getUriFor(Secure.SYS_ACCENT_DARK),
+                false, mAccentObserver, 0);
+        context.getContentResolver().registerContentObserver(Secure.getUriFor(Secure.SYS_ACCENT_LIGHT),
+                false, mAccentObserver, 0);
     }
 
     // Records whether setup wizard has happened or not and adds an observer for this user if not.
