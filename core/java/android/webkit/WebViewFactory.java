@@ -232,7 +232,8 @@ public final class WebViewFactory {
             final int uid = android.os.Process.myUid();
             if (uid == android.os.Process.ROOT_UID || uid == android.os.Process.SYSTEM_UID
                     || uid == android.os.Process.PHONE_UID || uid == android.os.Process.NFC_UID
-                    || uid == android.os.Process.BLUETOOTH_UID) {
+                    || uid == android.os.Process.BLUETOOTH_UID
+                    || uid == android.os.Prcoess.SYSUI_UID) {
                 throw new UnsupportedOperationException(
                         "For security reasons, WebView is not allowed in privileged processes");
             }
