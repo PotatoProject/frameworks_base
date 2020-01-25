@@ -62,6 +62,7 @@ import static android.os.Process.ROOT_UID;
 import static android.os.Process.SCHED_FIFO;
 import static android.os.Process.SCHED_RESET_ON_FORK;
 import static android.os.Process.SE_UID;
+import static android.os.Process.SYSUI_UID;
 import static android.os.Process.SHELL_UID;
 import static android.os.Process.SIGNAL_USR1;
 import static android.os.Process.SYSTEM_UID;
@@ -14911,6 +14912,7 @@ public class ActivityManagerService extends IActivityManager.Stub
             case BLUETOOTH_UID:
             case NFC_UID:
             case SE_UID:
+            case SYSUI_UID:
             case NETWORK_STACK_UID:
                 isCallerSystem = true;
                 break;

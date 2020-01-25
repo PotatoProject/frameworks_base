@@ -177,6 +177,12 @@ public class Process {
     public static final int SE_UID = 1068;
 
     /**
+     * Defines the UID for SystemUI
+     * @hide
+     */
+    public static final int SYSUI_UID = 1069;
+
+    /**
      * Defines the UID/GID for the NetworkStack app.
      * @hide
      */
