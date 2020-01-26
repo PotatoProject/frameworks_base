@@ -4707,6 +4707,18 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
 
+
+        /**
+         * Enable/disable privacy indicators on statusbar
+         * @hide
+         */
+        public static final String STATUSBAR_PRIVACY_INDICATORS = "statusbar_privacy_indicators";
+
+        /**
+         * @hide
+         */
+        private static final Validator STATUSBAR_PRIVACY_INDICATORS_VALIDATOR = BOOLEAN_VALIDATOR;
+
         /**
          * Wheter to show network traffic indicator in statusbar
          * @hide
@@ -4840,6 +4852,7 @@ public final class Settings {
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
             USE_OLD_MOBILETYPE,
+            STATUSBAR_PRIVACY_INDICATORS,
         };
 
         /**
@@ -4974,6 +4987,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
             PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
             PRIVATE_SETTINGS.add(USE_OLD_MOBILETYPE);
+            PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
         }
 
         /**
@@ -5082,6 +5096,7 @@ public final class Settings {
             VALIDATORS.put(STATUS_BAR_LOGO, STATUS_BAR_LOGO_VALIDATOR);
             VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
             VALIDATORS.put(USE_OLD_MOBILETYPE, USE_OLD_MOBILETYPE_VALIDATOR);
+            VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
         }
 
         /**
