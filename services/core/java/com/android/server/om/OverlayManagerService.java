@@ -851,6 +851,30 @@ public final class OverlayManagerService extends SystemService {
             }
         }
 
+        @Override
+        public void setAccentLight(String value) {
+            final long ident = Binder.clearCallingIdentity();
+            try {
+                synchronized (mLock) {
+                    mImpl.setAccentLight(value);
+                }
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+
+        @Override
+        public void setAccentDark(String value) {
+            final long ident = Binder.clearCallingIdentity();
+            try {
+                synchronized (mLock) {
+                    mImpl.setAccentDark(value);
+                }
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+
         /**
          * Ensure that the caller has permission to interact with the given userId.
          * If the calling user is not the same as the provided user, the caller needs

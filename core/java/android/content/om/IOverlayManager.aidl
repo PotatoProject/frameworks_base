@@ -158,6 +158,15 @@ interface IOverlayManager {
      */
     String[] getDefaultOverlayPackages();
 
+    /**
+     * Triggers OMS asset reload for android or some given package
+     */
     void reloadAssets(in String packageName, in int userId);
     void reloadAndroidAssets(in int userId);
+
+    /**
+     * Sets accent props through the OMS service
+     */
+     void setAccentLight(in String value);
+     void setAccentDark(in String value);
 }
