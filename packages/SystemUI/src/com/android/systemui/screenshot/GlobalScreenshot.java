@@ -80,12 +80,10 @@ import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Slog;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceControl;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
@@ -95,7 +93,6 @@ import android.widget.Toast;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.config.sysui.SystemUiDeviceConfigFlags;
 import com.android.internal.messages.nano.SystemMessageProto.SystemMessage;
-import com.android.internal.util.potato.PotatoUtils;
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.SystemUI;
@@ -645,10 +642,6 @@ class GlobalScreenshot {
 
     private MediaActionSound mCameraSound;
 
-    public static boolean mPartialShotStarted;
-    public static boolean mPartialShot;
-    private float mTouchDownX;
-    private float mTouchDownY;
 
     /**
      * @param context everything needs a context :(
@@ -777,35 +770,23 @@ class GlobalScreenshot {
     void takeScreenshotPartial(final Consumer<Uri> finisher, final boolean statusBarVisible,
             final boolean navBarVisible) {
         mWindowManager.addView(mScreenshotLayout, mWindowLayoutParams);
-        mPartialShotStarted = false;
-        mPartialShot = true;
-        ViewConfiguration vc = ViewConfiguration.get(mContext);
-        final int touchSlop = vc.getScaledTouchSlop();
-        PotatoUtils.setPartialScreenshot(true);
         mScreenshotSelectorView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 ScreenshotSelectorView view = (ScreenshotSelectorView) v;
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        mPartialShotStarted = true;
-                        mTouchDownX = event.getRawX();
-                        mTouchDownY = event.getRawY();
                         view.startSelection((int) event.getX(), (int) event.getY());
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         view.updateSelection((int) event.getX(), (int) event.getY());
                         return true;
                     case MotionEvent.ACTION_UP:
-                        float x = event.getRawX();
-                        float y = event.getRawY();
                         view.setVisibility(View.GONE);
-                        PotatoUtils.setPartialScreenshot(false);
                         mWindowManager.removeView(mScreenshotLayout);
-                        if (Math.abs(mTouchDownX - x) > touchSlop ||
-                            Math.abs(mTouchDownY - y) > touchSlop) {
-                            final Rect rect = view.getSelectionRect();
-                            if (rect != null && !rect.isEmpty()) {
+                        final Rect rect = view.getSelectionRect();
+                        if (rect != null) {
+                            if (rect.width() != 0 && rect.height() != 0) {
                                 // Need mScreenshotLayout to handle it after the view disappears
                                 mScreenshotLayout.post(new Runnable() {
                                     public void run() {
@@ -813,16 +794,10 @@ class GlobalScreenshot {
                                                 rect);
                                     }
                                 });
-                                view.stopSelection();
-                                return true;
                             }
                         }
-                        finisher.accept(null);
                         view.stopSelection();
                         return true;
-                    case MotionEvent.ACTION_CANCEL:
-                        stopScreenshot();
-                        finisher.accept(null);
                 }
 
                 return false;
@@ -846,8 +821,6 @@ class GlobalScreenshot {
             mWindowManager.removeView(mScreenshotLayout);
             mScreenshotSelectorView.stopSelection();
         }
-        // called from action_cancel and also when unbinding screenshot service
-        PotatoUtils.setPartialScreenshot(false);
     }
 
     /**
@@ -1048,11 +1021,6 @@ class GlobalScreenshot {
     }
 
     static void notifyScreenshotError(Context context, NotificationManager nManager, int msgResId) {
-        // do nothing - it was a partial screenshot and no selection was made
-        if (mPartialShot && !mPartialShotStarted) {
-            return;
-        }
-
         Resources r = context.getResources();
         String errorMsg = r.getString(msgResId);
 

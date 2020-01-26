@@ -120,5 +120,4 @@ interface IStatusBarService
     void showInDisplayFingerprintView();
     void hideInDisplayFingerprintView();
 
-    void setPartialScreenshot(boolean active);
 }
