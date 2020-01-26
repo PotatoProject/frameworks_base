@@ -4707,6 +4707,18 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
 
+
+        /**
+         * Enable/disable privacy indicators on statusbar
+         * @hide
+         */
+        public static final String STATUSBAR_PRIVACY_INDICATORS = "statusbar_privacy_indicators";
+
+        /**
+         * @hide
+         */
+        private static final Validator STATUSBAR_PRIVACY_INDICATORS_VALIDATOR = BOOLEAN_VALIDATOR;
+
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
@@ -4782,6 +4794,7 @@ public final class Settings {
             QS_PANEL_BG_USE_WALL,
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
+            STATUSBAR_PRIVACY_INDICATORS,
         };
 
         /**
@@ -4915,6 +4928,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(CUSTOM_BACK_GESTURE_HEIGHT);
             PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
             PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
+            PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
         }
 
         /**
@@ -5022,6 +5036,7 @@ public final class Settings {
             VALIDATORS.put(LOCKSCREEN_MEDIA_METADATA, LOCKSCREEN_MEDIA_METADATA_VALIDATOR);
             VALIDATORS.put(STATUS_BAR_LOGO, STATUS_BAR_LOGO_VALIDATOR);
             VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
+            VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
         }
 
         /**
