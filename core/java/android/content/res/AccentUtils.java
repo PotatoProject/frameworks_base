@@ -29,6 +29,14 @@ public class AccentUtils {
         return getAccentColor(defaultColor, ACCENT_LIGHT_PROP);
     }
 
+    public static void setAccentDark(String value) {
+        SystemProperties.set(ACCENT_DARK_PROP, value);
+    }
+
+    public static void setAccentLight(String value) {
+        SystemProperties.set(ACCENT_LIGHT_PROP, value);
+    }
+
     private static int getAccentColor(int defaultColor, String property) {
         try {
             String colorValue = SystemProperties.get(property, "-1");

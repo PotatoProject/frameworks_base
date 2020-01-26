@@ -32,6 +32,7 @@ import android.annotation.Nullable;
 import android.content.om.OverlayInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.res.AccentUtils;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.ArraySet;
@@ -779,6 +780,14 @@ final class OverlayManagerServiceImpl {
 
     public void reloadAssets(final String packageName, final int userId) {
         mListener.onOverlaysChanged(packageName, userId);
+    }
+
+    public void setAccentLight(final String value) {
+        AccentUtils.setAccentLight(value);
+    }
+
+    public void setAccentDark(final String value) {
+        AccentUtils.setAccentDark(value);
     }
 
     interface OverlayChangeListener {
