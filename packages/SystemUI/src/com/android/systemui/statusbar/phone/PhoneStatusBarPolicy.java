@@ -25,14 +25,18 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.service.notification.ZenModeConfig;
 import android.telecom.TelecomManager;
@@ -142,6 +146,8 @@ public class PhoneStatusBarPolicy
 
     private BluetoothController mBluetooth;
     private AlarmManager.AlarmClockInfo mNextAlarm;
+
+    private boolean mShowStatusBarPrivacyIndicators;
 
     public PhoneStatusBarPolicy(Context context, StatusBarIconController iconController) {
         mContext = context;
@@ -268,6 +274,42 @@ public class PhoneStatusBarPolicy
         mLocationController.addCallback(this);
 
         SysUiServiceProvider.getComponent(mContext, CommandQueue.class).addCallback(this);
+
+        Handler mHandler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(mHandler);
+        settingsObserver.observe();
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            Uri uri = Settings.System.getUriFor(Settings.System.STATUSBAR_PRIVACY_INDICATORS);
+            resolver.registerContentObserver(uri, false,
+                    this, UserHandle.USER_ALL);
+            updateSettings();
+        }
+
+        /*
+         *  @hide
+         */
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings();
+        }
+    }
+
+    private void updateSettings() {
+        ContentResolver resolver = mContext.getContentResolver();
+
+       mShowStatusBarPrivacyIndicators = Settings.System.getIntForUser(resolver,
+                                          Settings.System.STATUSBAR_PRIVACY_INDICATORS, 0,
+                                          UserHandle.USER_CURRENT) == 1;
+
+        updateSettings();
     }
 
     @Override
@@ -682,6 +724,7 @@ public class PhoneStatusBarPolicy
         boolean showCamera = false;
         boolean showMicrophone = false;
         boolean showLocation = false;
+        if (mShowStatusBarPrivacyIndicators == true){
         for (PrivacyItem item : items) {
             if (item == null /* b/124234367 */) {
                 if (DEBUG) {
@@ -704,7 +747,7 @@ public class PhoneStatusBarPolicy
                     break;
             }
         }
-
+        }
         mIconController.setIconVisibility(mSlotCamera, showCamera);
         mIconController.setIconVisibility(mSlotMicrophone, showMicrophone);
         mIconController.setIconVisibility(mSlotLocation, showLocation);
