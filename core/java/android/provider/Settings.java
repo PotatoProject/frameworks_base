@@ -4725,6 +4725,16 @@ public final class Settings {
          */
         private static final Validator CUSTOM_FP_ICON_VALIDATOR =
                 ANY_STRING_VALIDATOR;
+        /**
+         * Enable/disable privacy indicators on statusbar
+         * @hide
+         */
+        public static final String STATUSBAR_PRIVACY_INDICATORS = "statusbar_privacy_indicators";
+
+        /**
+         * @hide
+         */
+        private static final Validator STATUSBAR_PRIVACY_INDICATORS_VALIDATOR = BOOLEAN_VALIDATOR;
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -4802,6 +4812,7 @@ public final class Settings {
             QS_PANEL_BG_USE_FW,
             CUSTOM_BACK_GESTURE_HEIGHT,
             CUSTOM_FP_ICON,
+            STATUSBAR_PRIVACY_INDICATORS,
         };
 
         /**
@@ -4936,6 +4947,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STATUS_BAR_LOGO);
             PRIVATE_SETTINGS.add(SMART_CLOCK_ENABLE);
             PRIVATE_SETTINGS.add(CUSTOM_FP_ICON);
+            PRIVATE_SETTINGS.add(STATUSBAR_PRIVACY_INDICATORS);
         }
 
         /**
@@ -5044,6 +5056,7 @@ public final class Settings {
             VALIDATORS.put(STATUS_BAR_LOGO, STATUS_BAR_LOGO_VALIDATOR);
             VALIDATORS.put(SMART_CLOCK_ENABLE, SMART_CLOCK_ENABLE_VALIDATOR);
             VALIDATORS.put(CUSTOM_FP_ICON, CUSTOM_FP_ICON_VALIDATOR);
+            VALIDATORS.put(STATUSBAR_PRIVACY_INDICATORS, STATUSBAR_PRIVACY_INDICATORS_VALIDATOR);
         }
 
         /**
