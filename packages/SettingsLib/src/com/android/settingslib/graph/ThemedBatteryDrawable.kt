@@ -25,6 +25,7 @@ import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.PathParser
 import android.util.TypedValue
@@ -68,6 +69,9 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
     private val plusPath = Path()
     private val scaledPlus = Path()
 
+    private val iconRect = RectF()
+    private val textPath = Path()
+
     private var intrinsicHeight: Int
     private var intrinsicWidth: Int
 
@@ -106,6 +110,12 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             postInvalidate()
         }
 
+    var showPercent = false
+        set(value) {
+            field = value
+            postInvalidate()
+        }
+
     private val fillColorStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
         p.color = frameColor
         p.isDither = true
@@ -131,6 +141,11 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
         p.isDither = true
         p.strokeWidth = 0f
         p.style = Paint.Style.FILL_AND_STROKE
+    }
+
+    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
+        p.textAlign = Paint.Align.CENTER
+        p.typeface = Typeface.create("sans-serif-condensed", Typeface.BOLD)
     }
 
     private val errorPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
@@ -177,6 +192,27 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
     }
 
     override fun draw(c: Canvas) {
+        var drawText: Boolean
+        var pctX: Float
+        var pctY: Float
+        var textHeight: Float
+        var pctText: String
+
+        if (!charging && !powerSaveEnabled && showPercent) {
+            val baseHeight = (if (dualTone) iconRect else fillRect).height()
+            textPaint.setColor(getColorForLevel(level))
+            textPaint.setTextSize(baseHeight * (if (level == 100) 0.38f else 0.65f))
+            textHeight = -textPaint.getFontMetrics().ascent
+            pctText = level.toString()
+            pctX = fillRect.width() * 0.5f + fillRect.left
+            pctY = (fillRect.height() + textHeight) * 0.47f + fillRect.top
+            textPath.reset()
+            textPaint.getTextPath(pctText, 0, pctText.length, pctX, pctY, textPath)
+            drawText = true
+        } else {
+            drawText = false
+        }
+
         c.saveLayer(null, null)
         unifiedPath.reset()
         levelPath.reset()
@@ -206,6 +242,11 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             unifiedPath.op(scaledBolt, Path.Op.DIFFERENCE)
             if (!invertFillIcon) {
                 c.drawPath(scaledBolt, fillPaint)
+            }
+        } else if (drawText) {
+            unifiedPath.op(textPath, Path.Op.DIFFERENCE);
+            if (!invertFillIcon) {
+                c.drawPath(textPath, fillPaint);
             }
         }
 
@@ -247,6 +288,13 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             c.drawPath(scaledErrorPerimeter, errorPaint)
             // And draw the plus sign on top of the fill
             c.drawPath(scaledPlus, errorPaint)
+        } else if (drawText) {
+            c.clipOutPath(textPath)
+            if (invertFillIcon) {
+                c.drawPath(textPath, fillColorStrokePaint)
+            } else {
+                c.drawPath(textPath, fillColorStrokeProtection)
+            }
         }
         c.restore()
     }
@@ -379,6 +427,7 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
 
         fillColorStrokePaint.strokeWidth = scaledStrokeWidth
         fillColorStrokeProtection.strokeWidth = scaledStrokeWidth
+        iconRect.set(bounds)
     }
 
     private fun loadPaths() {
