@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e256483e_6280464a",
+        "filename": "packages/SettingsLib/src/com/android/settingslib/graph/ThemedBatteryDrawable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-05T17:45:06Z",
+      "side": 0,
+      "message": "Also doesn\u0027t need to be removed",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 36
+      },
+      "revId": "d84399ad2879c37c063bdcceae6930c4a2f624e0",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae13c84b_7a46fff4",
+        "filename": "packages/SettingsLib/src/com/android/settingslib/graph/ThemedBatteryDrawable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-05T17:45:06Z",
+      "side": 0,
+      "message": "useless change",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 169,
+        "endChar": 31
+      },
+      "revId": "d84399ad2879c37c063bdcceae6930c4a2f624e0",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}

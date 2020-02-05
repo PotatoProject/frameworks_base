@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f68d3fee_2d85d4dc",
+        "filename": "packages/SettingsLib/src/com/android/settingslib/graph/ThemedBatteryDrawable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-05T17:45:06Z",
+      "side": 1,
+      "message": "Doesn\u0027t change a thing. Unnecessary diff.",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 115,
+        "endChar": 116
+      },
+      "revId": "f1c7c04081eee0e7812c5c0d1e6dc5a8fba6c372",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5e8f349_86106828",
+        "filename": "packages/SettingsLib/src/com/android/settingslib/graph/ThemedBatteryDrawable.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-05T17:45:06Z",
+      "side": 1,
+      "message": "useless",
+      "range": {
+        "startLine": 188,
+        "startChar": 0,
+        "endLine": 188,
+        "endChar": 24
+      },
+      "revId": "f1c7c04081eee0e7812c5c0d1e6dc5a8fba6c372",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
