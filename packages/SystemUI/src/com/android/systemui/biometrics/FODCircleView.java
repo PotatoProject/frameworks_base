@@ -143,6 +143,7 @@ public class FODCircleView extends ImageView implements OnTouchListener {
             mIsPulsing = pulsing;
 	        if (mIsPulsing) {
                 mIsDreaming = false;
+                setCustomIcon();
 	        }
             mIsInsideCircle = false;
             setCustomIcon();
