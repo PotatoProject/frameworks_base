@@ -61,5 +61,10 @@
 
     <!-- Icon manager -->
     <string name="systemui_tuner_icon_manager_title">Icon manager</string>
+    <string name="misc_statusbar_items_category_title">Misc</string>
+
+    <!-- POSP logo -->
+    <string name="du_logo_title">POSP logo</string>
+    <string name="du_logo_summary">Let everyone know that you\'re using POSP when they see your screen</string>
 
 </resources>
