@@ -193,6 +193,7 @@ public class FODCircleView extends ImageView {
 
         mUpdateMonitor = KeyguardUpdateMonitor.getInstance(context);
         mUpdateMonitor.registerCallback(mMonitorCallback);
+
         updateCutoutFlags();
 
         Dependency.get(ConfigurationController.class).addCallback(this);
