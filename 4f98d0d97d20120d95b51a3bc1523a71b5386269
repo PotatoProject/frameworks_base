@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ab45f7c_2861dabc",
+        "filename": "core/res/res/values/potato_symbols.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-20T13:28:58Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 63,
+        "endChar": 1
+      },
+      "revId": "4f98d0d97d20120d95b51a3bc1523a71b5386269",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
