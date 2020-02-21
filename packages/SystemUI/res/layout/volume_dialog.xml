@@ -17,28 +17,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sysui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/volume_dialog_container"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
     android:gravity="right"
     android:layout_gravity="right"
     android:background="@android:color/transparent"
-    android:theme="@style/qs_theme">
+    android:theme="@style/qs_theme"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <!-- right-aligned to be physically near volume button -->
     <LinearLayout
         android:id="@+id/volume_dialog"
         android:minWidth="@dimen/volume_dialog_panel_width"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
         android:paddingTop="@dimen/volume_dialog_panel_transparent_padding"
         android:paddingBottom="@dimen/volume_dialog_panel_transparent_padding"
-        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding"
+        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding_right"
         android:orientation="vertical"
-        android:clipToPadding="false"
-        android:animateLayoutChanges="true" >
+        android:clipChildren="false"
+        android:clipToPadding="false" >
 
         <FrameLayout
             android:id="@+id/ringer"
@@ -69,25 +70,23 @@
         <LinearLayout
             android:id="@+id/main"
             android:minWidth="@dimen/volume_dialog_panel_width"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:layout_gravity="right"
+            android:gravity="left"
+            android:layout_gravity="left"
             android:orientation="vertical"
             android:translationZ="@dimen/volume_dialog_elevation"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:animateLayoutChanges="true"
             android:background="@drawable/rounded_bg_full" >
             <LinearLayout
                 android:id="@+id/volume_dialog_rows"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minWidth="@dimen/volume_dialog_panel_width"
-                android:gravity="center"
+                android:gravity="left"
                 android:orientation="horizontal"
                 android:paddingRight="@dimen/volume_dialog_stream_padding"
-                android:animateLayoutChanges="true"
                 android:paddingLeft="@dimen/volume_dialog_stream_padding">
                     <!-- volume rows added and removed here! :-) -->
             </LinearLayout>

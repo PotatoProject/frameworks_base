@@ -29,7 +29,7 @@ public class SystemUIInterpolators {
             this(400f, 1.4f, 0);
         }
 
-        private LogDecelerateInterpolator(float base, float timeScale, float drift) {
+        public LogDecelerateInterpolator(float base, float timeScale, float drift) {
             mBase = base;
             mDrift = drift;
             mTimeScale = 1f / timeScale;

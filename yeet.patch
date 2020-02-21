@@ -1,0 +1,460 @@
+diff --git a/:x b/:x
+deleted file mode 100644
+index 6892d85e02c..00000000000
+--- a/:x
++++ /dev/null
+@@ -1,32 +0,0 @@
+-Fix Google dialer FC due to missing permissions
+-
+-In past verisons you could not download the Google dialer unless
+-you were on a Nexus/Pixel. Now that we're able to download it on pretty
+-much every device running 8.1, we need to protect the user from the user.
+-
+-Some users are smarter than others, is that simple. Some users will realize
+-that the reason this FCs is because of missing permissions. Some won't be that
+-smart and will come to us and report this as a bug. This commit fixes this.
+-
+-[@AgentFabulous - POSP]
+-- Adapt for android-10.0.0_r2
+-- Use grantSystemFixedPermissionsToSystemPackage to simplify syntax
+-
+-Change-Id: I125b42f5c68bd84aece41f2f9124716af06a88d6
+-Signed-off-by: Kshitij Gupta <kshitijgm@gmail.com>
+-
+-# Please enter the commit message for your changes. Lines starting
+-# with '#' will be ignored, and an empty message aborts the commit.
+-#
+-# Author:    Alex Cruz <du.alexcruz@gmail.com>
+-#
+-# interactive rebase in progress; onto d117ba6360d
+-# Last commands done (6 commands done):
+-#    edit a70a9d33639 Allow chromium to sign in
+-#    edit 6bef19cae95 Fix Google dialer FC due to missing permissions
+-# No commands remaining.
+-# You are currently rebasing.
+-#
+-# Changes to be committed:
+-#	modified:   services/core/java/com/android/server/pm/permission/DefaultPermissionGrantPolicy.java
+-#
+diff --git a/packages/SystemUI/res/layout/volume_dialog.xml b/packages/SystemUI/res/layout/volume_dialog.xml
+index 7b786e6b1b8..2be2fb70a97 100644
+--- a/packages/SystemUI/res/layout/volume_dialog.xml
++++ b/packages/SystemUI/res/layout/volume_dialog.xml
+@@ -17,19 +17,21 @@
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:sysui="http://schemas.android.com/apk/res-auto"
+     android:id="@+id/volume_dialog_container"
+-    android:layout_width="wrap_content"
++    android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+-    android:clickable="true"
+-    android:gravity="right"
+-    android:layout_gravity="right"
++    android:gravity="left"
++    android:layout_gravity="left"
+     android:background="@android:color/transparent"
+-    android:theme="@style/qs_theme">
++    android:theme="@style/qs_theme"
++    android:clickable="false"
++    android:focusable="false"
++    android:focusableInTouchMode="false">
+ 
+     <!-- right-aligned to be physically near volume button -->
+     <LinearLayout
+         android:id="@+id/volume_dialog"
+         android:minWidth="@dimen/volume_dialog_panel_width"
+-        android:layout_width="wrap_content"
++        android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:background="@android:color/transparent"
+         android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
+@@ -37,8 +39,7 @@
+         android:paddingBottom="@dimen/volume_dialog_panel_transparent_padding"
+         android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding"
+         android:orientation="vertical"
+-        android:clipToPadding="false"
+-        android:animateLayoutChanges="true" >
++        android:clipToPadding="false" >
+ 
+         <FrameLayout
+             android:id="@+id/ringer"
+@@ -69,25 +70,23 @@
+         <LinearLayout
+             android:id="@+id/main"
+             android:minWidth="@dimen/volume_dialog_panel_width"
+-            android:layout_width="wrap_content"
++            android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+-            android:gravity="right"
+-            android:layout_gravity="right"
++            android:gravity="left"
++            android:layout_gravity="left"
+             android:orientation="vertical"
+             android:translationZ="@dimen/volume_dialog_elevation"
+             android:clipChildren="false"
+             android:clipToPadding="false"
+-            android:animateLayoutChanges="true"
+             android:background="@drawable/rounded_bg_full" >
+             <LinearLayout
+                 android:id="@+id/volume_dialog_rows"
+-                android:layout_width="wrap_content"
++                android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:minWidth="@dimen/volume_dialog_panel_width"
+-                android:gravity="center"
++                android:gravity="left"
+                 android:orientation="horizontal"
+                 android:paddingRight="@dimen/volume_dialog_stream_padding"
+-                android:animateLayoutChanges="true"
+                 android:paddingLeft="@dimen/volume_dialog_stream_padding">
+                     <!-- volume rows added and removed here! :-) -->
+             </LinearLayout>
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/SystemUIInterpolators.java b/packages/SystemUI/src/com/android/systemui/volume/SystemUIInterpolators.java
+index 5ad8840a9dd..8fbc2a8f77e 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/SystemUIInterpolators.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/SystemUIInterpolators.java
+@@ -29,7 +29,7 @@ public class SystemUIInterpolators {
+             this(400f, 1.4f, 0);
+         }
+ 
+-        private LogDecelerateInterpolator(float base, float timeScale, float drift) {
++        public LogDecelerateInterpolator(float base, float timeScale, float drift) {
+             mBase = base;
+             mDrift = drift;
+             mTimeScale = 1f / timeScale;
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/UntouchableFrameLayout.java b/packages/SystemUI/src/com/android/systemui/volume/UntouchableFrameLayout.java
+index e69de29bb2d..cdf9409d414 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/UntouchableFrameLayout.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/UntouchableFrameLayout.java
+@@ -0,0 +1,37 @@
++package com.android.systemui.volume;
++
++import android.content.Context;
++import android.util.AttributeSet;
++import android.view.MotionEvent;
++import android.widget.FrameLayout;
++
++public class UntouchableFrameLayout extends FrameLayout {
++    public UntouchableFrameLayout(Context context) {
++        super(context);
++    }
++
++    public UntouchableFrameLayout(Context context, AttributeSet attrs) {
++        super(context, attrs);
++    }
++
++    public UntouchableFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
++        super(context, attrs, defStyleAttr);
++    }
++
++    public UntouchableFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
++        super(context, attrs, defStyleAttr, defStyleRes);
++    }
++
++    @Override
++    public boolean onTouchEvent(MotionEvent ev)
++    {
++        return false;
++    }
++
++    @Override
++    public boolean onInterceptTouchEvent(MotionEvent ev)
++    {
++        onTouchEvent(ev);
++        return false;
++    }
++}
+\ No newline at end of file
+diff --git a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+index 4add75b5185..6d07af3a62e 100644
+--- a/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/volume/VolumeDialogImpl.java
+@@ -33,7 +33,10 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+ 
+ import static com.android.systemui.volume.Events.DISMISS_REASON_SETTINGS_CLICKED;
+ 
++import android.animation.Animator;
++import android.animation.AnimatorListenerAdapter;
+ import android.animation.ObjectAnimator;
++import android.animation.ValueAnimator;
+ import android.annotation.SuppressLint;
+ import android.app.ActivityManager;
+ import android.app.Dialog;
+@@ -61,6 +64,8 @@ import android.os.VibrationEffect;
+ import android.provider.Settings;
+ import android.provider.Settings.Global;
+ import android.text.InputFilter;
++import android.transition.TransitionManager;
++import android.util.AttributeSet;
+ import android.util.Log;
+ import android.util.Slog;
+ import android.util.SparseBooleanArray;
+@@ -78,8 +83,10 @@ import android.view.accessibility.AccessibilityEvent;
+ import android.view.accessibility.AccessibilityManager;
+ import android.view.accessibility.AccessibilityNodeInfo;
+ import android.view.animation.DecelerateInterpolator;
++import android.view.animation.PathInterpolator;
+ import android.widget.FrameLayout;
+ import android.widget.ImageButton;
++import android.widget.LinearLayout;
+ import android.widget.SeekBar;
+ import android.widget.SeekBar.OnSeekBarChangeListener;
+ import android.widget.TextView;
+@@ -132,7 +139,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+     private Window mWindow;
+     private CustomDialog mDialog;
+     private ViewGroup mDialogView;
+-    private ViewGroup mDialogContainerView;
++    private FrameLayout mDialogContainerView;
+     private ViewGroup mDialogRowsView;
+     private ViewGroup mRinger;
+     private ImageButton mRingerIcon;
+@@ -169,6 +176,9 @@ public class VolumeDialogImpl implements VolumeDialog,
+     private ViewStub mODICaptionsTooltipViewStub;
+     private View mODICaptionsTooltipView = null;
+ 
++    public boolean mIsExpandAnimDone = true;
++    public ValueAnimator mAnimVol;
++
+     private boolean mLeftVolumeRocker;
+ 
+     public VolumeDialogImpl(Context context) {
+@@ -271,6 +281,19 @@ public class VolumeDialogImpl implements VolumeDialog,
+             return true;
+         });
+ 
++        mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
++        mDialogContainerView.setClickable(false);
++        mDialogContainerView.setFocusable(false);
++        mDialogContainerView.setFocusableInTouchMode(false);
++
++        mDialogContainerView.setOnTouchListener(new View.OnTouchListener() {
++            @Override
++            public boolean onTouch(View v, MotionEvent event) {
++                dismissH(0);
++                return true;
++            }
++        });
++
+         mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+         mRinger = mDialog.findViewById(R.id.ringer);
+ 
+@@ -305,12 +328,6 @@ public class VolumeDialogImpl implements VolumeDialog,
+         mQDialog = mDialog.findViewById(R.id.q_dialog);
+         mExpandRows = mDialog.findViewById(R.id.volume_expand_rows);
+ 
+-        mDialogContainerView = mDialog.findViewById(R.id.volume_dialog_container);
+-
+-        mDialogContainerView.setOnClickListener(v -> {
+-            dismissH(0);
+-        });
+-
+         if (mRows.isEmpty()) {
+             if (!AudioSystem.isSingleVolume(mContext)) {
+                 addRow(STREAM_ACCESSIBILITY, R.drawable.ic_volume_accessibility,
+@@ -325,7 +342,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+                         R.drawable.ic_volume_alarm, R.drawable.ic_volume_alarm_mute, true, false);
+                 addRow(AudioManager.STREAM_VOICE_CALL,
+                         com.android.internal.R.drawable.ic_phone,
+-                        com.android.internal.R.drawable.ic_phone, false, false);
++                        com.android.internal.R.drawable.ic_phone, true, false);
+                 addRow(AudioManager.STREAM_BLUETOOTH_SCO,
+                         R.drawable.ic_volume_bt_sco, R.drawable.ic_volume_bt_sco, false, false);
+                 addRow(AudioManager.STREAM_SYSTEM, R.drawable.ic_volume_system,
+@@ -335,12 +352,97 @@ public class VolumeDialogImpl implements VolumeDialog,
+             addExistingRows();
+         }
+ 
++        /*int rowSidePadding = (mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_stream_padding) * 2);
++        int panelRightPadding = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_transparent_padding_right);
++        int panelPadding = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_transparent_padding);
++
++        setDialogWidth(mRowWidth * 3 + rowSidePadding + panelRightPadding + panelPadding);*/
++
+         updateRowsH(getActiveRow());
+         initRingerH();
+         initSettingsH();
+         initODICaptionsH();
+     }
+ 
++    private void opExpandAnim(boolean expanding) {
++        int start;
++        int end;
++
++        int rowWidth = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_ringer_size);
++        int rowSidePadding = (mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_stream_padding) * 2);
++        int panelRightPadding = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_transparent_padding_right);
++        int panelPadding = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_transparent_padding);
++
++        int beforeWidth = rowWidth + panelRightPadding + panelPadding;
++        int afterWidth = (rowWidth * 3) + panelRightPadding + panelPadding + rowSidePadding;
++
++        if (expanding) {
++            start = beforeWidth;
++            end = afterWidth;
++        } else {
++            start = afterWidth;
++            end = beforeWidth;
++        }
++
++        if(!expanding)
++            setDialogWidth(end);
++
++        mODICaptionsView.animate().alpha(0).setDuration(DIALOG_HIDE_ANIMATION_DURATION).start();
++        mODICaptionsView.animate().alpha(1.0f).setInterpolator(new SystemUIInterpolators.LogDecelerateInterpolator(800f, 2.1f, 0)).setDuration(DIALOG_HIDE_ANIMATION_DURATION).start();
++        ObjectAnimator animation = ObjectAnimator.ofFloat(mDialogView, "translationX", end - start, 0f);
++        animation.setInterpolator(new SystemUIInterpolators.LogDecelerateInterpolator(800f, 2.1f, 0));
++        animation.setDuration(DIALOG_HIDE_ANIMATION_DURATION);
++        animation.setStartDelay(250);
++        animation.start();
++
++        if(expanding)
++            setDialogWidth(end);
++
++        /*mAnimVol.setDuration(275);
++        mAnimVol.setInterpolator(new PathInterpolator(0.4f, 0.0f, 0.4f, 1.0f));
++        mAnimVol.addListener(new AnimatorListenerAdapter() {
++            public void onAnimationEnd(Animator animator) {
++                //dialogContainerLP.width = end;
++                //dialogContainerVG.setLayoutParams(dialogContainerLP);
++                //dialogContainerVG.requestLayout();
++                //if(!expanding)
++                //    setDialogWidth(end);
++                mIsExpandAnimDone = true;
++                updateRowsH(getActiveRow());
++            }
++
++            public void onAnimationStart(Animator animator) {
++                mIsExpandAnimDone = false;
++                //setDialogWidth(WRAP_CONTENT);
++                //dialogContainerLP.width = start;
++                //dialogContainerVG.setLayoutParams(dialogContainerLP);
++                //dialogContainerVG.requestLayout();
++                //if(expanding)
++                    setDialogWidth(end);
++            }
++        });
++
++        mAnimVol.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
++            public void onAnimationUpdate(ValueAnimator valueAnimator) {
++                float animatorValue = ((Float) valueAnimator.getAnimatedValue()).floatValue();
++                float newWidth = (((float) (end - start)) * animatorValue) + ((float) start);
++                float newContentWidth = (((float) (contentEnd - contentStart)) * animatorValue) + ((float) contentStart);
++
++                //attributes.width = (int) newWidth;
++                //mDialog.getWindow().setAttributes(attributes);
++                //setDialogWidth((int) newWidth);
++                dialogContainerLP.width = (int) newWidth;
++                //mainLP.width = (int) newContentWidth;
++                dialogContainerVG.setLayoutParams(dialogContainerLP);
++                //mainVG.setLayoutParams(mainLP);
++                dialogContainerVG.requestLayout();
++                //mainVG.requestLayout();
++            }
++        });*/
++
++        //mAnimVol.start();
++    }
++
+     protected ViewGroup getDialogView() {
+         return mDialogView;
+     }
+@@ -384,9 +486,9 @@ public class VolumeDialogImpl implements VolumeDialog,
+         VolumeRow row = new VolumeRow();
+         initRow(row, stream, iconRes, iconMuteRes, important, defaultStream);
+         if(!isAudioPanelOnLeftSide()){
+-            mDialogRowsView.addView(row.view, 0);
+-        } else {
+             mDialogRowsView.addView(row.view);
++        } else {
++            mDialogRowsView.addView(row.view, 0);
+         }
+         mRows.add(row);
+     }
+@@ -398,9 +500,9 @@ public class VolumeDialogImpl implements VolumeDialog,
+             initRow(row, row.stream, row.iconRes, row.iconMuteRes, row.important,
+                     row.defaultStream);
+             if(!isAudioPanelOnLeftSide()){
+-                mDialogRowsView.addView(row.view, 0);
+-            } else {
+                 mDialogRowsView.addView(row.view);
++            } else {
++                mDialogRowsView.addView(row.view, 0);
+             }
+             updateVolumeRowH(row);
+         }
+@@ -504,7 +606,8 @@ public class VolumeDialogImpl implements VolumeDialog,
+         for(int i = mRows.size() - 1; i >= 0; i--) {
+             final VolumeRow row = mRows.get(i);
+             if ((row.stream == AudioManager.STREAM_RING
+-                    || row.stream == AudioManager.STREAM_ALARM)) {
++                    || row.stream == AudioManager.STREAM_ALARM
++                    || row.stream == AudioManager.STREAM_VOICE_CALL)) {
+                 Util.setVisOrGone(row.view, /* vis */ false);
+             }
+         }
+@@ -537,6 +640,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+             mExpandRows.setOnClickListener(v -> {
+                 if(!mExpanded) {
++                    opExpandAnim(true);
+                     VolumeRow row = findRow(AudioManager.STREAM_RING);
+                     if (row != null) {
+                         Util.setVisOrGone(row.view, /* vis */ true);
+@@ -549,6 +653,12 @@ public class VolumeDialogImpl implements VolumeDialog,
+                         updateVolumeRowTintH(row,
+                                 /* isActive */ row.stream == mActiveStream);
+                     }
++                    row = findRow(AudioManager.STREAM_VOICE_CALL);
++                    if (row != null) {
++                        Util.setVisOrGone(row.view, /* vis */ true);
++                        updateVolumeRowTintH(row,
++                                /* isActive */ row.stream == mActiveStream);
++                    }
+                     // Track ally stream, basically whatever is active next
+                     // to the default one (media stream). e.g call stream.
+                     if (watchAllyStream != -1) {
+@@ -565,6 +675,7 @@ public class VolumeDialogImpl implements VolumeDialog,
+                     updateVolumeRowTintH(row,
+                             /* isActive */ true);
+                     cleanExpandRows();
++                    opExpandAnim(false);
+                     mExpanded = false;
+                 }
+                 mExpandRows.setExpanded(mExpanded);
+@@ -711,17 +822,13 @@ public class VolumeDialogImpl implements VolumeDialog,
+         updateCaptionsIcon();
+     }
+ 
+-    public void setDialogWidth(int newWidth) {
++    private void setDialogWidth(int newWidth) {
+         FrameLayout frameLayout = (FrameLayout) mDialog.findViewById(R.id.volume_dialog_container);
+         ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
+         layoutParams.width = newWidth;
+         frameLayout.setLayoutParams(layoutParams);
+-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) getDialogView().getLayoutParams();
+-        layoutParams2.gravity = 21;
+-        getDialogView().setLayoutParams(layoutParams2);
+         WindowManager.LayoutParams attributes = mDialog.getWindow().getAttributes();
+         attributes.width = newWidth;
+-        attributes.gravity = 21;
+         mDialog.getWindow().setAttributes(attributes);
+     }
+ 
+@@ -790,8 +897,6 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+     private void showH(int reason) {
+         if (D.BUG) Log.d(TAG, "showH r=" + Events.SHOW_REASONS[reason]);
+-        final int rowWidth = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_ringer_size) +
+-                (mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_stream_padding) * 2);
+         mHandler.removeMessages(H.SHOW);
+         mHandler.removeMessages(H.DISMISS);
+         rescheduleTimeoutH();
+@@ -804,7 +909,6 @@ public class VolumeDialogImpl implements VolumeDialog,
+ 
+         initSettingsH();
+         mShowing = true;
+-        setDialogWidth(rowWidth * 3);
+         mDialog.show();
+         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
+         mController.notifyVisible(true);
