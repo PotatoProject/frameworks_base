@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "addffa08_e3a5eb8f",
+        "filename": "core/res/res/values/config.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1878,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-02-22T17:00:04Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 1878,
+        "startChar": 0,
+        "endLine": 1878,
+        "endChar": 8
+      },
+      "revId": "31d8737c3008098b06ba72f90e5d60ca98e68c01",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
