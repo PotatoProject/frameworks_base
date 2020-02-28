@@ -194,6 +194,9 @@ public class NavigationBarInflaterView extends FrameLayout
             updateHint();
             onLikelyDefaultLayoutChange();
         }
+        if (QuickStepContract.isGesturalMode(mNavBarMode)) {
+            onLikelyDefaultLayoutChange();
+        }
     }
 
     public void setNavigationBarLayout(String layoutValue) {
