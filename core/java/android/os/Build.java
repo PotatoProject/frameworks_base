@@ -1002,10 +1002,6 @@ public class Build {
     /** A string that uniquely identifies this build.  Do not attempt to parse this value. */
     public static final String FINGERPRINT = deriveFingerprint();
 
-    /* @hide */
-    public static final String POTATO_FINGERPRINT = SystemProperties.get("ro.potato.fingerprint",
-            deriveFingerprint());
-
     /**
      * Some devices split the fingerprint components between multiple
      * partitions, so we might derive the fingerprint at runtime.
