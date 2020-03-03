@@ -4737,6 +4737,13 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_MEDIA_BLUR = "lockscreen_media_blur";
 
+        /** Width of the navigation handle.
+         *  @hide
+         */
+        public static final String NAVIGATION_HANDLE_WIDTH = "navigation_handle_width";
+
+        /** @hide */
+        private static final Validator NAVIGATION_HANDLE_WIDTH_VALIDATOR = ANY_INTEGER_VALIDATOR;
 
         /**
          * Enable/disable privacy indicators on statusbar
@@ -4948,6 +4955,7 @@ public final class Settings {
             DISPLAY_CUTOUT_MODE,
             STOCK_STATUSBAR_IN_HIDE,
             NAVIGATION_BAR_SHOW,
+            NAVIGATION_HANDLE_WIDTH,
         };
 
         /**
@@ -5089,6 +5097,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(STOCK_STATUSBAR_IN_HIDE);
             PRIVATE_SETTINGS.add(COLOR_BUCKET_OVERLAY);
             PRIVATE_SETTINGS.add(NAVIGATION_BAR_SHOW);
+            PRIVATE_SETTINGS.add(NAVIGATION_HANDLE_WIDTH);
         }
 
         /**
@@ -5203,6 +5212,7 @@ public final class Settings {
             VALIDATORS.put(DISPLAY_CUTOUT_MODE, DISPLAY_CUTOUT_MODE_VALIDATOR);
             VALIDATORS.put(STOCK_STATUSBAR_IN_HIDE, STOCK_STATUSBAR_IN_HIDE_VALIDATOR);
             VALIDATORS.put(NAVIGATION_BAR_SHOW, NAVIGATION_BAR_SHOW_VALIDATOR);
+            VALIDATORS.put(NAVIGATION_HANDLE_WIDTH, NAVIGATION_HANDLE_WIDTH_VALIDATOR);
         }
 
         /**
