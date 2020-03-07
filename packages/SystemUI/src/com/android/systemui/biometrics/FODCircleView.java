@@ -25,7 +25,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.biometrics.BiometricSourceType;
-import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.IHwBinder;
 import android.os.Looper;
@@ -63,7 +62,6 @@ public class FODCircleView extends ImageView implements OnTouchListener {
     private final Paint mPaintShow = new Paint();
     private final WindowManager.LayoutParams mParams = new WindowManager.LayoutParams();
     private final WindowManager mWindowManager;
-    private final DisplayManager mDisplayManager;
 
     private IFingerprintInscreen mFingerprintInscreenDaemon;
 
@@ -252,8 +250,6 @@ public class FODCircleView extends ImageView implements OnTouchListener {
 
         mUpdateMonitor = KeyguardUpdateMonitor.getInstance(context);
         mUpdateMonitor.registerCallback(mMonitorCallback);
-
-        mDisplayManager = context.getSystemService(DisplayManager.class);
     }
 
     @Override
@@ -492,12 +488,12 @@ public class FODCircleView extends ImageView implements OnTouchListener {
             }
 
             if (mShouldBoostBrightness) {
-                mDisplayManager.setTemporaryBrightness(255);
+                mParams.screenBrightness = 1.0f;
             }
 
             mParams.dimAmount = ((float) dimAmount) / 255.0f;
         } else {
-            mDisplayManager.setTemporaryBrightness(-1);
+            mParams.screenBrightness = 0.0f;
             mParams.dimAmount = 0.0f;
         }
 
