@@ -2397,10 +2397,7 @@ public class NotificationPanelView extends PanelView implements
         super.onExpandingStarted();
         mNotificationStackScroller.onExpansionStarted();
         mIsExpanding = true;
-        mQsExpandedWhenExpandingStarted = mQsFullyExpanded;
-        if (mQsExpanded) {
-            onQsExpansionStarted();
-        }
+        Log.i(TAG, "DEBUG isExpanding " + mIsExpanding);
         // Since there are QS tiles in the header now, we need to make sure we start listening
         // immediately so they can be up to date.
         if (mQs == null) return;
@@ -2413,6 +2410,7 @@ public class NotificationPanelView extends PanelView implements
         mNotificationStackScroller.onExpansionStopped();
         mHeadsUpManager.onExpandingFinished();
         mIsExpanding = false;
+        Log.i(TAG, "DEBUG isExpanding " + mIsExpanding);
         if (isFullyCollapsed()) {
             DejankUtils.postAfterTraversal(new Runnable() {
                 @Override

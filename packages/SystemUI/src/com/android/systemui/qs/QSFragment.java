@@ -369,6 +369,7 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             return;
         }
         mLastQSExpansion = expansion;
+        Log.i(TAG, "DEBUG qs-expansion " + expansion);
         mLastKeyguardAndExpanded = onKeyguardAndExpanded;
 
         boolean fullyExpanded = expansion == 1;
