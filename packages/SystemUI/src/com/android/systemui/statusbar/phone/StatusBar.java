@@ -1589,6 +1589,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void setQsExpanded(boolean expanded) {
+        Log.i(TAG, "DEBUG expansion: " + expanded);
         mStatusBarWindowController.setQsExpanded(expanded);
         mNotificationPanel.setStatusAccessibilityImportance(expanded
                 ? View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
