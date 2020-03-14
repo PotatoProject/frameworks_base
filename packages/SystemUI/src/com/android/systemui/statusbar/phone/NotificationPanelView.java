@@ -73,6 +73,8 @@ import com.android.systemui.DejankUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
+import com.android.systemui.ScreenDecorations;
+import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.fragments.FragmentHostManager;
 import com.android.systemui.fragments.FragmentHostManager.FragmentListener;
 import com.android.systemui.plugins.FalsingManager;
@@ -454,6 +456,8 @@ public class NotificationPanelView extends PanelView implements
      * the keyguard is dismissed to show the status bar.
      */
     private boolean mDelayShowingKeyguardStatusBar;
+    private ScreenDecorations mScreenDecorations =
+            SysUiServiceProvider.getComponent(context, ScreenDecorations.class);
 
     @Inject
     public NotificationPanelView(@Named(VIEW_CONTEXT) Context context, AttributeSet attrs,
@@ -2392,6 +2396,12 @@ public class NotificationPanelView extends PanelView implements
         mBigClockContainer.setAlpha(alpha);
     }
 
+    private void setTopCorners(bool enable) {
+        if (mScreenDecorations == null)
+            SysUiServiceProvider.getComponent(context, ScreenDecorations.class);
+	mScreenDecorations.setTopCorners(enable);
+    }
+
     @Override
     protected void onExpandingStarted() {
         super.onExpandingStarted();
@@ -2405,6 +2415,7 @@ public class NotificationPanelView extends PanelView implements
         // immediately so they can be up to date.
         if (mQs == null) return;
         mQs.setHeaderListening(true);
+        setTopCorners(mIsExpanding);
     }
 
     @Override
@@ -2440,6 +2451,7 @@ public class NotificationPanelView extends PanelView implements
         notifyListenersTrackingHeadsUp(null);
         mExpandingFromHeadsUp = false;
         setPanelScrimMinFraction(0.0f);
+        setTopCorners(mIsExpanding);
     }
 
     private void notifyListenersTrackingHeadsUp(ExpandableNotificationRow pickedChild) {
