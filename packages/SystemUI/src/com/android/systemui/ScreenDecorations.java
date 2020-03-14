@@ -140,6 +140,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     private boolean mCustomCutout;
 
     private boolean mImmerseMode;
+    private boolean mTopEnabled = true;
 
     /**
      * Converts a set of {@link Rect}s into a {@link Region}
@@ -510,6 +511,9 @@ public class ScreenDecorations extends SystemUI implements Tunable,
             }
         });
         updateCutoutMode();
+        if (!mTopEnabled) {
+            onTuningChanged(SIZE, null);
+	}
     }
 
     private void updateOrientation() {
@@ -781,6 +785,9 @@ public class ScreenDecorations extends SystemUI implements Tunable,
                     sizeBottom = size;
                 }
 
+                if (!mTopEnabled && mRotation == RotationUtils.ROTATION_NONE) {
+                    sizeTop = 0;
+                }
                 setSize(mOverlay.findViewById(R.id.left), sizeTop);
                 setSize(mOverlay.findViewById(R.id.right), sizeTop);
                 setSize(mBottomOverlay.findViewById(R.id.left), sizeBottom);
@@ -830,6 +837,13 @@ public class ScreenDecorations extends SystemUI implements Tunable,
             mImmerseMode = newImmerseMode;
             mHandler.removeCallbacksAndMessages(null);
             mHandler.post(this::startOnScreenDecorationsThread);
+        }
+    }
+
+    public void setTopCorners(bool enable) {
+        if (mTopEnabled != enable) {
+            mTopEnabled = enable;
+            onTuningChanged(SIZE, null);
         }
     }
 
