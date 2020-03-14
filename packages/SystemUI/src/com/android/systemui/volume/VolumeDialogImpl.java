@@ -132,14 +132,15 @@ public class VolumeDialogImpl implements VolumeDialog,
     private CustomDialog mDialog;
     private ViewGroup mDialogView;
     private ViewGroup mDialogRowsView;
+    private ViewGroup mDialogStreamSwitchView;
     private ViewGroup mRinger;
     private ImageButton mRingerIcon;
     private ViewGroup mODICaptionsView;
     private CaptionsToggleImageButton mODICaptionsIcon;
-    private View mSettingsView;
-    private ImageButton mSettingsIcon;
     private FrameLayout mZenIcon;
     private final List<VolumeRow> mRows = new ArrayList<>();
+    private final List<StreamSwitchButton> mSwitchButtons = new ArrayList<>();
+    private int mSelectedSwitchButton = 0;
     private ConfigurableTexts mConfigurableTexts;
     private final SparseBooleanArray mDynamic = new SparseBooleanArray();
     private final KeyguardManager mKeyguard;
@@ -266,6 +267,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         });
 
         mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+        mDialogStreamSwitchView = mDialog.findViewById(R.id.volume_dialog_stream_buttons);
         mRinger = mDialog.findViewById(R.id.ringer);
         if (mRinger != null) {
             mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
@@ -294,9 +296,6 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         }
 
-        mSettingsView = mDialog.findViewById(R.id.settings_container);
-        mSettingsIcon = mDialog.findViewById(R.id.settings);
-
         if (mRows.isEmpty()) {
             if (!AudioSystem.isSingleVolume(mContext)) {
                 addRow(STREAM_ACCESSIBILITY, R.drawable.ic_volume_accessibility,
@@ -321,9 +320,20 @@ public class VolumeDialogImpl implements VolumeDialog,
             addExistingRows();
         }
 
+        if (mSwitchButtons.isEmpty()) {
+            addStreamButton(mRows.get(0), AudioManager.STREAM_MUSIC,
+                    R.drawable.ic_volume_media, R.drawable.ic_volume_media_mute);
+            addStreamButton(mRows.get(0), AudioManager.STREAM_VOICE_CALL,
+                    com.android.internal.R.drawable.ic_phone,
+                    com.android.internal.R.drawable.ic_phone);
+            addStreamButton(mRows.get(0), AudioManager.STREAM_RING,
+                    R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute);
+            addStreamButton(mRows.get(0), AudioManager.STREAM_ALARM,
+                    R.drawable.ic_alarm, R.drawable.ic_volume_alarm_mute);
+        }
+
         updateRowsH(getActiveRow());
         initRingerH();
-        initSettingsH();
         initODICaptionsH();
     }
 
@@ -359,6 +369,13 @@ public class VolumeDialogImpl implements VolumeDialog,
         mHandler.sendEmptyMessage(H.RECHECK_ALL);
     }
 
+    private void addStreamButton(VolumeRow row, int stream, int iconRes, int iconMuteRes) {
+        StreamSwitchButton button = new StreamSwitchButton();
+        initStreamButton(button, row, stream, iconRes, iconMuteRes);
+        mDialogStreamSwitchView.addView(button.view);
+        mSwitchButtons.add(button);
+    }
+
     private void addRow(int stream, int iconRes, int iconMuteRes, boolean important,
             boolean defaultStream) {
         addRow(stream, iconRes, iconMuteRes, important, defaultStream, false);
@@ -369,11 +386,11 @@ public class VolumeDialogImpl implements VolumeDialog,
         if (D.BUG) Slog.d(TAG, "Adding row for stream " + stream);
         VolumeRow row = new VolumeRow();
         initRow(row, stream, iconRes, iconMuteRes, important, defaultStream);
-        if(!isAudioPanelOnLeftSide()){
-            mDialogRowsView.addView(row.view, 0);
-        } else {
+        //if(!isAudioPanelOnLeftSide()){
+        //    mDialogRowsView.addView(row.view, 0);
+        //} else {
             mDialogRowsView.addView(row.view);
-        }
+        //}
         mRows.add(row);
     }
 
@@ -431,6 +448,43 @@ public class VolumeDialogImpl implements VolumeDialog,
     }
 
     @SuppressLint("InflateParams")
+    private void initStreamButton(final StreamSwitchButton button, final VolumeRow row, final int stream,
+            int iconRes, int iconMuteRes) {
+        button.row = row;
+        button.stream = stream;
+        button.iconRes = iconRes;
+        button.iconMuteRes = iconMuteRes;
+
+        button.view = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_stream_button, null);
+        button.view.setId(stream);
+        button.view.setTag(button);
+
+        button.icon = button.view.findViewById(R.id.button);
+        button.icon.setImageResource(iconRes);
+
+        button.icon.setOnClickListener(v -> {
+            mSelectedSwitchButton = mSwitchButtons.size();
+            row.stream = button.stream;
+            updateRowsH(row);
+            updateVolumeRowH(row);
+            button.icon.setBackgroundResource(R.drawable.rounded_ripple_selected);
+            button.icon.setColorFilter(
+                    Utils.getColorAttr(mContext, android.R.attr.colorBackgroundFloating).getDefaultColor(),
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+
+            for(int i = 0; i < mSwitchButtons.size(); i++) {
+                if(i == mSelectedSwitchButton) continue;
+                StreamSwitchButton currentButton = mSwitchButtons.get(i);
+
+                currentButton.icon.setBackgroundResource(R.drawable.rounded_ripple);
+                currentButton.icon.setColorFilter(
+                        Utils.getColorAttr(mContext, android.R.attr.colorAccent).getDefaultColor(),
+                        android.graphics.PorterDuff.Mode.SRC_IN);
+            }
+        });
+    }
+
+    @SuppressLint("InflateParams")
     private void initRow(final VolumeRow row, final int stream, int iconRes, int iconMuteRes,
             boolean important, boolean defaultStream) {
         row.stream = stream;
@@ -448,7 +502,8 @@ public class VolumeDialogImpl implements VolumeDialog,
         }
         row.dndIcon = row.view.findViewById(R.id.dnd_icon);
         row.slider = row.view.findViewById(R.id.volume_row_slider);
-        row.slider.setOnSeekBarChangeListener(new VolumeSeekBarChangeListener(row));
+        row.seekBarListener = new VolumeSeekBarChangeListener(row);
+        row.slider.setOnSeekBarChangeListener(row.seekBarListener);
 
         row.anim = null;
 
@@ -483,24 +538,6 @@ public class VolumeDialogImpl implements VolumeDialog,
             });
         } else {
             row.icon.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        }
-    }
-
-    public void initSettingsH() {
-        if (mSettingsView != null) {
-            mSettingsView.setVisibility(
-                    mDeviceProvisionedController.isCurrentUserSetup() &&
-                            mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
-                            VISIBLE : GONE);
-        }
-        if (mSettingsIcon != null) {
-            mSettingsIcon.setOnClickListener(v -> {
-                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
-                Intent intent = new Intent(Settings.Panel.ACTION_VOLUME);
-                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
-                Dependency.get(ActivityStarter.class).startActivity(intent,
-                        true /* dismissShade */);
-            });
         }
     }
 
@@ -718,7 +755,6 @@ public class VolumeDialogImpl implements VolumeDialog,
             mConfigChanged = false;
         }
 
-        initSettingsH();
         mShowing = true;
         mDialog.show();
         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
@@ -996,6 +1032,8 @@ public class VolumeDialogImpl implements VolumeDialog,
     private void updateVolumeRowH(VolumeRow row) {
         if (D.BUG) Log.i(TAG, "updateVolumeRowH s=" + row.stream);
         if (mState == null) return;
+        row.seekBarListener = new VolumeSeekBarChangeListener(row);
+        row.slider.setOnSeekBarChangeListener(row.seekBarListener);
         final StreamState ss = mState.states.get(row.stream);
         if (ss == null) return;
         row.ss = ss;
@@ -1480,6 +1518,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         private TextView header;
         private ImageButton icon;
         private SeekBar slider;
+        private VolumeSeekBarChangeListener seekBarListener;
         private int stream;
         private StreamState ss;
         private long userAttempt;  // last user-driven slider change
@@ -1495,5 +1534,14 @@ public class VolumeDialogImpl implements VolumeDialog,
         private int animTargetProgress;
         private int lastAudibleLevel = 1;
         private FrameLayout dndIcon;
+    }
+
+    private static class StreamSwitchButton {
+        private View view;
+        public ImageButton icon;
+        private VolumeRow row;
+        private int stream;
+        private int iconRes;
+        private int iconMuteRes;
     }
 }
