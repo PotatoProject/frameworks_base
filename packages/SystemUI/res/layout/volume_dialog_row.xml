@@ -44,11 +44,11 @@
             android:layout_marginTop="@dimen/volume_dialog_slider_margin_top"
             android:layout_marginBottom="@dimen/volume_dialog_slider_margin_bottom"
             android:layoutDirection="rtl"
-            android:layout_height="@dimen/volume_dialog_slider_height">
+            android:layout_height="@dimen/volume_dialog_panel_height">
             <SeekBar
                 android:id="@+id/volume_row_slider"
                 android:clickable="true"
-                android:layout_width="@dimen/volume_dialog_slider_height"
+                android:layout_width="@dimen/volume_dialog_panel_height"
                 android:layout_height="match_parent"
                 android:layoutDirection="rtl"
                 android:layout_gravity="center"
@@ -63,6 +63,7 @@
             android:background="@drawable/ripple_drawable_20dp"
             android:layout_marginBottom="@dimen/volume_dialog_row_margin_bottom"
             android:tint="@color/accent_tint_color_selector"
+            android:visibility="gone"
             android:soundEffectsEnabled="false" />
     </LinearLayout>
 
