@@ -70,6 +70,29 @@
             android:layout_height="@dimen/volume_dialog_panel_height"
             android:orientation="horizontal">
             <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/stream_switch"
+                android:layout_width="@dimen/volume_dialog_panel_width"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_gravity="right"
+                android:orientation="vertical"
+                android:translationZ="@dimen/volume_dialog_elevation"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_marginLeft="@dimen/volume_dialog_spacer"
+                android:layout_marginRight="@dimen/volume_dialog_spacer"
+                android:background="@drawable/rounded_bg_full" >
+                <LinearLayout
+                    android:id="@+id/volume_dialog_stream_buttons"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical">
+                    <!-- switch stream buttons get added here -->
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/main"
                 android:minWidth="@dimen/volume_dialog_panel_width"
                 android:layout_width="@dimen/volume_dialog_panel_width"
