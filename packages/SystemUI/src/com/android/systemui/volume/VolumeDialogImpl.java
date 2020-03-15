@@ -80,6 +80,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -132,7 +133,9 @@ public class VolumeDialogImpl implements VolumeDialog,
     private CustomDialog mDialog;
     private ViewGroup mDialogView;
     private ViewGroup mDialogRowsView;
-    private ViewGroup mRinger;
+    private ViewGroup mColumnHolder;
+    private ViewGroup mSwitchStreamColumn;
+    private FrameLayout mRinger;
     private ImageButton mRingerIcon;
     private ViewGroup mODICaptionsView;
     private CaptionsToggleImageButton mODICaptionsIcon;
@@ -263,16 +266,27 @@ public class VolumeDialogImpl implements VolumeDialog,
             return true;
         });
 
+        mColumnHolder = mDialog.findViewById(R.id.column_holder);
+
         mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
         mRinger = mDialog.findViewById(R.id.ringer);
         if (mRinger != null) {
             mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
             mZenIcon = mRinger.findViewById(R.id.dnd_icon);
+            LinearLayout.LayoutParams ringerLP = (LinearLayout.LayoutParams) mRinger.getLayoutParams();
             if(!isAudioPanelOnLeftSide()) {
-                mRinger.setForegroundGravity(Gravity.RIGHT);
+                ringerLP.gravity = Gravity.RIGHT;
             } else {
-                mRinger.setForegroundGravity(Gravity.LEFT);
+                ringerLP.gravity = Gravity.LEFT;
             }
+            mRinger.setLayoutParams(ringerLP);
+        }
+
+        mSwitchStreamColumn = mDialog.findViewById(R.id.stream_switch);
+
+        if(isAudioPanelOnLeftSide()) {
+            mColumnHolder.removeViewAt(0);
+            mColumnHolder.addView(mSwitchStreamColumn, 1);
         }
 
         mODICaptionsView = mDialog.findViewById(R.id.odi_captions);
