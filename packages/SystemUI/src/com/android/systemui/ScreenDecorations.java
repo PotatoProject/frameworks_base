@@ -103,6 +103,8 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     private static final String TAG = "ScreenDecorations";
 
     public static final String SIZE = "sysui_rounded_size";
+    public static final String SIZE_TOP = "sysui_rounded_size_top";
+    public static final String SIZE_BOTTOM = "sysui_rounded_size_bottom";
     public static final String PADDING = "sysui_rounded_content_padding";
     private static final boolean DEBUG_SCREENSHOT_ROUNDED_CORNERS =
             SystemProperties.getBoolean("debug.screenshot_rounded_corners", false);
@@ -132,6 +134,9 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     private boolean mIsReceivingNavBarColor = false;
     private boolean mInGesturalMode;
     private boolean mCustomCutout;
+
+    private boolean mTopVisible = false;
+    private boolean mBottomVisible = false;
 
     /**
      * Converts a set of {@link Rect}s into a {@link Region}
@@ -405,8 +410,10 @@ public class ScreenDecorations extends SystemUI implements Tunable,
         mWindowManager.getDefaultDisplay().getMetrics(metrics);
         mDensity = metrics.density;
 
-        Dependency.get(Dependency.MAIN_HANDLER).post(
-                () -> Dependency.get(TunerService.class).addTunable(this, SIZE));
+        Handler mainHandler = Dependency.get(Dependency.MAIN_HANDLER);
+        mainHandler.post(() -> Dependency.get(TunerService.class).addTunable(this, SIZE));
+        mainHandler.post(() -> Dependency.get(TunerService.class).addTunable(this, SIZE_TOP));
+        mainHandler.post(() -> Dependency.get(TunerService.class).addTunable(this, SIZE_BOTTOM));
 
         // Watch color inversion and invert the overlay as needed.
         mColorInversionSetting = new SecureSetting(mContext, mHandler,
@@ -626,18 +633,18 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     }
 
     private void updateWindowVisibilities() {
-        updateWindowVisibility(mOverlay);
-        updateWindowVisibility(mBottomOverlay);
+        updateWindowVisibility(mOverlay, mTopVisible);
+        updateWindowVisibility(mBottomOverlay, mBottomVisible);
     }
 
-    private void updateWindowVisibility(View overlay) {
+    private void updateWindowVisibility(View overlay, boolean visible) {
         boolean visibleForCutout = shouldDrawCutout()
                 && overlay.findViewById(R.id.display_cutout).getVisibility() == View.VISIBLE;
         boolean visibleForRoundedCorners = hasRoundedCorners();
         boolean visibleForHandles = overlay.findViewById(R.id.assist_hint_left).getVisibility()
                 == View.VISIBLE || overlay.findViewById(R.id.assist_hint_right).getVisibility()
                 == View.VISIBLE;
-        overlay.setVisibility(visibleForCutout || visibleForRoundedCorners || visibleForHandles
+        overlay.setVisibility((visibleForCutout || visibleForRoundedCorners || visibleForHandles) && visible
                 ? View.VISIBLE : View.GONE);
     }
 
@@ -740,13 +747,24 @@ public class ScreenDecorations extends SystemUI implements Tunable,
             if (mOverlay == null) return;
             // If custom cutout is used, initRoundCornerViews() will set the size
             if (mCustomCutout) return;
-            if (SIZE.equals(key)) {
-                int size = mRoundedDefault;
-                int sizeTop = mRoundedDefaultTop;
-                int sizeBottom = mRoundedDefaultBottom;
+            if (SIZE.equals(key) || SIZE_TOP.equals(key) || SIZE_BOTTOM.equals(key)) {
+                ContentResolver resolver = mContext.getContentResolver();
+                int size = (int) (Secure.getInt(resolver, SIZE, (int) (mRoundedDefault / mDensity)) * mDensity);
+                int sizeTop = (int) (Secure.getInt(resolver, SIZE_TOP, (int) (mRoundedDefaultTop / mDensity)) * mDensity);
+                int sizeBottom = (int) (Secure.getInt(resolver, SIZE_BOTTOM, (int) (mRoundedDefaultBottom / mDensity)) * mDensity);
                 if (newValue != null) {
                     try {
-                        size = (int) (Integer.parseInt(newValue) * mDensity);
+                        switch (key) {
+                            case SIZE:
+                                size = (int) (Integer.parseInt(newValue) * mDensity);
+                                break;
+                            case SIZE_TOP:
+                                sizeTop = (int) (Integer.parseInt(newValue) * mDensity);
+                                break;
+                            case SIZE_BOTTOM:
+                                sizeBottom = (int) (Integer.parseInt(newValue) * mDensity);
+                                break;
+                        }
                     } catch (Exception e) {
                     }
                 }
@@ -758,10 +776,21 @@ public class ScreenDecorations extends SystemUI implements Tunable,
                     sizeBottom = size;
                 }
 
+                // Also allow disabling top and bottom during runtime
+                if (sizeTop <= 0) {
+                    sizeTop = 0;
+                }
+                if (sizeBottom <= 0) {
+                    sizeBottom = 0;
+                }
+                mTopVisible = sizeTop != 0;
+                mBottomVisible = sizeBottom != 0;
+                updateWindowVisibilities();
                 setSize(mOverlay.findViewById(R.id.left), sizeTop);
                 setSize(mOverlay.findViewById(R.id.right), sizeTop);
                 setSize(mBottomOverlay.findViewById(R.id.left), sizeBottom);
                 setSize(mBottomOverlay.findViewById(R.id.right), sizeBottom);
+
             }
         });
     }
