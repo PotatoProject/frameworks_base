@@ -34,9 +34,10 @@
         android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
         android:paddingTop="@dimen/volume_dialog_panel_transparent_padding"
         android:paddingBottom="@dimen/volume_dialog_panel_transparent_padding"
-        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding"
+        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding_right"
         android:orientation="vertical"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
         <FrameLayout
             android:id="@+id/ringer"
@@ -67,8 +68,11 @@
         <LinearLayout
             android:id="@+id/column_holder"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/volume_dialog_panel_height"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/volume_dialog_panel_height"
+            android:orientation="horizontal"
+            android:clipToPadding="false"
+            android:clipChildren="false">
             <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/stream_switch"
@@ -106,9 +110,8 @@
                 android:background="@drawable/rounded_bg_full" >
                 <LinearLayout
                     android:id="@+id/volume_dialog_rows"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="@dimen/volume_dialog_panel_width"
+                    android:layout_height="match_parent"
+                    android:layout_width="@dimen/volume_dialog_panel_width"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingRight="@dimen/volume_dialog_stream_padding"
