@@ -41,10 +41,8 @@
         <FrameLayout
             android:id="@+id/volume_row_slider_frame"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/volume_dialog_slider_margin_top"
-            android:layout_marginBottom="@dimen/volume_dialog_slider_margin_bottom"
-            android:layoutDirection="rtl"
-            android:layout_height="@dimen/volume_dialog_panel_height">
+            android:layout_height="@dimen/volume_dialog_panel_height"
+            android:layoutDirection="rtl">
             <SeekBar
                 android:id="@+id/volume_row_slider"
                 android:clickable="true"
@@ -52,6 +50,8 @@
                 android:layout_height="match_parent"
                 android:layoutDirection="rtl"
                 android:layout_gravity="center"
+                android:paddingStart="@dimen/volume_dialog_slider_margin_top"
+                android:paddingEnd="@dimen/volume_dialog_slider_margin_bottom"
                 android:rotation="90" />
         </FrameLayout>
 
