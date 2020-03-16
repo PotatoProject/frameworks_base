@@ -28,7 +28,7 @@
         android:layout_width="@dimen/volume_dialog_ringer_size"
         android:layout_height="@dimen/volume_dialog_ringer_size"
         android:background="@drawable/rounded_ripple"
-        android:tint="@color/accent_tint_color_selector"
+        android:tint="?android:attr/colorForeground"
         android:soundEffectsEnabled="false" />
 
 </LinearLayout>

@@ -391,18 +391,18 @@
 
     <dimen name="volume_dialog_stream_padding">8dp</dimen>
 
-    <dimen name="volume_dialog_panel_width">54dp</dimen>
+    <dimen name="volume_dialog_panel_width">58dp</dimen>
 
     <!-- volume_dialog_panel_width * 4 -->
-    <dimen name="volume_dialog_panel_height">216dp</dimen>
+    <dimen name="volume_dialog_panel_height">232dp</dimen>
 
     <dimen name="volume_dialog_slider_height">116dp</dimen>
 
-    <dimen name="volume_dialog_ringer_size">54dp</dimen>
+    <dimen name="volume_dialog_ringer_size">58dp</dimen>
 
-    <dimen name="volume_dialog_ringer_icon_padding">15dp</dimen>
+    <dimen name="volume_dialog_ringer_icon_padding">17dp</dimen>
 
-    <dimen name="volume_dialog_caption_size">54dp</dimen>
+    <dimen name="volume_dialog_caption_size">58dp</dimen>
 
     <dimen name="volume_dialog_tap_target_size">48dp</dimen>
 
