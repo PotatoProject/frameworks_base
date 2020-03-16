@@ -54,6 +54,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.media.AudioSystem;
 import android.os.Debug;
@@ -141,6 +142,9 @@ public class VolumeDialogImpl implements VolumeDialog,
     private ViewGroup mColumnHolder;
     private ViewGroup mSwitchStreamColumn;
     private ViewGroup mSwitchStreamButtons;
+    private ViewGroup mTopButtons;
+    private FrameLayout mOutputSwitcher;
+    private ImageButton mOSIcon;
     private FrameLayout mRinger;
     private ImageButton mRingerIcon;
     private ViewGroup mODICaptionsView;
@@ -282,24 +286,35 @@ public class VolumeDialogImpl implements VolumeDialog,
         mColumnHolder = mDialog.findViewById(R.id.column_holder);
 
         mDialogRowsView = mDialog.findViewById(R.id.volume_dialog_rows);
+        mTopButtons = mDialog.findViewById(R.id.top_buttons);
+        mOutputSwitcher = mDialog.findViewById(R.id.output_switcher);
         mRinger = mDialog.findViewById(R.id.ringer);
+
+        if(mTopButtons != null) {
+            LinearLayout.LayoutParams topButtonsLP = (LinearLayout.LayoutParams) mTopButtons.getLayoutParams();
+            if(!isAudioPanelOnLeftSide()) {
+                topButtonsLP.gravity = Gravity.RIGHT;
+            } else {
+                topButtonsLP.gravity = Gravity.LEFT;
+            }
+            mTopButtons.setLayoutParams(topButtonsLP);
+        }
+
         if (mRinger != null) {
             mRingerIcon = mRinger.findViewById(R.id.ringer_icon);
             mZenIcon = mRinger.findViewById(R.id.dnd_icon);
-            LinearLayout.LayoutParams ringerLP = (LinearLayout.LayoutParams) mRinger.getLayoutParams();
-            if(!isAudioPanelOnLeftSide()) {
-                ringerLP.gravity = Gravity.RIGHT;
-            } else {
-                ringerLP.gravity = Gravity.LEFT;
-            }
-            mRinger.setLayoutParams(ringerLP);
         }
+
+        if(mOutputSwitcher != null)
+            mOSIcon = mDialog.findViewById(R.id.os_icon);
 
         mSwitchStreamColumn = mDialog.findViewById(R.id.stream_switch);
 
         if(isAudioPanelOnLeftSide()) {
             mColumnHolder.removeViewAt(0);
+            mTopButtons.removeViewAt(0);
             mColumnHolder.addView(mSwitchStreamColumn, 1);
+            mTopButtons.addView(mOutputSwitcher, 1);
         }
 
         mSwitchStreamButtons = mDialog.findViewById(R.id.volume_dialog_stream_buttons);
@@ -312,13 +327,6 @@ public class VolumeDialogImpl implements VolumeDialog,
         if (mHasSeenODICaptionsTooltip && mODICaptionsTooltipViewStub != null) {
             mDialogView.removeView(mODICaptionsTooltipViewStub);
             mODICaptionsTooltipViewStub = null;
-        }else if (mODICaptionsTooltipViewStub != null){
-            if(!isAudioPanelOnLeftSide()) {
-                mRinger.setForegroundGravity(Gravity.BOTTOM | Gravity.RIGHT);
-            } else {
-                mRinger.setForegroundGravity(Gravity.BOTTOM | Gravity.LEFT);
-            }
-
         }
 
         mSwitchStreamSelectedDrawable = getSwitchStreamSelectedDrawable();
@@ -351,6 +359,7 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         updateRowsH(getActiveRow());
         updateSwitchStreamButtonsH(getActiveButton());
+        initOutputSwitcherH();
         initRingerH();
         initODICaptionsH();
     }
@@ -639,6 +648,31 @@ public class VolumeDialogImpl implements VolumeDialog,
         }
     }
 
+    public void initOutputSwitcherH() {
+        if (mOutputSwitcher != null) {
+            mOutputSwitcher.setVisibility(
+                    mDeviceProvisionedController.isCurrentUserSetup() &&
+                            mActivityManager.getLockTaskModeState() == LOCK_TASK_MODE_NONE ?
+                            VISIBLE : GONE);
+        }
+        if (mOSIcon != null) {
+            mOSIcon.setOnClickListener(v -> {
+                Events.writeEvent(mContext, Events.EVENT_SETTINGS_CLICK);
+                Intent intent = new Intent("com.android.settings.panel.action.MEDIA_OUTPUT");
+                dismissH(DISMISS_REASON_SETTINGS_CLICKED);
+                Dependency.get(ActivityStarter.class).startActivity(intent,
+                        true /* dismissShade */);
+            });
+
+            AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+            AudioDeviceInfo[] adi = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+
+            if(adi.length > 3)
+                mOSIcon.setEnabled(true);
+            else mOSIcon.setEnabled(false);
+        }
+    }
+
     public void initRingerH() {
         if (mRingerIcon != null) {
             mRingerIcon.setAccessibilityLiveRegion(ACCESSIBILITY_LIVE_REGION_POLITE);
@@ -853,6 +887,7 @@ public class VolumeDialogImpl implements VolumeDialog,
             mConfigChanged = false;
         }
 
+        initOutputSwitcherH();
         mShowing = true;
         mDialog.show();
         Events.writeEvent(mContext, Events.EVENT_SHOW_DIALOG, reason, mKeyguard.isKeyguardLocked());
