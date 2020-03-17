@@ -134,6 +134,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private final H mHandler = new H();
     private final VolumeDialogController mController;
     private final DeviceProvisionedController mDeviceProvisionedController;
+    private final AudioManager mAudio;
 
     private Window mWindow;
     private CustomDialog mDialog;
@@ -179,7 +180,6 @@ public class VolumeDialogImpl implements VolumeDialog,
     private boolean mLeftVolumeRocker;
     private Drawable mSwitchStreamSelectedDrawable;
     private boolean mActiveStreamManuallyModified = false;
-    private VolumeRow mCachedExtraRow;
 
     public VolumeDialogImpl(Context context) {
         mContext =
@@ -193,6 +193,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mHasSeenODICaptionsTooltip =
                 Prefs.getBoolean(context, Prefs.Key.HAS_SEEN_ODI_CAPTIONS_TOOLTIP, false);
         mLeftVolumeRocker = mContext.getResources().getBoolean(R.bool.config_audioPanelOnLeftSide);
+        mAudio = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
     }
 
     @Override
@@ -444,7 +445,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                 mDialogRowsView.addView(row.view);
             }
             mSwitchStreamButtons.addView(button.view);
-            updateVolumeRowH(row);
+            updateVolumeRowH(row, button);
             if(button.stream == AudioManager.STREAM_MUSIC ||
                 button.stream == AudioManager.STREAM_RING ||
                 button.stream == AudioManager.STREAM_ALARM) {
@@ -616,15 +617,47 @@ public class VolumeDialogImpl implements VolumeDialog,
             mActiveStreamManuallyModified = true;
             updateSwitchStreamButtonsH(button);
         });
+
+        button.icon.setOnLongClickListener(v -> {
+            if (button.stream == AudioManager.STREAM_RING) {
+                final boolean hasVibrator = mController.hasVibrator();
+                if (mState.ringerModeInternal == AudioManager.RINGER_MODE_NORMAL) {
+                    if (hasVibrator) {
+                        mController.setRingerMode(AudioManager.RINGER_MODE_VIBRATE, false);
+                    } else {
+                        final boolean wasZero = row.ss.level == 0;
+                        mController.setStreamVolume(button.stream,
+                                wasZero ? row.lastAudibleLevel : 0);
+                    }
+                } else {
+                    mController.setRingerMode(AudioManager.RINGER_MODE_NORMAL, false);
+                    if (button.row.ss.level == 0) {
+                        mController.setStreamVolume(stream, 1);
+                    }
+                }
+            } else {
+                final boolean vmute = button.row.ss.level == button.row.ss.levelMin;
+                mController.setStreamVolume(button.stream,
+                        vmute ? button.row.lastAudibleLevel : button.row.ss.levelMin);
+            }
+            button.row.userAttempt = 0;
+
+            return true;
+        });
     }
 
     private void updateSwitchStreamButtonsH(StreamSwitchButton button) {
+        mPrevActiveStream = mActiveStream;
         mActiveStream = button.stream;
-        updateRowsH(button.row);
+        mAudio.forceVolumeControlStream(button.stream);
+        updateRowsH(getActiveRow());
         updateSwitchButtonsVisibility(getActiveRow());
 
         for(int i = 0; i < mSwitchButtons.size(); i++) {
             StreamSwitchButton currentButton = mSwitchButtons.get(i);
+
+            updateVolumeRowH(currentButton.row, currentButton);
+
             if(currentButton.stream == mActiveStream) {
                 Util.setVisOrGone(button.row.view, true);
 
@@ -664,8 +697,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                         true /* dismissShade */);
             });
 
-            AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-            AudioDeviceInfo[] adi = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+            AudioDeviceInfo[] adi = mAudio.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
 
             if(adi.length > 3)
                 mOSIcon.setEnabled(true);
@@ -948,7 +980,6 @@ public class VolumeDialogImpl implements VolumeDialog,
                 .withEndAction(() -> mHandler.postDelayed(() -> {
                     mDialog.dismiss();
                     mActiveStreamManuallyModified = false;
-                    mCachedExtraRow = null;
                     tryToRemoveCaptionsTooltip();
                 }, 50));
         if (!isLandscape()) animator.translationX((mDialogView.getWidth() / 2.0f)*(isAudioPanelOnLeftSide() ? -1 : 1));
@@ -1018,20 +1049,12 @@ public class VolumeDialogImpl implements VolumeDialog,
     }
 
     private void updateSwitchButtonsVisibility(final VolumeRow activeRow) {
-        if(activeRow.stream != AudioManager.STREAM_MUSIC &&
-            activeRow.stream != AudioManager.STREAM_RING &&
-            activeRow.stream != AudioManager.STREAM_ALARM) {
-            mCachedExtraRow = activeRow;
-        }
-
         for (final StreamSwitchButton button : mSwitchButtons) {
             final boolean shouldBeVisible = button.stream == AudioManager.STREAM_MUSIC ||
                 button.stream == AudioManager.STREAM_RING ||
                 button.stream == AudioManager.STREAM_ALARM ||
                 button.stream == activeRow.stream ||
-                (mCachedExtraRow != null
-                    ? button.stream == mCachedExtraRow.stream
-                    : false);
+                mDynamic.get(button.stream);
             Util.setVisOrGone(button.view, shouldBeVisible);
         }
     }
@@ -1155,6 +1178,7 @@ public class VolumeDialogImpl implements VolumeDialog,
 
         mState = state;
         mDynamic.clear();
+
         // add any new dynamic rows
         for (int i = 0; i < state.states.size(); i++) {
             final int stream = state.states.keyAt(i);
@@ -1176,8 +1200,8 @@ public class VolumeDialogImpl implements VolumeDialog,
                 updateSwitchStreamButtonsH(getActiveButton());
             if (mShowing) rescheduleTimeoutH();
         }
-        for (VolumeRow row : mRows) {
-            updateVolumeRowH(row);
+        for (int i = 0; i < mRows.size(); i++) {
+            updateVolumeRowH(mRows.get(i), mSwitchButtons.get(i));
         }
         updateRingerH();
         mWindow.setTitle(composeWindowTitle());
@@ -1187,7 +1211,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         return mContext.getString(R.string.volume_dialog_title, getStreamLabelH(getActiveRow().ss));
     }
 
-    private void updateVolumeRowH(VolumeRow row) {
+    private void updateVolumeRowH(VolumeRow row, StreamSwitchButton button) {
         if (D.BUG) Log.i(TAG, "updateVolumeRowH s=" + row.stream);
         if (mState == null) return;
         final StreamState ss = mState.states.get(row.stream);
@@ -1248,6 +1272,8 @@ public class VolumeDialogImpl implements VolumeDialog,
                 : mAutomute && ss.level == 0 ? row.iconMuteRes
                 : (ss.muted ? row.iconMuteRes : row.iconRes);
         row.icon.setImageResource(iconRes);
+        if(button.icon != null)
+            button.icon.setImageResource(iconRes);
         row.iconState =
                 iconRes == R.drawable.ic_volume_ringer_vibrate ? Events.ICON_STATE_VIBRATE
                 : (iconRes == R.drawable.ic_volume_media_bt_mute || iconRes == row.iconMuteRes)
@@ -1385,12 +1411,12 @@ public class VolumeDialogImpl implements VolumeDialog,
         if (row == null) {
             if (D.BUG) Log.d(TAG, "recheckH ALL");
             trimObsoleteH();
-            for (VolumeRow r : mRows) {
-                updateVolumeRowH(r);
+            for (int i = 0; i < mRows.size(); i++) {
+                updateVolumeRowH(mRows.get(i), mSwitchButtons.get(i));
             }
         } else {
             if (D.BUG) Log.d(TAG, "recheckH " + row.stream);
-            updateVolumeRowH(row);
+            updateVolumeRowH(row, new StreamSwitchButton());
         }
     }
 
