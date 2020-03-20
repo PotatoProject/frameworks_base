@@ -38,7 +38,8 @@
             android:layout_weight="1"
             android:layout_marginStart="@dimen/system_icons_super_container_margin_start"
             android:gravity="center_vertical|end"
-            android:paddingEnd="@dimen/system_icons_keyguard_padding_end" >
+            android:paddingStart="@dimen/status_bar_padding_start"
+            android:paddingEnd="@dimen/status_bar_padding_end" >
             <include layout="@layout/system_icons" />
         </FrameLayout>
 
@@ -46,7 +47,9 @@
             android:layout_width="@dimen/multi_user_switch_width_keyguard"
             android:layout_height="match_parent"
             android:background="@drawable/ripple_drawable"
-            android:layout_marginEnd="@dimen/multi_user_switch_keyguard_margin">
+            android:layout_marginEnd="@dimen/multi_user_switch_keyguard_margin"
+            android:paddingStart="@dimen/status_bar_padding_start"
+            android:paddingEnd="@dimen/status_bar_padding_end">
             <ImageView android:id="@+id/multi_user_avatar"
                 android:layout_width="@dimen/multi_user_avatar_keyguard_size"
                 android:layout_height="@dimen/multi_user_avatar_keyguard_size"
@@ -75,6 +78,8 @@
         android:textColor="?attr/wallpaperTextColorSecondary"
         android:singleLine="true"
         systemui:showMissingSim="true"
-        systemui:showAirplaneMode="true" />
+        systemui:showAirplaneMode="true"
+        android:paddingStart="@dimen/status_bar_padding_start"
+        android:paddingEnd="@dimen/status_bar_padding_end" />
 
 </com.android.systemui.statusbar.phone.KeyguardStatusBarView>
