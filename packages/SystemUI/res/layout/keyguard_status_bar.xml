@@ -51,6 +51,7 @@
                 android:layout_width="@dimen/multi_user_avatar_keyguard_size"
                 android:layout_height="@dimen/multi_user_avatar_keyguard_size"
                 android:layout_gravity="center"
+                android:paddingEnd="@dimen/status_bar_left_clock_end_padding"
                 android:scaleType="centerInside"/>
         </com.android.systemui.statusbar.phone.MultiUserSwitch>
     </LinearLayout>
@@ -75,6 +76,8 @@
         android:textColor="?attr/wallpaperTextColorSecondary"
         android:singleLine="true"
         systemui:showMissingSim="true"
-        systemui:showAirplaneMode="true" />
+        systemui:showAirplaneMode="true"
+        android:paddingStart="@dimen/status_bar_padding_start"
+        android:paddingEnd="@dimen/status_bar_padding_end" />
 
 </com.android.systemui.statusbar.phone.KeyguardStatusBarView>
