@@ -156,6 +156,7 @@ public class WifiTile extends QSTileImpl<SignalState> {
         handleClickInner();
     }
 
+    /*
     @Override
     protected void handleSecondaryClick() {
         if (!mWifiController.canConfigWifi()) {
@@ -175,6 +176,7 @@ public class WifiTile extends QSTileImpl<SignalState> {
             mController.setWifiEnabled(true);
         }
     }
+    */
 
     @Override
     public CharSequence getTileLabel() {
