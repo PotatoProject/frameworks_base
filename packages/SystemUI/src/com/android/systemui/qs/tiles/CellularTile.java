@@ -157,6 +157,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
         dialog.show();
     }
 
+    /*
     @Override
     protected void handleSecondaryClick() {
         if (mDataController.isMobileDataSupported()) {
@@ -170,9 +171,10 @@ public class CellularTile extends QSTileImpl<SignalState> {
             showDetail(true);
         } else {
             mActivityStarter
-                    .postStartActivityDismissingKeyguard(getCellularSettingIntent(),0 /* delay */);
+                    .postStartActivityDismissingKeyguard(getCellularSettingIntent(),0);
         }
     }
+    */
 
     @Override
     public CharSequence getTileLabel() {
