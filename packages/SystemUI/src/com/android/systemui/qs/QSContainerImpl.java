@@ -22,6 +22,7 @@ import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.om.IOverlayManager;
+import android.content.res.ColorUtils;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.graphics.Color;
@@ -47,6 +48,9 @@ import com.android.systemui.qs.customize.QSCustomizer;
 public class QSContainerImpl extends FrameLayout {
 
     private static final String TAG = "QSContainerImpl";
+
+    private static final float QS_MIN_LIGHTNESS = 0.0f;
+    private static final float QS_MAX_LIGHTNESS = 0.6f;
 
     private final Point mSizePoint = new Point();
 
@@ -149,12 +153,12 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundAlpha = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
                 UserHandle.USER_CURRENT);
-        mQsBackGroundColor = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.QS_PANEL_BG_COLOR, Color.WHITE,
-                UserHandle.USER_CURRENT);
-        mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
-                UserHandle.USER_CURRENT);
+        mQsBackGroundColor = ColorUtils.getValidQsColor(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_BG_COLOR, ColorUtils.genRandomQsColor(),
+                UserHandle.USER_CURRENT));
+        mQsBackGroundColorWall = ColorUtils.getValidQsColor(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_BG_COLOR_WALL, ColorUtils.genRandomQsColor(),
+                UserHandle.USER_CURRENT));
         setQsBackground();
     }
 
