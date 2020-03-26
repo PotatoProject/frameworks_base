@@ -40,6 +40,7 @@ import android.widget.FrameLayout;
 
 import com.android.systemui.R;
 import com.android.systemui.qs.customize.QSCustomizer;
+import com.android.internal.graphics.ColorUtils;
 
 /**
  * Wrapper view with background which contains {@link QSPanel} and {@link BaseStatusBarHeader}
@@ -47,6 +48,9 @@ import com.android.systemui.qs.customize.QSCustomizer;
 public class QSContainerImpl extends FrameLayout {
 
     private static final String TAG = "QSContainerImpl";
+
+    private static final float QS_MIN_LIGHTNESS = 0.0;
+    private static final float QS_MAX_LIGHTNESS = 0.6;
 
     private final Point mSizePoint = new Point();
 
@@ -139,6 +143,30 @@ public class QSContainerImpl extends FrameLayout {
         }
     }
 
+    private static boolean isQsColorValid(int color) {
+        float hsl[] = new float[3];
+        ColorUtils.colorToHSL(color, hsl);
+        return hsl[2] >= QS_MIN_LIGHTNESS && hsl[2] <= QS_MAX_LIGHTNESS;
+    }
+
+    private static int generateValidColor(int color) {
+        if (isQsColorValid(color)) return color;
+        float hsl[] = new float[3];
+        ColorUtils.colorToHSL(color, hsl);
+        // We want to use the lightness at 0.75 of valid range
+        hsl[2] = ((QS_MIN_LIGHTNESS * 1) + (QS_MAX_LIGHTNESS * 3)) / 4;
+        return ColorUtils.HSLToColor(hsl);
+    }
+
+    private static int generateRandomQsColor() {
+        Random r = new Random();
+        float hsl[] = new float[3];
+        hsl[0] = r.nextInt(360);
+        hsl[1] = r.nextFloat();
+        hsl[2] = r.nextFloat() * 0.6;
+        return ColorUtils.HSLToColor(hsl);
+    }
+
     private void updateSettings() {
         int userQsWallColorSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
                     Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
@@ -149,12 +177,12 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundAlpha = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
                 UserHandle.USER_CURRENT);
-        mQsBackGroundColor = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.QS_PANEL_BG_COLOR, Color.WHITE,
-                UserHandle.USER_CURRENT);
-        mQsBackGroundColorWall = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.QS_PANEL_BG_COLOR_WALL, Color.WHITE,
-                UserHandle.USER_CURRENT);
+        mQsBackGroundColor = generateValidColor(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_BG_COLOR, generateRandomQsColor(),
+                UserHandle.USER_CURRENT));
+        mQsBackGroundColorWall = generateValidColor(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.QS_PANEL_BG_COLOR_WALL, generateRandomQsColor(),
+                UserHandle.USER_CURRENT));
         setQsBackground();
     }
 
