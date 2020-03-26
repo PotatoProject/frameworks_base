@@ -31,6 +31,7 @@ import android.annotation.CallSuper;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
 import android.app.WallpaperManager;
+import android.content.res.ColorUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -512,16 +513,16 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     }
 
     public static int getColorForState(Context context, int state) {
-        int activeDefault = Utils.getColorAttrDefaultColor(context, android.R.attr.colorPrimary);
+        int defaultColor = ColorUtils.genRandomQsColor();
 
         boolean setQsFromWall = System.getIntForUser(context.getContentResolver(),
                     System.SYSUI_COLORS_ACTIVE, 0, UserHandle.USER_CURRENT) == 1;
         boolean setQsFromResources = System.getIntForUser(context.getContentResolver(),
                     System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
 
-        int qsBackGroundColor = System.getIntForUser(context.getContentResolver(),
-                System.QS_PANEL_BG_COLOR, activeDefault, UserHandle.USER_CURRENT);
-        int qsBackGroundColorWall = getWallpaperColor();
+        int qsBackGroundColor = ColorUtils.getValidQsColor(System.getIntForUser(context.getContentResolver(),
+                System.QS_PANEL_BG_COLOR, defaultColor, UserHandle.USER_CURRENT));
+        int qsBackGroundColorWall = ColorUtils.getValidQsColor(getWallpaperColor());
 
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
