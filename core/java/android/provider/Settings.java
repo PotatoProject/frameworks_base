@@ -4503,13 +4503,13 @@ public final class Settings {
         public static final Validator PROXIMITY_ON_WAKE_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
-        /** Whether to skip music track with volume rocker 
         /**
+         * Whether to skip music track with volume rocker
          * @hide
          */
         public static final String VOLUME_BUTTON_MUSIC_CONTROL = "volume_button_music_control";
 
-        /*
+        /**
          * Whether the user has already accepted MediaProjection permission for the built-in screenrecorder
          * @hide
          */
@@ -4649,7 +4649,7 @@ public final class Settings {
         private static final Validator STATUS_BAR_LOGO_VALIDATOR =
                 BOOLEAN_VALIDATOR;
 
-        /*
+        /**
          * Whether to use smart clock or not
          * @hide
          */
@@ -4683,8 +4683,8 @@ public final class Settings {
          */
         public static final String SCREENRECORD_LOW_QUALITY = "screenrecord_low_quality";
 
-        /*
-         *  Enable statusbar double tap gesture on to put device to sleep
+        /**
+         * Enable statusbar double tap gesture on to put device to sleep
          * @hide
          */
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
