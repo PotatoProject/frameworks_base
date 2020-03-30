@@ -692,6 +692,9 @@
                 <action android:name="com.android.intent.action.SHOW_KEYBOARD_SHORTCUTS" />
             </intent-filter>
         </receiver>
-
+        <receiver
+            android:name=".AprilEasterBroadcast"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 </manifest>
