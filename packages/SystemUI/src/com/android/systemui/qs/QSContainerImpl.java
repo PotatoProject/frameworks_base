@@ -19,8 +19,12 @@ package com.android.systemui.qs;
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.om.IOverlayManager;
 import android.content.res.ColorUtils;
 import android.content.res.Configuration;
@@ -39,8 +43,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.systemui.AprilEasterBroadcast;
 import com.android.systemui.R;
 import com.android.systemui.qs.customize.QSCustomizer;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.lang.System;
 
 /**
  * Wrapper view with background which contains {@link QSPanel} and {@link BaseStatusBarHeader}
@@ -75,6 +84,8 @@ public class QSContainerImpl extends FrameLayout {
 
     private IOverlayManager mOverlayManager;
 
+    private ValueAnimator mDiscoAnim;
+
     public QSContainerImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOverlayManager = IOverlayManager.Stub.asInterface(
@@ -87,6 +98,7 @@ public class QSContainerImpl extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        setAprilEasterAlarm();
         mQSPanel = findViewById(R.id.quick_settings_panel);
         mQSDetail = findViewById(R.id.qs_detail);
         mHeader = findViewById(R.id.header);
@@ -118,7 +130,7 @@ public class QSContainerImpl extends FrameLayout {
 
         void observe() {
             getContext().getContentResolver().registerContentObserver(Settings.System
-                            .getUriFor(Settings.System.QS_PANEL_BG_ALPHA), false,
+                    .getUriFor(Settings.System.QS_PANEL_BG_ALPHA), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_COLOR), false,
@@ -163,6 +175,7 @@ public class QSContainerImpl extends FrameLayout {
         int currentColor = mSetQsFromWall ? mQsBackGroundColorWall : mQsBackGroundColor;
 
         if (mSetQsFromResources) {
+            stopDiscoMode();
             mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
             try {
                 mOverlayManager.setEnabled("com.android.systemui.qstheme.color",
@@ -171,9 +184,12 @@ public class QSContainerImpl extends FrameLayout {
                 Log.w("QSContainerImpl", "Can't change qs theme", e);
             }
         } else {
+            startDiscoMode();
             if (mQsBackGround != null) {
-                mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
-                mQsBackGround.setAlpha(mQsBackGroundAlpha);
+                if (mDiscoAnim == null || (mDiscoAnim != null && !mDiscoAnim.isStarted() && !mDiscoAnim.isRunning())) {
+                    mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
+                    mQsBackGround.setAlpha(mQsBackGroundAlpha);
+                }
             }
             try {
                 mOverlayManager.setEnabled("com.android.systemui.qstheme.color",
@@ -186,6 +202,42 @@ public class QSContainerImpl extends FrameLayout {
         if (mQsBackGround != null && mBackground != null) {
             mBackground.setBackground(mQsBackGround);
         }
+    }
+
+    private void startDiscoMode() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        if (cal.get(Calendar.MONTH) != 3 && cal.get(Calendar.DAY_OF_MONTH) != 1) {
+            stopDiscoMode();
+            return;
+        }
+        final float from = 0f;
+        final float to = 360f;
+        if (mDiscoAnim != null)
+            mDiscoAnim.cancel();
+        mDiscoAnim = ValueAnimator.ofFloat(0, 1);
+        final float[] hsl = {0f, 1f, 0.5f};
+        mDiscoAnim.setDuration(5000);
+        mDiscoAnim.setRepeatCount(ValueAnimator.INFINITE);
+        mDiscoAnim.setRepeatMode(ValueAnimator.RESTART);
+        mDiscoAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                hsl[0] = from + (to - from)*animation.getAnimatedFraction();
+                mQsBackGround.setColorFilter(com.android.internal.graphics.ColorUtils.HSLToColor(hsl), PorterDuff.Mode.SRC_ATOP);
+                mQsBackGround.setAlpha(mQsBackGroundAlpha);
+                if (mQsBackGround != null && mBackground != null) {
+                    mBackground.setBackground(mQsBackGround);
+                }
+            }
+        });
+        mDiscoAnim.start();
+    }
+
+    private void stopDiscoMode() {
+        if (mDiscoAnim != null)
+            mDiscoAnim.cancel();
+        mDiscoAnim = null;
     }
 
     @Override
@@ -322,5 +374,21 @@ public class QSContainerImpl extends FrameLayout {
             getDisplay().getRealSize(mSizePoint);
         }
         return mSizePoint.y;
+    }
+
+    private void setAprilEasterAlarm() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.set(Calendar.YEAR, 2020);
+        cal.set(Calendar.MONTH, 3);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(getContext(), AprilEasterBroadcast.class);
+        PendingIntent pi = PendingIntent.getBroadcast(getContext(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
+        am.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
     }
 }
