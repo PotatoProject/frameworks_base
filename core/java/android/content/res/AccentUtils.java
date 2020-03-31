@@ -15,6 +15,7 @@ public class AccentUtils {
 
     private static final String ACCENT_DARK_PROP = "persist.sys.theme.accent_dark";
     private static final String ACCENT_LIGHT_PROP = "persist.sys.theme.accent_light";
+    private static final String ACCENT_DISCO_PROP = "persist.sys.theme.accent_disco";
 
     public static boolean isResourceDarkAccent(String resName) {
         return resName.contains("accent_device_default_dark");
@@ -35,7 +36,8 @@ public class AccentUtils {
     private static int getAccentColor(int defaultColor, String property) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        if (cal.get(Calendar.MONTH) == 3 && cal.get(Calendar.DAY_OF_MONTH) == 1) {
+        if ((cal.get(Calendar.MONTH) == 3 && cal.get(Calendar.DAY_OF_MONTH) == 1) ||
+                        SystemProperties.get(ACCENT_DISCO_PROP, "0") == "1") {
             return ColorUtils.genRandomAccentColor(property == ACCENT_DARK_PROP);
         }
         try {
