@@ -4696,10 +4696,10 @@ public final class Settings {
         public static final String SCREENRECORD_STOP_DOT = "screenrecord_stop_dot";
 
         /**
-         * Screenrecord: low quality
+         * Screenrecord: video bitrate
          * @hide
          */
-        public static final String SCREENRECORD_LOW_QUALITY = "screenrecord_low_quality";
+        public static final String SCREENRECORD_VIDEO_BITRATE = "screenrecord_video_bitrate";
 
         /**
          * Enable statusbar double tap gesture on to put device to sleep
@@ -4834,6 +4834,8 @@ public final class Settings {
           * @hide
           */
         public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+
+
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
