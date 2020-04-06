@@ -4678,10 +4678,10 @@ public final class Settings {
                 BOOLEAN_VALIDATOR;
 
         /**
-         * Screenrecord: enable mic
+         * Screenrecord: audio source
          * @hide
          */
-        public static final String SCREENRECORD_ENABLE_MIC = "screenrecord_enable_mic";
+        public static final String SCREENRECORD_AUDIO_SOURCE = "screenrecord_audio_source";
 
         /**
          * Screenrecord: show taps
@@ -4700,6 +4700,8 @@ public final class Settings {
          * @hide
          */
         public static final String SCREENRECORD_VIDEO_BITRATE = "screenrecord_video_bitrate";
+
+
 
         /**
          * Enable statusbar double tap gesture on to put device to sleep
