@@ -27,7 +27,7 @@ public class AprilEasterBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        if (cal.get(Calendar.MONTH) != 3 && cal.get(Calendar.DAY_OF_MONTH) != 1) {
+        if (cal.get(Calendar.MONTH) != 3 || cal.get(Calendar.DAY_OF_MONTH) != 1) {
             Secure.putInt(context.getContentResolver(), "disco_mode_triggered", 0);
             return;
         }

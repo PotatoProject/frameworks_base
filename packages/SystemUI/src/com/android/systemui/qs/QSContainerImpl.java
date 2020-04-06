@@ -207,7 +207,7 @@ public class QSContainerImpl extends FrameLayout {
     private void startDiscoMode() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        if (cal.get(Calendar.MONTH) != 3 && cal.get(Calendar.DAY_OF_MONTH) != 1) {
+        if (cal.get(Calendar.MONTH) != 3 || cal.get(Calendar.DAY_OF_MONTH) != 1) {
             stopDiscoMode();
             Settings.Secure.putInt(getContext().getContentResolver(), "disco_mode_triggered", 0);
             return;
