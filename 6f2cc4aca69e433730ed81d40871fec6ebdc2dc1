@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31b51c76_66f3ac63",
+        "filename": "tests/Camera2Tests/SmartCamera/SimpleCamera/.project",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-04-07T12:32:03Z",
+      "side": 0,
+      "message": "breh wot",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 21
+      },
+      "revId": "6f2cc4aca69e433730ed81d40871fec6ebdc2dc1",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28588b00_0bb9251e",
+        "filename": "tests/HwAccelerationTest/.project",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-04-07T12:32:03Z",
+      "side": 0,
+      "message": "breh wot pt2",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 21
+      },
+      "revId": "6f2cc4aca69e433730ed81d40871fec6ebdc2dc1",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
