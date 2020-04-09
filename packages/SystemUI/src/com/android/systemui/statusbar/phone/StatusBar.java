@@ -1899,6 +1899,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STOCK_STATUSBAR_IN_HIDE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_TILES_BG_DISCO),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -1931,6 +1934,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_COLUMNS_LANDSCAPE)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_TILE_TITLE_VISIBILITY))) {
                 updateQsPanelResources();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_TILES_BG_DISCO))) {
+                mQSPanel.getHost().reloadAllTiles();
             }
         }
 
