@@ -4916,6 +4916,12 @@ public final class Settings {
         public static final String ADVANCED_REBOOT = "advanced_reboot";
 
         /**
+         * Whether to disco the QS tiles or not
+         * @hide
+         */
+        public static final String QS_TILES_BG_DISCO = "qs_tiles_bg_disco";
+
+        /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
          *
