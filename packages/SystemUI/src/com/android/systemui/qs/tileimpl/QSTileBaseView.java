@@ -19,6 +19,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.content.res.Configuration;
+import android.content.res.ColorUtils;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -65,7 +67,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private boolean mShowRippleEffect = true;
 
     private final ImageView mBg;
-    private final int mColorActive;
+    private int mColorActive;
     private final int mColorInactive;
     private final int mColorDisabled;
     private int mCircleColor;
@@ -111,7 +113,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         setBackground(mTileBackground);
 
-        mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
+        mColorActive = setActiveColor();
         mColorDisabled = Utils.getDisabled(context,
                 Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary));
         mColorInactive = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
@@ -121,6 +123,22 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setClipToPadding(false);
         mCollapsedView = collapsedView;
         setFocusable(true);
+    }
+
+    private int setActiveColor() {
+        mColorActive = ColorUtils.genRandomAccentColor(isThemeDark(mContext));
+        return mColorActive;
+    }
+
+    private static Boolean isThemeDark(Context context) {
+        switch (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+            case Configuration.UI_MODE_NIGHT_YES:
+              return true;
+            case Configuration.UI_MODE_NIGHT_NO:
+              return false;
+            default:
+              return false;
+        }
     }
 
     public View getBgCircle() {
@@ -190,6 +208,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     }
 
     public void onStateChanged(QSTile.State state) {
+        setActiveColor();
         mHandler.obtainMessage(H.STATE_CHANGED, state).sendToTarget();
     }
 
