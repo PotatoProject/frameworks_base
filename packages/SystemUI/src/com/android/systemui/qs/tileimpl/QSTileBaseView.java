@@ -19,6 +19,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.content.res.ColorUtils;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -48,6 +49,8 @@ import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
 
+import java.util.Random;
+
 public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
 
     private static final String TAG = "QSTileBaseView";
@@ -70,6 +73,8 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private final int mColorDisabled;
     private int mCircleColor;
     private int mBgSize;
+
+    private static final String ACCENT_DARK_PROP = "persist.sys.theme.accent_dark";
 
     public QSTileBaseView(Context context, QSIconView icon) {
         this(context, icon, false);
@@ -111,7 +116,11 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         setBackground(mTileBackground);
 
-        mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
+        Random random = new Random();
+        int nextInt = random.nextInt(0xffffff + 1);
+        String colorCode = String.format("#%06x", nextInt);
+
+        mColorActive = Color.parseColor(colorCode);
         mColorDisabled = Utils.getDisabled(context,
                 Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary));
         mColorInactive = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
