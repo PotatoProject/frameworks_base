@@ -81,6 +81,7 @@ public class QSContainerImpl extends FrameLayout {
     private int mQsBackGroundColorWall;
     private boolean mSetQsFromWall;
     private boolean mSetQsFromResources;
+    private boolean mQsBackGroundColorRGB;
 
     private IOverlayManager mOverlayManager;
 
@@ -144,6 +145,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.QS_PANEL_BG_RGB), false,
+                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -168,6 +172,8 @@ public class QSContainerImpl extends FrameLayout {
         mQsBackGroundColorWall = ColorUtils.getValidQsColor(Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR_WALL, ColorUtils.genRandomQsColor(),
                 UserHandle.USER_CURRENT));
+        mQsBackGroundColorRGB = Settings.System.getIntForUser(getContext().getContentResolver(),
+                    Settings.System.QS_PANEL_BG_RGB, 0, UserHandle.USER_CURRENT) == 1;
         setQsBackground();
     }
 
@@ -207,15 +213,14 @@ public class QSContainerImpl extends FrameLayout {
     private void startDiscoMode() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        if (cal.get(Calendar.MONTH) != 3 || cal.get(Calendar.DAY_OF_MONTH) != 1) {
+        if ((cal.get(Calendar.MONTH) != 3 || cal.get(Calendar.DAY_OF_MONTH) != 1) && !mQsBackgroundModeRGB) {
             stopDiscoMode();
             Settings.Secure.putInt(getContext().getContentResolver(), "disco_mode_triggered", 0);
             return;
         }
         final float from = 0f;
         final float to = 360f;
-        if (mDiscoAnim != null)
-            mDiscoAnim.cancel();
+        stopDiscoMode();
         mDiscoAnim = ValueAnimator.ofFloat(0, 1);
         final float[] hsl = {0f, 1f, 0.5f};
         mDiscoAnim.setDuration(5000);
