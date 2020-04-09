@@ -48,6 +48,8 @@ import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
 
+import java.util.Random;
+
 public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
 
     private static final String TAG = "QSTileBaseView";
@@ -111,7 +113,11 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         setBackground(mTileBackground);
 
-        mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
+        Random random = new Random();
+        int nextInt = random.nextInt(0xffffff + 1);
+        String colorCode = String.format("#%06x", nextInt);
+
+        mColorActive = Color.parseColor(colorCode);
         mColorDisabled = Utils.getDisabled(context,
                 Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary));
         mColorInactive = Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
