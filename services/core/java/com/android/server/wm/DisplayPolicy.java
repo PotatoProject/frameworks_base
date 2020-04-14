@@ -2707,6 +2707,12 @@ public class DisplayPolicy {
         final int landscapeRotation = displayRotation.getLandscapeRotation();
         final int seascapeRotation = displayRotation.getSeascapeRotation();
         final int uiMode = mService.mPolicy.getUiMode();
+        final boolean showIMESpace = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.NAVIGATION_BAR_IME_SPACE, 1, UserHandle.USER_CURRENT) != 0;
+        final int navbarFrameHeight = showIMESpace ?
+                res.getDimensionPixelSize(R.dimen.navigation_bar_frame_height) : 0;
+        final int navbarFrameHeightLandscape = showIMESpace ?
+                res.getDimensionPixelSize(R.dimen.navigation_bar_frame_height_landscape) : 0;
 
         if (hasStatusBar()) {
             mStatusBarHeightForRotation[portraitRotation] =
@@ -2733,10 +2739,10 @@ public class DisplayPolicy {
         // Height of the navigation bar frame when presented horizontally at bottom
         mNavigationBarFrameHeightForRotationDefault[portraitRotation] =
         mNavigationBarFrameHeightForRotationDefault[upsideDownRotation] =
-                res.getDimensionPixelSize(R.dimen.navigation_bar_frame_height);
+                navbarFrameHeight;
         mNavigationBarFrameHeightForRotationDefault[landscapeRotation] =
         mNavigationBarFrameHeightForRotationDefault[seascapeRotation] =
-                res.getDimensionPixelSize(R.dimen.navigation_bar_frame_height_landscape);
+                navbarFrameHeightLandscape;
 
         // Width of the navigation bar when presented vertically along one side
         mNavigationBarWidthForRotationDefault[portraitRotation] =

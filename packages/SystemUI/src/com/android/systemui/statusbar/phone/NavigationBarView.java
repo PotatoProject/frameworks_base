@@ -1042,8 +1042,8 @@ public class NavigationBarView extends FrameLayout implements
                             com.android.internal.R.dimen.navigation_bar_height_landscape)
                     : getResources().getDimensionPixelSize(
                             com.android.internal.R.dimen.navigation_bar_height);
-            int frameHeight = getResources().getDimensionPixelSize(
-                    com.android.internal.R.dimen.navigation_bar_frame_height);
+            int frameHeight = showIMESpace() ? getResources().getDimensionPixelSize(
+                    com.android.internal.R.dimen.navigation_bar_frame_height) : 0;
             mBarTransitions.setBackgroundFrame(new Rect(0, frameHeight - height, w, h));
         }
 
@@ -1232,4 +1232,9 @@ public class NavigationBarView extends FrameLayout implements
         mDockedStackExists = exists;
         updateRecentsIcon();
     });
+
+    private boolean showIMESpace() {
+        return Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.NAVIGATION_BAR_IME_SPACE, 1, UserHandle.USER_CURRENT) != 0;
+    }
 }
