@@ -20,8 +20,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.ContentObserver;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -61,12 +65,15 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
 
     private final Rect mQsBounds = new Rect();
     private final StatusBarStateController mStatusBarStateController;
+    private View mView;
+    private Context mContext;
     private boolean mQsExpanded;
     private boolean mHeaderAnimating;
     private boolean mStackScrollerOverscrolling;
 
     private long mDelay;
 
+    private QSTheme mQSTheme;
     private QSAnimator mQSAnimator;
     private HeightListener mPanelView;
     protected QuickStatusBarHeader mHeader;
@@ -74,7 +81,7 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
     protected QSPanel mQSPanel;
     private QSDetail mQSDetail;
     private boolean mListening;
-    private QSContainerImpl mContainer;
+    private QSContainer mContainer;
     private int mLayoutDirection;
     private QSFooter mFooter;
     private float mLastQSExpansion = -1;
@@ -98,6 +105,10 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             Context context,
             QSTileHost qsTileHost,
             StatusBarStateController statusBarStateController) {
+        mContext = context;
+        Handler handler = new Handler();
+        SettingsObserver settingsObserver = new SettingsObserver(handler);
+        settingsObserver.observe();
         mRemoteInputQuickSettingsDisabler = remoteInputQsDisabler;
         mInjectionInflater = injectionInflater;
         SysUiServiceProvider.getComponent(context, CommandQueue.class)
@@ -111,21 +122,22 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
             Bundle savedInstanceState) {
         inflater = mInjectionInflater.injectable(
                 inflater.cloneInContext(new ContextThemeWrapper(getContext(), R.style.qs_panel_theme)));
-        return inflater.inflate(R.layout.qs_panel, container, false);
+        updateSettings(false);
+        switch(mQSTheme) {
+            case STOCK:
+                return inflater.inflate(R.layout.qs_panel, container, false);
+            case OREO:
+                return inflater.inflate(R.layout.qs_panel_oreo, container, false);
+            default:
+                return inflater.inflate(R.layout.qs_panel, container, false);
+        }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mQSPanel = view.findViewById(R.id.quick_settings_panel);
-        mQSDetail = view.findViewById(R.id.qs_detail);
-        mHeader = view.findViewById(R.id.header);
-        mFooter = view.findViewById(R.id.qs_footer);
-        mContainer = view.findViewById(id.quick_settings_container);
-
-        mQSDetail.setQsPanel(mQSPanel, mHeader, (View) mFooter);
-        mQSAnimator = new QSAnimator(this,
-                mHeader.findViewById(R.id.quick_qs_panel), mQSPanel);
+        mView = view;
+        updateMemberVariablesForQS();
 
         mQSCustomizer = view.findViewById(R.id.qs_customize);
         mQSCustomizer.setQs(this);
@@ -141,6 +153,60 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
         setHost(mHost);
         mStatusBarStateController.addCallback(this);
         onStateChanged(mStatusBarStateController.getState());
+    }
+
+    private void updateMemberVariablesForQS() {
+        mQSPanel = mView.findViewById(R.id.quick_settings_panel);
+        mQSDetail = mView.findViewById(R.id.qs_detail);
+        mHeader = mView.findViewById(R.id.header);
+        mFooter = mView.findViewById(R.id.qs_footer);
+        mContainer = mView.findViewById(id.quick_settings_container);
+
+        mQSDetail.setQsPanel(mQSPanel, mHeader, (View) mFooter);
+        mQSAnimator = new QSAnimator(this,
+                mHeader.findViewById(R.id.quick_qs_panel), mQSPanel);
+    }
+
+    private class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            mContext.getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor("qs_panel_theme"), false,
+                    this, UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateSettings(true);
+        }
+    }
+
+    private void updateSettings(boolean update) {
+        int enumValue = Settings.System.getIntForUser(getContext().getContentResolver(),
+                "qs_panel_theme", 0,
+                UserHandle.USER_CURRENT);
+        switch(enumValue) {
+            case 0:
+                mQSTheme = QSTheme.STOCK;
+                break;
+            case 1:
+                mQSTheme = QSTheme.OREO;
+                break;
+            default:
+                mQSTheme = QSTheme.STOCK;
+                break;
+        }
+
+        if(update) {
+            getActivity().getFragmentManager()
+                    .beginTransaction()
+                    .detach(this)
+                    .attach(this)
+                    .commit();
+        }
     }
 
     @Override
@@ -528,5 +594,10 @@ public class QSFragment extends LifecycleFragment implements QS, CommandQueue.Ca
     public void onStateChanged(int newState) {
         mState = newState;
         setKeyguardShowing(newState == StatusBarState.KEYGUARD);
+    }
+
+    enum QSTheme {
+        STOCK,
+        OREO,
     }
 }

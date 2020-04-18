@@ -84,6 +84,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
     protected final View mBrightnessView;
     protected final ImageView mBrightnessIcon;
     private final H mHandler = new H();
+    private final View mPageIndicator;
     private final MetricsLogger mMetricsLogger = Dependency.get(MetricsLogger.class);
     private final QSTileRevealController mQsTileRevealController;
 
@@ -192,6 +193,13 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
                 return true;
             }
         });
+
+        mPageIndicator = LayoutInflater.from(context).inflate(
+                R.layout.qs_page_indicator, this, false);
+        addView(mPageIndicator);
+        if (mTileLayout instanceof PagedTileLayout) {
+            ((PagedTileLayout) mTileLayout).setPageIndicator((PageIndicator) mPageIndicator);
+        }
 
         addDivider();
 

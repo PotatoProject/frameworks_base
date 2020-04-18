@@ -28,7 +28,7 @@ import com.android.keyguard.KeyguardMessageArea;
 import com.android.keyguard.KeyguardSliceView;
 import com.android.systemui.SystemUIRootComponent;
 import com.android.systemui.qs.QSCarrierGroup;
-import com.android.systemui.qs.QSFooterImpl;
+import com.android.systemui.qs.themes.stock.QSFooterImplStock;
 import com.android.systemui.qs.QSPanel;
 import com.android.systemui.qs.QuickQSPanel;
 import com.android.systemui.qs.QuickStatusBarHeader;
@@ -122,7 +122,7 @@ public class InjectionInflationController {
         /**
          * Creates the QSFooterImpl.
          */
-        QSFooterImpl createQsFooter();
+        QSFooterImplStock createQsFooter();
 
         /**
          * Creates the NotificationStackScrollLayout.

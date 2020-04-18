@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.android.systemui.qs;
+package com.android.systemui.qs.themes.stock;
 
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 
@@ -56,6 +56,10 @@ import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.R.dimen;
 import com.android.systemui.plugins.ActivityStarter;
+import com.android.systemui.qs.PageIndicator;
+import com.android.systemui.qs.QSFooter;
+import com.android.systemui.qs.QSPanel;
+import com.android.systemui.qs.TouchAnimator;
 import com.android.systemui.qs.TouchAnimator.Builder;
 import com.android.systemui.statusbar.phone.MultiUserSwitch;
 import com.android.systemui.statusbar.phone.SettingsButton;
@@ -67,7 +71,7 @@ import com.android.systemui.tuner.TunerService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class QSFooterImpl extends FrameLayout implements QSFooter,
+public class QSFooterImplStock extends FrameLayout implements QSFooter,
         OnClickListener, OnUserInfoChangedListener {
 
     private static final String TAG = "QSFooterImpl";
@@ -111,7 +115,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     };
 
     @Inject
-    public QSFooterImpl(@Named(VIEW_CONTEXT) Context context, AttributeSet attrs,
+    public QSFooterImplStock(@Named(VIEW_CONTEXT) Context context, AttributeSet attrs,
             ActivityStarter activityStarter, UserInfoController userInfoController,
             DeviceProvisionedController deviceProvisionedController) {
         super(context, attrs);
@@ -121,7 +125,7 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
     }
 
     @VisibleForTesting
-    public QSFooterImpl(Context context, AttributeSet attrs) {
+    public QSFooterImplStock(Context context, AttributeSet attrs) {
         this(context, attrs,
                 Dependency.get(ActivityStarter.class),
                 Dependency.get(UserInfoController.class),
@@ -291,6 +295,11 @@ public class QSFooterImpl extends FrameLayout implements QSFooter,
         if (disabled == mQsDisabled) return;
         mQsDisabled = disabled;
         updateEverything();
+    }
+
+    @Override
+    public View getExpandView() {
+        return null;
     }
 
     public void updateEverything() {

@@ -70,5 +70,11 @@ public interface QSFooter {
      */
     void setExpandClickListener(View.OnClickListener onClickListener);
 
+    /**
+     * Returns the {@link View} that should expand the quick settings when clicked.
+     */
+    @Nullable
+    View getExpandView();
+
     default void disable(int state1, int state2, boolean animate) {}
 }

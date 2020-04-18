@@ -16,7 +16,7 @@
 -->
 
 <!-- Extends FrameLayout -->
-<com.android.systemui.qs.QSFooterImpl
+<com.android.systemui.qs.themes.stock.QSFooterImplStock
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/qs_footer"
     android:layout_width="match_parent"
@@ -136,4 +136,4 @@
         android:layout_gravity="center_horizontal|bottom"
         android:background="@drawable/qs_footer_drag_handle" />
 
-</com.android.systemui.qs.QSFooterImpl>
+</com.android.systemui.qs.themes.stock.QSFooterImplStock>

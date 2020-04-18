@@ -14,7 +14,7 @@
  * limitations under the License
  */
 
-package com.android.systemui.qs;
+package com.android.systemui.qs.themes.stock;
 
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
@@ -45,6 +45,9 @@ import android.widget.FrameLayout;
 
 import com.android.systemui.AprilEasterBroadcast;
 import com.android.systemui.R;
+import com.android.systemui.qs.QSContainer;
+import com.android.systemui.qs.QSPanel;
+import com.android.systemui.qs.QuickStatusBarHeader;
 import com.android.systemui.qs.customize.QSCustomizer;
 
 import java.util.Calendar;
@@ -54,7 +57,7 @@ import java.lang.System;
 /**
  * Wrapper view with background which contains {@link QSPanel} and {@link BaseStatusBarHeader}
  */
-public class QSContainerImpl extends FrameLayout {
+public class QSContainerImplStock extends FrameLayout implements QSContainer {
 
     private static final String TAG = "QSContainerImpl";
 
@@ -87,7 +90,7 @@ public class QSContainerImpl extends FrameLayout {
 
     private ValueAnimator mDiscoAnim;
 
-    public QSContainerImpl(Context context, AttributeSet attrs) {
+    public QSContainerImplStock(Context context, AttributeSet attrs) {
         super(context, attrs);
         mOverlayManager = IOverlayManager.Stub.asInterface(
                 ServiceManager.getService(Context.OVERLAY_SERVICE));
@@ -131,22 +134,22 @@ public class QSContainerImpl extends FrameLayout {
 
         void observe() {
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_ALPHA), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_ALPHA), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_COLOR), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_COLOR), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_COLOR_WALL), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_USE_WALL), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_USE_WALL), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_USE_FW), false,
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.QS_PANEL_BG_RGB), false,
+                            .getUriFor(Settings.System.QS_PANEL_BG_RGB), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -158,10 +161,10 @@ public class QSContainerImpl extends FrameLayout {
 
     private void updateSettings() {
         int userQsWallColorSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
-                    Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
+                Settings.System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT);
         mSetQsFromWall = userQsWallColorSetting == 1;
         int userQsFwSetting = Settings.System.getIntForUser(getContext().getContentResolver(),
-                    Settings.System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT);
+                Settings.System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT);
         mSetQsFromResources = userQsFwSetting == 1;
         mQsBackGroundAlpha = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_ALPHA, 255,
@@ -173,7 +176,7 @@ public class QSContainerImpl extends FrameLayout {
                 Settings.System.QS_PANEL_BG_COLOR_WALL, ColorUtils.genRandomQsColor(),
                 UserHandle.USER_CURRENT));
         mQsBackGroundColorRGB = Settings.System.getIntForUser(getContext().getContentResolver(),
-                    Settings.System.QS_PANEL_BG_RGB, 0, UserHandle.USER_CURRENT) == 1;
+                Settings.System.QS_PANEL_BG_RGB, 0, UserHandle.USER_CURRENT) == 1;
         setQsBackground();
     }
 
@@ -286,7 +289,7 @@ public class QSContainerImpl extends FrameLayout {
 
     @Override
     protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed,
-            int parentHeightMeasureSpec, int heightUsed) {
+                                           int parentHeightMeasureSpec, int heightUsed) {
         // Do not measure QSPanel again when doing super.onMeasure.
         // This prevents the pages in PagedTileLayout to be remeasured with a different (incorrect)
         // size to the one used for determining the number of rows and then the number of pages.
@@ -302,6 +305,7 @@ public class QSContainerImpl extends FrameLayout {
         updateExpansion();
     }
 
+    @Override
     public void disable(int state1, int state2, boolean animate) {
         final boolean disabled = (state2 & DISABLE2_QUICK_SETTINGS) != 0;
         if (disabled == mQsDisabled) return;
@@ -324,11 +328,13 @@ public class QSContainerImpl extends FrameLayout {
      *
      * @param heightOverride the overridden height
      */
+    @Override
     public void setHeightOverride(int heightOverride) {
         mHeightOverride = heightOverride;
         updateExpansion();
     }
 
+    @Override
     public void updateExpansion() {
         int height = calculateContainerHeight();
         setBottom(getTop() + height);
@@ -356,6 +362,7 @@ public class QSContainerImpl extends FrameLayout {
         }
     }
 
+    @Override
     public void setExpansion(float expansion) {
         mQsExpansion = expansion;
         updateExpansion();
