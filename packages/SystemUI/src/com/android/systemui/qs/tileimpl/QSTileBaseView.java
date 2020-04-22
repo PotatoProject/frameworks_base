@@ -143,8 +143,10 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private void setActiveColor(Context context) {
         if (mShouldDisco)
             mColorActive = ColorUtils.genRandomAccentColor(isThemeDark(context), (long) mIcon.toString().hashCode());
-        else
-            mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
+        else {
+            int activeColor = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
+            mColorActive = androidx.core.graphics.ColorUtils.setAlphaComponent(activeColor, 51 /* 20% opacity */);
+        }
     }
 
     private static Boolean isThemeDark(Context context) {
