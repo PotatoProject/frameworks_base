@@ -37,12 +37,6 @@
     <!-- Qs visibility -->
     <dimen name="qs_tile_height_wo_label">64dp</dimen>
 
-    <!-- Width of the battery icon in the status bar when set to circle style. -->
-    <dimen name="status_bar_battery_icon_circle_width">12.5dp</dimen>
-
-    <!-- Height of the battery icon in the status bar when set to circle style. -->
-    <dimen name="status_bar_battery_icon_circle_height">12.5dp</dimen>
-
     <!-- Bottom margin size when fingerprint in display is active -->
     <dimen name="keyguard_indication_margin_bottom_fingerprint_in_display">@dimen/keyguard_indication_margin_bottom</dimen>
 
