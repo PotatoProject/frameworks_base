@@ -462,6 +462,8 @@
     <!-- SystemUI Plugins that can be loaded on user builds. -->
     <string-array name="config_pluginWhitelist" translatable="false">
         <item>com.android.systemui</item>
+        <item>co.potatoproject.plugin</item>
+        <item>co.potatoprojetc.plugin.oreoqs</item>
     </string-array>
 
     <integer name="ongoing_appops_dialog_max_apps">5</integer>

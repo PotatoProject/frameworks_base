@@ -46,6 +46,7 @@ android_library {
         "SettingsLib",
         "androidx.legacy_legacy-support-v4",
         "androidx.recyclerview_recyclerview",
+        "androidx.viewpager_viewpager",
         "androidx.preference_preference",
         "androidx.appcompat_appcompat",
         "androidx.mediarouter_mediarouter",
@@ -67,7 +68,6 @@ android_library {
         "jsr330",
         "vendor.lineage.biometrics.fingerprint.inscreen-V1.0-java",
     ],
-    manifest: "AndroidManifest.xml",
 
     libs: [
         "telephony-common",
@@ -150,6 +150,7 @@ android_app {
     product_specific: true,
     certificate: "platform",
     privileged: true,
+    manifest: "AndroidManifest.xml",
 
     optimize: {
         proguard_flags_files: ["proguard.flags"],

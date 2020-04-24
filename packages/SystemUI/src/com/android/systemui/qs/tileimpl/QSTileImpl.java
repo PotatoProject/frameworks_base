@@ -148,7 +148,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     }
 
     @VisibleForTesting
-    protected void handleStale() {
+    public void handleStale() {
         setListening(mStaleListener, true);
     }
 

@@ -787,10 +787,10 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         }
     }
 
-    protected static class Record {
-        DetailAdapter detailAdapter;
-        int x;
-        int y;
+    public static class Record {
+        public DetailAdapter detailAdapter;
+        public int x;
+        public int y;
     }
 
     public static final class TileRecord extends Record {

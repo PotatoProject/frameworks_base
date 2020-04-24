@@ -1156,4 +1156,7 @@
 
     <!-- Size of the RAT type for CellularTile -->
     <dimen name="celltile_rat_type_size">10sp</dimen>
+
+     <!-- How far to inset the rounded edges -->
+     <dimen name="stat_sys_mobile_signal_circle_inset">0.9dp</dimen>
 </resources>

@@ -666,8 +666,8 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.android.systemui.fileprovider"
             android:exported="false"
+            android:authorities="com.android.systemui.fileprovider"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
