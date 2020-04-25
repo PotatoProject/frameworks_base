@@ -1845,6 +1845,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    private ThemeModeController mThemeModeController = new ThemeModeController(mContext, mHandler);
     private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
     private class CustomSettingsObserver extends ContentObserver {
 
