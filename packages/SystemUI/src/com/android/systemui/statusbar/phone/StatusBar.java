@@ -1845,6 +1845,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    private ThemeModeController mThemeModeController = new ThemeModeController(mContext, mHandler);
     private CustomSettingsObserver mCustomSettingsObserver = new CustomSettingsObserver(mHandler);
     private class CustomSettingsObserver extends ContentObserver {
 
@@ -1899,6 +1900,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STOCK_STATUSBAR_IN_HIDE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    "system_theme_mode"),
+                    0, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -1931,6 +1935,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_COLUMNS_LANDSCAPE)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_TILE_TITLE_VISIBILITY))) {
                 updateQsPanelResources();
+            } else if (uri.equals(Settings.System.getUriFor("system_theme_mode"))) {
+
             }
         }
 
