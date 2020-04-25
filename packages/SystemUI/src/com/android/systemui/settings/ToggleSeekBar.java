@@ -18,14 +18,23 @@ package com.android.systemui.settings;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.service.quicksettings.Tile;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.SeekBar;
+
+import androidx.annotation.Nullable;
 
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.ActivityStarter;
+import com.android.systemui.qs.tileimpl.QSTileImpl;
 
 public class ToggleSeekBar extends SeekBar {
     private String mAccessibilityLabel;
@@ -42,10 +51,12 @@ public class ToggleSeekBar extends SeekBar {
 
     public ToggleSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        updateThumbColor();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        updateThumbColor();
         if (mEnforcedAdmin != null) {
             Intent intent = RestrictedLockUtils.getShowAdminSupportDetailsIntent(
                     mContext, mEnforcedAdmin);
@@ -57,6 +68,17 @@ public class ToggleSeekBar extends SeekBar {
         }
 
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateThumbColor();
+    }
+
+    public void updateThumbColor() {
+        getThumb().setColorFilter(QSTileImpl.getColorForState(mContext, Tile.STATE_ACTIVE),
+                android.graphics.PorterDuff.Mode.SRC_IN);
     }
 
     public void setAccessibilityLabel(String label) {

@@ -16,11 +16,6 @@
 -->
 
 <merge xmlns:android="http://schemas.android.com/apk/res/android">->
-    <View
-        android:id="@+id/customizer_transparent_view"
-        android:layout_width="match_parent"
-        android:layout_height="@*android:dimen/quick_qs_offset_height"
-        android:background="@android:color/transparent" />
 
     <com.android.keyguard.AlphaOptimizedLinearLayout
         android:id="@+id/customize_container"

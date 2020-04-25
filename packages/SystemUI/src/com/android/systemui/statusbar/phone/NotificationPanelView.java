@@ -618,8 +618,7 @@ public class NotificationPanelView extends PanelView implements
                 R.dimen.max_notification_fadeout_height);
         mIndicationBottomPadding = getResources().getDimensionPixelSize(
                 R.dimen.keyguard_indication_bottom_padding);
-        mQsNotificationTopPadding = getResources().getDimensionPixelSize(
-                R.dimen.qs_notification_padding);
+        mQsNotificationTopPadding = 0;
         mShelfHeight = getResources().getDimensionPixelSize(R.dimen.notification_shelf_height);
         mDarkIconSize = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_icon_drawing_size_dark);
@@ -628,7 +627,7 @@ public class NotificationPanelView extends PanelView implements
         mHeadsUpInset = statusbarHeight + getResources().getDimensionPixelSize(
                 R.dimen.heads_up_status_bar_padding);
         mStatusBarHeaderHeight = getResources().getDimensionPixelSize(
-		R.dimen.status_bar_height);
+		        R.dimen.status_bar_height);
     }
 
     /**

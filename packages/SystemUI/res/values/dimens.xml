@@ -1156,4 +1156,10 @@
 
     <!-- Size of the RAT type for CellularTile -->
     <dimen name="celltile_rat_type_size">10sp</dimen>
+    <!-- Height of the status bar header bar -->
+    <dimen name="status_bar_header_height">124dp</dimen>
+    <!-- How far to inset the rounded edges -->
+    <dimen name="stat_sys_mobile_signal_circle_inset">0.9dp</dimen>
+    <dimen name="qs_tile_padding_below_icon">12dp</dimen>
+    <dimen name="qs_brightness_padding_top">6dp</dimen>
 </resources>

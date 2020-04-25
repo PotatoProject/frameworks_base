@@ -255,11 +255,10 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         Resources res = getResources();
         mShouldTranslateContents =
                 res.getBoolean(R.bool.config_translateNotificationContentsOnSwipe);
-        mOutlineRadius = res.getDimension(R.dimen.notification_shadow_radius);
+        mOutlineRadius = 0;
         mAlwaysRoundBothCorners = res.getBoolean(R.bool.config_clipNotificationsToOutline);
         if (!mAlwaysRoundBothCorners) {
-            mOutlineRadius = res.getDimensionPixelSize(
-                    Utils.getThemeAttr(mContext, android.R.attr.dialogCornerRadius));
+            mOutlineRadius = 0;
         }
         setClipToOutline(mAlwaysRoundBothCorners);
     }

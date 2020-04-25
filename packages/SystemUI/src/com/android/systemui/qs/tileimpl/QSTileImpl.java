@@ -412,33 +412,14 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     public abstract CharSequence getTileLabel();
 
     public static int getColorForState(Context context, int state) {
-        int defaultColor = ColorUtils.genRandomQsColor();
-
-        boolean setQsFromWall = System.getIntForUser(context.getContentResolver(),
-                    System.QS_PANEL_BG_USE_WALL, 0, UserHandle.USER_CURRENT) == 1;
-        boolean setQsFromResources = System.getIntForUser(context.getContentResolver(),
-                    System.QS_PANEL_BG_USE_FW, 1, UserHandle.USER_CURRENT) == 1;
-
-        int qsBackGroundColor = ColorUtils.getValidQsColor(System.getIntForUser(context.getContentResolver(),
-                System.QS_PANEL_BG_COLOR, defaultColor, UserHandle.USER_CURRENT));
-        int qsBackGroundColorWall = ColorUtils.getValidQsColor(System.getIntForUser(context.getContentResolver(),
-                System.QS_PANEL_BG_COLOR_WALL, defaultColor, UserHandle.USER_CURRENT));
-
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
                 return Utils.getDisabled(context,
-                        Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary));
+                        Utils.getColorAttrDefaultColor(context, android.R.attr.colorForeground));
             case Tile.STATE_INACTIVE:
-                return Utils.getColorAttrDefaultColor(context, android.R.attr.textColorSecondary);
+                return Utils.getColorAttrDefaultColor(context, android.R.attr.textColorHint);
             case Tile.STATE_ACTIVE:
-                if (setQsFromResources) {
-                    return Utils.getColorAttrDefaultColor(context, android.R.attr.colorPrimary);
-                } else {
-                    if (setQsFromWall)
-                        return qsBackGroundColorWall;
-                    else
-                        return qsBackGroundColor;
-                }
+                return Utils.getColorAttrDefaultColor(context, android.R.attr.textColorPrimary);
             default:
                 Log.e("QSTile", "Invalid state " + state);
                 return 0;

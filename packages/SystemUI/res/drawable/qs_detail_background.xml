@@ -18,7 +18,7 @@ Copyright (C) 2014 The Android Open Source Project
         <inset>
             <shape>
                 <solid android:color="@color/qs_detail_transition"/>
-                <corners android:radius="?android:attr/dialogCornerRadius" />
+                <corners android:radius="0dp" />
             </shape>
         </inset>
     </item>
@@ -26,7 +26,7 @@ Copyright (C) 2014 The Android Open Source Project
         <inset>
             <shape>
                 <solid android:color="?android:attr/colorPrimary"/>
-                <corners android:radius="?android:attr/dialogCornerRadius" />
+                <corners android:radius="0dp" />
             </shape>
         </inset>
     </item>

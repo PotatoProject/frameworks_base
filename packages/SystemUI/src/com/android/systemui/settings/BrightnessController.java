@@ -36,6 +36,7 @@ import android.os.ServiceManager;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.service.quicksettings.Tile;
 import android.service.vr.IVrManager;
 import android.service.vr.IVrStateCallbacks;
 import android.util.Log;
@@ -48,6 +49,7 @@ import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settingslib.RestrictedLockUtilsInternal;
 import com.android.systemui.Dependency;
 import com.android.systemui.SystemUIFactory;
+import com.android.systemui.qs.tileimpl.QSTileImpl;
 
 import java.util.ArrayList;
 
@@ -268,6 +270,8 @@ public class BrightnessController implements ToggleSlider.Listener {
 
     public BrightnessController(Context context, ImageView icon, ToggleSlider control) {
         mIcon = icon;
+        mIcon.setColorFilter(QSTileImpl.getColorForState(context, Tile.STATE_ACTIVE),
+                android.graphics.PorterDuff.Mode.SRC_IN);
         mContext = context;
         mControl = control;
         mControl.setMax(GAMMA_SPACE_MAX);

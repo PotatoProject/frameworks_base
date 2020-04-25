@@ -94,6 +94,7 @@ public class ToggleSliderView extends RelativeLayout implements ToggleSlider {
         if (mListener != null) {
             mListener.onInit(this);
         }
+        mSlider.updateThumbColor();
     }
 
     public void setEnforcedAdmin(RestrictedLockUtils.EnforcedAdmin admin) {

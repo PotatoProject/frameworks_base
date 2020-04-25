@@ -22,7 +22,7 @@ public class TileLayout extends ViewGroup implements QSTileLayout {
 
     private static final String TAG = "TileLayout";
 
-    protected int mColumns;
+    protected int mColumns = 3;
     protected int mCellWidth;
     protected int mCellHeight;
     protected int mCellMarginHorizontal;

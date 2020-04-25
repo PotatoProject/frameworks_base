@@ -16,47 +16,55 @@
 
 package com.android.systemui.qs.tiles;
 
-import static com.android.systemui.Prefs.Key.QS_HAS_TURNED_OFF_MOBILE_DATA;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.provider.Settings;
+import android.os.SystemProperties;
 import android.service.quicksettings.Tile;
-import android.telephony.SubscriptionManager;
-import android.text.Html;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Switch;
-
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.settingslib.net.DataUsageController;
-import com.android.systemui.Prefs;
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
+import com.android.systemui.R.string;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.qs.DetailAdapter;
 import com.android.systemui.plugins.qs.QSIconView;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
+import com.android.systemui.qs.CellTileView;
+import com.android.systemui.qs.CellTileView.SignalIcon;
 import com.android.systemui.qs.QSHost;
-import com.android.systemui.qs.SignalTileView;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.phone.SystemUIDialog;
+import com.android.systemui.statusbar.phone.UnlockMethodCache;
+import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NetworkController.IconState;
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
-import com.android.systemui.statusbar.policy.KeyguardMonitor;
 
 import javax.inject.Inject;
 
 /** Quick settings tile: Cellular **/
 public class CellularTile extends QSTileImpl<SignalState> {
+    private static final ComponentName CELLULAR_SETTING_COMPONENT = new ComponentName(
+            "com.android.settings", "com.android.settings.Settings$DataUsageSummaryActivity");
+    private static final ComponentName DATA_PLAN_CELLULAR_COMPONENT = new ComponentName(
+            "com.android.settings", "com.android.settings.Settings$DataPlanUsageSummaryActivity");
+
+    private static final Intent CELLULAR_SETTINGS =
+            new Intent().setComponent(CELLULAR_SETTING_COMPONENT);
+    private static final Intent DATA_PLAN_CELLULAR_SETTINGS =
+            new Intent().setComponent(DATA_PLAN_CELLULAR_COMPONENT);
+
     private static final String ENABLE_SETTINGS_DATA_PLAN = "enable.settings.data.plan";
 
     private final NetworkController mController;
@@ -65,30 +73,21 @@ public class CellularTile extends QSTileImpl<SignalState> {
 
     private final CellSignalCallback mSignalCallback = new CellSignalCallback();
     private final ActivityStarter mActivityStarter;
-
-    private final KeyguardMonitor mKeyguard;
-    private final KeyguardCallback mKeyguardCallback = new KeyguardCallback();
+    private final KeyguardMonitor mKeyguardMonitor;
 
     @Inject
-    public CellularTile(QSHost host, NetworkController networkController,
-            ActivityStarter activityStarter) {
+    public CellularTile(QSHost host) {
         super(host);
-        mController = networkController;
-        mActivityStarter = activityStarter;
+        mController = Dependency.get(NetworkController.class);
+        mActivityStarter = Dependency.get(ActivityStarter.class);
+        mKeyguardMonitor = Dependency.get(KeyguardMonitor.class);
         mDataController = mController.getMobileDataController();
         mDetailAdapter = new CellularDetailAdapter();
-        mKeyguard = Dependency.get(KeyguardMonitor.class);
-        mController.observe(getLifecycle(), mSignalCallback);
     }
 
     @Override
     public SignalState newTileState() {
         return new SignalState();
-    }
-
-    @Override
-    public QSIconView createTileView(Context context) {
-        return new SignalTileView(context);
     }
 
     @Override
@@ -98,71 +97,39 @@ public class CellularTile extends QSTileImpl<SignalState> {
 
     @Override
     public void handleSetListening(boolean listening) {
-        if (listening) {
-            mKeyguard.addCallback(mKeyguardCallback);
-        } else {
-            mKeyguard.removeCallback(mKeyguardCallback);
+        if (mController == null) {
+            return;
         }
+        if (listening) {
+            mController.addCallback(mSignalCallback);
+        } else {
+            mController.removeCallback(mSignalCallback);
+        }
+    }
+
+    @Override
+    public QSIconView createTileView(Context context) {
+        return new CellTileView(context);
     }
 
     @Override
     public Intent getLongClickIntent() {
-        return getCellularSettingIntent();
+        return getCellularSettingIntent(mContext);
     }
 
     @Override
     protected void handleClick() {
-        if (getState().state == Tile.STATE_UNAVAILABLE) {
-            return;
-        }
-        if (mDataController.isMobileDataEnabled()) {
-            maybeShowDisableDialog();
-        } else {
-            if (mKeyguard.isSecure() && mKeyguard.isShowing()) {
-                Dependency.get(ActivityStarter.class).postQSRunnableDismissingKeyguard(() -> {
-                    mHost.openPanels();
-                    mDataController.setMobileDataEnabled(true);
-                });
-                return;
-            }
-            mDataController.setMobileDataEnabled(true);
-        }
-    }
-
-    private void maybeShowDisableDialog() {
-        if (Prefs.getBoolean(mContext, QS_HAS_TURNED_OFF_MOBILE_DATA, false)) {
-            // Directly turn off mobile data if the user has seen the dialog before.
-            mDataController.setMobileDataEnabled(false);
-            return;
-        }
-        String carrierName = mController.getMobileDataNetworkName();
-        if (TextUtils.isEmpty(carrierName)) {
-            carrierName = mContext.getString(R.string.mobile_data_disable_message_default_carrier);
-        }
-        AlertDialog dialog = new Builder(mContext)
-                .setTitle(R.string.mobile_data_disable_title)
-                .setMessage(mContext.getString(R.string.mobile_data_disable_message, carrierName))
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(
-                        com.android.internal.R.string.alert_windows_notification_turn_off_action,
-                        (d, w) -> {
-                            mDataController.setMobileDataEnabled(false);
-                            Prefs.putBoolean(mContext, QS_HAS_TURNED_OFF_MOBILE_DATA, true);
-                        })
-                .create();
-        dialog.getWindow().setType(LayoutParams.TYPE_KEYGUARD_DIALOG);
-        SystemUIDialog.setShowForAllUsers(dialog, true);
-        SystemUIDialog.registerDismissListener(dialog);
-        SystemUIDialog.setWindowOnTop(dialog);
-        dialog.show();
+        mDataController.setMobileDataEnabled(!mDataController.isMobileDataEnabled());
     }
 
     @Override
     protected void handleSecondaryClick() {
+        if (getState().state == Tile.STATE_UNAVAILABLE) {
+            return;
+        }
         if (mDataController.isMobileDataSupported()) {
-            if (mKeyguard.isSecure() && mKeyguard.isShowing()) {
-                Dependency.get(ActivityStarter.class).postQSRunnableDismissingKeyguard(() -> {
-                    mHost.openPanels();
+            if (mKeyguardMonitor.isSecure()) {
+                mActivityStarter.postQSRunnableDismissingKeyguard(() -> {
                     showDetail(true);
                 });
                 return;
@@ -170,7 +137,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
             showDetail(true);
         } else {
             mActivityStarter
-                    .postStartActivityDismissingKeyguard(getCellularSettingIntent(),0 /* delay */);
+                    .postStartActivityDismissingKeyguard(getCellularSettingIntent(mContext), 0 /* delay */);
         }
     }
 
@@ -181,76 +148,47 @@ public class CellularTile extends QSTileImpl<SignalState> {
 
     @Override
     protected void handleUpdateState(SignalState state, Object arg) {
+        if (mSignalCallback == null) {
+            return;
+        }
         CallbackInfo cb = (CallbackInfo) arg;
         if (cb == null) {
             cb = mSignalCallback.mInfo;
         }
 
         final Resources r = mContext.getResources();
+        state.activityIn = cb.enabled && cb.activityIn;
+        state.activityOut = cb.enabled && cb.activityOut;
+        state.isOverlayIconWide = cb.isDataTypeIconWide;
+        state.overlayIconId = cb.dataTypeIconId;
+        state.dualTarget = true;
+
         state.label = r.getString(R.string.mobile_data);
-        boolean mobileDataEnabled = mDataController.isMobileDataSupported()
-                && mDataController.isMobileDataEnabled();
-        state.value = mobileDataEnabled;
-        state.activityIn = mobileDataEnabled && cb.activityIn;
-        state.activityOut = mobileDataEnabled && cb.activityOut;
+
+        final String signalContentDesc = cb.enabled && (cb.mobileSignalIconId > 0)
+                ? cb.signalContentDescription
+                : r.getString(R.string.accessibility_no_signal);
+        if (cb.noSim) {
+            state.contentDescription = state.label;
+        } else {
+            state.contentDescription = signalContentDesc + ", " + state.label;
+        }
+
         state.expandedAccessibilityClassName = Switch.class.getName();
+        state.value = mDataController.isMobileDataSupported()
+                && mDataController.isMobileDataEnabled();
+
         if (cb.noSim) {
             state.icon = ResourceIcon.get(R.drawable.ic_qs_no_sim);
         } else {
-            state.icon = ResourceIcon.get(R.drawable.ic_swap_vert);
+            state.icon = new SignalIcon(cb.mobileSignalIconId);
         }
 
-        if (cb.noSim) {
-            state.state = Tile.STATE_UNAVAILABLE;
-            state.secondaryLabel = r.getString(R.string.keyguard_missing_sim_message_short);
-        } else if (cb.airplaneModeEnabled) {
-            state.state = Tile.STATE_UNAVAILABLE;
-            state.secondaryLabel = r.getString(R.string.status_bar_airplane);
-        } else if (mobileDataEnabled) {
-            state.state = Tile.STATE_ACTIVE;
-            state.secondaryLabel = appendMobileDataType(
-                    // Only show carrier name if there are more than 1 subscription
-                    cb.multipleSubs ? cb.dataSubscriptionName : "",
-                    getMobileDataContentName(cb));
-        } else {
+        if (cb.airplaneModeEnabled | cb.noSim) {
             state.state = Tile.STATE_INACTIVE;
-            state.secondaryLabel = r.getString(R.string.cell_data_off);
-        }
-
-
-        // TODO(b/77881974): Instead of switching out the description via a string check for
-        // we need to have two strings provided by the MobileIconGroup.
-        final CharSequence contentDescriptionSuffix;
-        if (state.state == Tile.STATE_INACTIVE) {
-            contentDescriptionSuffix = r.getString(R.string.cell_data_off_content_description);
         } else {
-            contentDescriptionSuffix = state.secondaryLabel;
+            state.state = Tile.STATE_ACTIVE;
         }
-
-        state.contentDescription = state.label + ", " + contentDescriptionSuffix;
-    }
-
-    private CharSequence appendMobileDataType(CharSequence current, CharSequence dataType) {
-        if (TextUtils.isEmpty(dataType)) {
-            return Html.fromHtml(current.toString(), 0);
-        }
-        if (TextUtils.isEmpty(current)) {
-            return Html.fromHtml(dataType.toString(), 0);
-        }
-        String concat = mContext.getString(R.string.mobile_carrier_text_format, current, dataType);
-        return Html.fromHtml(concat, 0);
-    }
-
-    private CharSequence getMobileDataContentName(CallbackInfo cb) {
-        if (cb.roaming && !TextUtils.isEmpty(cb.dataContentDescription)) {
-            String roaming = mContext.getString(R.string.data_connection_roaming);
-            String dataDescription = cb.dataContentDescription.toString();
-            return mContext.getString(R.string.mobile_data_text_format, roaming, dataDescription);
-        }
-        if (cb.roaming) {
-            return mContext.getString(R.string.data_connection_roaming);
-        }
-        return cb.dataContentDescription;
     }
 
     @Override
@@ -263,23 +201,45 @@ public class CellularTile extends QSTileImpl<SignalState> {
         return mController.hasMobileDataFeature();
     }
 
+    // Remove the period from the network name
+    public static String removeTrailingPeriod(String string) {
+        if (string == null) return null;
+        final int length = string.length();
+        if (string.endsWith(".")) {
+            return string.substring(0, length - 1);
+        }
+        return string;
+    }
+
     private static final class CallbackInfo {
+        boolean enabled;
+        boolean wifiEnabled;
         boolean airplaneModeEnabled;
-        CharSequence dataSubscriptionName;
-        CharSequence dataContentDescription;
+        int mobileSignalIconId;
+        String signalContentDescription;
+        int dataTypeIconId;
+        String dataContentDescription;
         boolean activityIn;
         boolean activityOut;
+        String enabledDesc;
         boolean noSim;
+        boolean isDataTypeIconWide;
         boolean roaming;
-        boolean multipleSubs;
     }
 
     private final class CellSignalCallback implements SignalCallback {
         private final CallbackInfo mInfo = new CallbackInfo();
+        @Override
+        public void setWifiIndicators(boolean enabled, IconState statusIcon, IconState qsIcon,
+                boolean activityIn, boolean activityOut, String description, boolean isTransient,
+                String statusLabel) {
+            mInfo.wifiEnabled = enabled;
+            refreshState(mInfo);
+        }
 
         @Override
         public void setMobileDataIndicators(IconState statusIcon, IconState qsIcon, int statusType,
-                int qsType, boolean activityIn, boolean activityOut, int stackedVoiceIcon,
+                int qsType, boolean activityIn, boolean activityOut, int stackedVoiceId,
                 CharSequence typeContentDescription,
                 CharSequence typeContentDescriptionHtml, CharSequence description,
                 boolean isWide, int subId, boolean roaming) {
@@ -287,19 +247,32 @@ public class CellularTile extends QSTileImpl<SignalState> {
                 // Not data sim, don't display.
                 return;
             }
-            mInfo.dataSubscriptionName = mController.getMobileDataNetworkName();
-            mInfo.dataContentDescription =
-                    (description != null) ? typeContentDescriptionHtml : null;
+            mInfo.enabled = qsIcon.visible;
+            mInfo.mobileSignalIconId = qsIcon.icon;
+            mInfo.signalContentDescription = qsIcon.contentDescription;
+            mInfo.dataTypeIconId = qsType;
+            mInfo.dataContentDescription = String.valueOf(typeContentDescription);
             mInfo.activityIn = activityIn;
             mInfo.activityOut = activityOut;
+            mInfo.enabledDesc = String.valueOf(description);
+            mInfo.isDataTypeIconWide = qsType != 0 && isWide;
             mInfo.roaming = roaming;
-            mInfo.multipleSubs = mController.getNumberSubscriptions() > 1;
             refreshState(mInfo);
         }
 
         @Override
         public void setNoSims(boolean show, boolean simDetected) {
             mInfo.noSim = show;
+            if (mInfo.noSim) {
+                // Make sure signal gets cleared out when no sims.
+                mInfo.mobileSignalIconId = 0;
+                mInfo.dataTypeIconId = 0;
+                // Show a No SIMs description to avoid emergency calls message.
+                mInfo.enabled = true;
+                mInfo.enabledDesc = mContext.getString(
+                        R.string.keyguard_missing_sim_message_short);
+                mInfo.signalContentDescription = mInfo.enabledDesc;
+            }
             refreshState(mInfo);
         }
 
@@ -315,14 +288,25 @@ public class CellularTile extends QSTileImpl<SignalState> {
         }
     }
 
-    static Intent getCellularSettingIntent() {
-        Intent intent = new Intent(Settings.Panel.ACTION_MOBILE_DATA);
-        int dataSub = SubscriptionManager.getDefaultDataSubscriptionId();
-        if (dataSub != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
-            intent.putExtra(Settings.EXTRA_SUB_ID,
-                    SubscriptionManager.getDefaultDataSubscriptionId());
-        }
-        return intent;
+    static Intent getCellularSettingIntent(Context context) {
+        // TODO(b/62349208): We should replace feature flag check below with data plans
+        // availability check. If the data plans are available we display the data plans usage
+        // summary otherwise we display data usage summary without data plans.
+        boolean isDataPlanFeatureEnabled =
+                SystemProperties.getBoolean(ENABLE_SETTINGS_DATA_PLAN, false /* default */);
+        context.getPackageManager()
+                .setComponentEnabledSetting(
+                        DATA_PLAN_CELLULAR_COMPONENT,
+                        isDataPlanFeatureEnabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                                : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
+        context.getPackageManager()
+                .setComponentEnabledSetting(
+                        CELLULAR_SETTING_COMPONENT,
+                        isDataPlanFeatureEnabled ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                                : PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+        return isDataPlanFeatureEnabled ? DATA_PLAN_CELLULAR_SETTINGS : CELLULAR_SETTINGS;
     }
 
     private final class CellularDetailAdapter implements DetailAdapter {
@@ -341,7 +325,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
 
         @Override
         public Intent getSettingsIntent() {
-            return getCellularSettingIntent();
+            return null;
         }
 
         @Override
@@ -372,11 +356,4 @@ public class CellularTile extends QSTileImpl<SignalState> {
             fireToggleStateChanged(enabled);
         }
     }
-
-    private final class KeyguardCallback implements KeyguardMonitor.Callback {
-        @Override
-        public void onKeyguardShowingChanged() {
-            refreshState();
-        }
-    };
 }

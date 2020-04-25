@@ -673,8 +673,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
 
     @Override
     public void onOverlayChanged() {
-        int newRadius = mContext.getResources().getDimensionPixelSize(
-                Utils.getThemeAttr(mContext, android.R.attr.dialogCornerRadius));
+        int newRadius = 0;
         if (mCornerRadius != newRadius) {
             mCornerRadius = newRadius;
             invalidate();
@@ -985,11 +984,10 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
                 R.dimen.min_top_overscroll_to_qs);
         mStatusBarHeight = res.getDimensionPixelSize(R.dimen.status_bar_height);
         mBottomMargin = res.getDimensionPixelSize(R.dimen.notification_panel_margin_bottom);
-        mSidePaddings = res.getDimensionPixelSize(R.dimen.notification_side_paddings);
+        mSidePaddings = 0;
         mMinInteractionHeight = res.getDimensionPixelSize(
                 R.dimen.notification_min_interaction_height);
-        mCornerRadius = res.getDimensionPixelSize(
-                Utils.getThemeAttr(mContext, android.R.attr.dialogCornerRadius));
+        mCornerRadius = 0;
         mHeadsUpInset = mStatusBarHeight + res.getDimensionPixelSize(
                 R.dimen.heads_up_status_bar_padding);
     }
@@ -1311,20 +1309,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ScrollAd
         mAmbientState.setAppearing(appearing);
         if (!appearing) {
             translationY = 0;
-            if (mShouldShowShelfOnly) {
-                stackHeight = mTopPadding + mShelf.getIntrinsicHeight();
-            } else if (mQsExpanded) {
-                int stackStartPosition = mContentHeight - mTopPadding + mIntrinsicPadding;
-                int stackEndPosition = mMaxTopPadding + mShelf.getIntrinsicHeight();
-                if (stackStartPosition <= stackEndPosition) {
-                    stackHeight = stackEndPosition;
-                } else {
-                    stackHeight = (int) NotificationUtils.interpolate(stackStartPosition,
-                            stackEndPosition, mQsExpansionFraction);
-                }
-            } else {
-                stackHeight = (int) height;
-            }
+            stackHeight = (int) height;
         } else {
             appearFraction = calculateAppearFraction(height);
             if (appearFraction >= 0) {

@@ -15,12 +15,12 @@
 package com.android.systemui.qs.tileimpl;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
-import android.text.TextUtils;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.settingslib.Utils;
 import com.android.systemui.FontSizeUtils;
 import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSIconView;
@@ -38,8 +37,7 @@ import java.util.Objects;
 
 /** View that represents a standard quick settings tile. **/
 public class QSTileView extends QSTileBaseView {
-    private static final int MAX_LABEL_LINES = 2;
-    private static final boolean DUAL_TARGET_ALLOWED = false;
+
     private View mDivider;
     protected TextView mLabel;
     protected TextView mSecondLine;
@@ -48,8 +46,6 @@ public class QSTileView extends QSTileBaseView {
     private ViewGroup mLabelContainer;
     private View mExpandIndicator;
     private View mExpandSpace;
-    private ColorStateList mColorLabelDefault;
-    private ColorStateList mColorLabelUnavailable;
 
     public QSTileView(Context context, QSIconView icon) {
         this(context, icon, false);
@@ -65,12 +61,7 @@ public class QSTileView extends QSTileBaseView {
         setId(View.generateViewId());
         createLabel();
         setOrientation(VERTICAL);
-        setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-        mColorLabelDefault = Utils.getColorAttr(getContext(), android.R.attr.textColorPrimary);
-        // The text color for unavailable tiles is textColorSecondary, same as secondaryLabel for
-        // contrast purposes
-        mColorLabelUnavailable = Utils.getColorAttr(getContext(),
-                android.R.attr.textColorSecondary);
+        setGravity(Gravity.CENTER);
     }
 
     TextView getLabel() {
@@ -81,7 +72,6 @@ public class QSTileView extends QSTileBaseView {
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         FontSizeUtils.updateFontSize(mLabel, R.dimen.qs_tile_text_size);
-        FontSizeUtils.updateFontSize(mSecondLine, R.dimen.qs_tile_text_size);
     }
 
     @Override
@@ -100,45 +90,31 @@ public class QSTileView extends QSTileBaseView {
         mExpandIndicator = mLabelContainer.findViewById(R.id.expand_indicator);
         mExpandSpace = mLabelContainer.findViewById(R.id.expand_space);
         mSecondLine = mLabelContainer.findViewById(R.id.app_label);
+
         addView(mLabelContainer);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        // Remeasure view if the primary label requires more then 2 lines or the secondary label
-        // text will be cut off.
-        if (mLabel.getLineCount() > MAX_LABEL_LINES || !TextUtils.isEmpty(mSecondLine.getText())
-                        && mSecondLine.getLineHeight() > mSecondLine.getHeight()) {
-            mLabel.setSingleLine();
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        }
     }
 
     @Override
     protected void handleStateChanged(QSTile.State state) {
         super.handleStateChanged(state);
         if (!Objects.equals(mLabel.getText(), state.label) || mState != state.state) {
-            mLabel.setTextColor(state.state == Tile.STATE_UNAVAILABLE ? mColorLabelUnavailable
-                    : mColorLabelDefault);
+            if (state.state == Tile.STATE_UNAVAILABLE) {
+                int color = QSTileImpl.getColorForState(getContext(), state.state);
+                state.label = new SpannableStringBuilder().append(state.label,
+                        new ForegroundColorSpan(color),
+                        SpannableStringBuilder.SPAN_INCLUSIVE_INCLUSIVE);
+            }
             mState = state.state;
             mLabel.setText(state.label);
         }
-        if (!Objects.equals(mSecondLine.getText(), state.secondaryLabel)) {
-            mSecondLine.setText(state.secondaryLabel);
-            mSecondLine.setVisibility(TextUtils.isEmpty(state.secondaryLabel) ? View.GONE
-                    : View.VISIBLE);
-        }
-        boolean dualTarget = DUAL_TARGET_ALLOWED && state.dualTarget;
-        mExpandIndicator.setVisibility(dualTarget ? View.VISIBLE : View.GONE);
-        mExpandSpace.setVisibility(dualTarget ? View.VISIBLE : View.GONE);
-        mLabelContainer.setContentDescription(dualTarget ? state.dualLabelContentDescription
+        mExpandIndicator.setVisibility(state.dualTarget ? View.VISIBLE : View.GONE);
+        mExpandSpace.setVisibility(state.dualTarget ? View.VISIBLE : View.GONE);
+        mLabelContainer.setContentDescription(state.dualTarget ? state.dualLabelContentDescription
                 : null);
-        if (dualTarget != mLabelContainer.isClickable()) {
-            mLabelContainer.setClickable(dualTarget);
-            mLabelContainer.setLongClickable(dualTarget);
-            mLabelContainer.setBackground(dualTarget ? newTileBackground() : null);
+        if (state.dualTarget != mLabelContainer.isClickable()) {
+            mLabelContainer.setClickable(state.dualTarget);
+            mLabelContainer.setLongClickable(state.dualTarget);
+            mLabelContainer.setBackground(state.dualTarget ? newTileBackground() : null);
         }
         mLabel.setEnabled(!state.disabledByPolicy);
         mPadLock.setVisibility(state.disabledByPolicy ? View.VISIBLE : View.GONE);
@@ -152,16 +128,5 @@ public class QSTileView extends QSTileBaseView {
         mLabelContainer.setOnLongClickListener(longClick);
         mLabelContainer.setClickable(false);
         mLabelContainer.setLongClickable(false);
-    }
-
-    @Override
-    public void textVisibility() {
-        if (Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.QS_TILE_TITLE_VISIBILITY, 1,
-                UserHandle.USER_CURRENT) == 1) {
-           mLabelContainer.setVisibility(View.VISIBLE);
-        } else {
-           mLabelContainer.setVisibility(View.GONE);
-        }
     }
 }

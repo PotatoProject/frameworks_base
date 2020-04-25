@@ -16,8 +16,8 @@
 
 package com.android.systemui.qs.tiles;
 
+import androidx.annotation.ColorInt;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.AttributeSet;
@@ -38,9 +38,9 @@ import java.text.DecimalFormat;
  */
 public class DataUsageDetailView extends LinearLayout {
 
-    private static final double KB = 1024;
-    private static final double MB = 1024 * KB;
-    private static final double GB = 1024 * MB;
+    private static final double KB = 1000;
+    private static final double MB = 1000 * KB;
+    private static final double GB = 1000 * MB;
 
     private final DecimalFormat FORMAT = new DecimalFormat("#.##");
 
@@ -66,7 +66,7 @@ public class DataUsageDetailView extends LinearLayout {
         final Resources res = mContext.getResources();
         final int titleId;
         final long bytes;
-        ColorStateList usageColorState = null;
+        @ColorInt int usageColor = 0;
         final String top;
         String bottom = null;
         if (info.usageLevel < info.warningLevel || info.limitLevel <= 0) {
@@ -91,18 +91,18 @@ public class DataUsageDetailView extends LinearLayout {
                     formatBytes(info.usageLevel));
             bottom = res.getString(R.string.quick_settings_cellular_detail_data_limit,
                     formatBytes(info.limitLevel));
-            usageColorState = Utils.getColorError(mContext);
+            usageColor = Utils.getColorAttrDefaultColor(mContext, android.R.attr.colorError);
         }
 
-        if (usageColorState == null) {
-            usageColorState = Utils.getColorAccent(mContext);
+        if (usageColor == 0) {
+            usageColor = Utils.getColorAccentDefaultColor(mContext);
         }
 
         final TextView title = findViewById(android.R.id.title);
         title.setText(titleId);
         final TextView usage = findViewById(R.id.usage_text);
         usage.setText(formatBytes(bytes));
-        usage.setTextColor(usageColorState);
+        usage.setTextColor(usageColor);
         final DataUsageGraph graph = findViewById(R.id.usage_graph);
         graph.setLevels(info.limitLevel, info.warningLevel, info.usageLevel);
         final TextView carrier = findViewById(R.id.usage_carrier_text);

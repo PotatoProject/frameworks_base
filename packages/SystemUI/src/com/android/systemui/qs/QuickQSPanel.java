@@ -25,13 +25,17 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import com.android.systemui.Dependency;
 import com.android.systemui.DumpController;
 import com.android.systemui.R;
-import com.android.systemui.plugins.qs.QSTile;
+import com.android.systemui.plugins.qs.*;
 import com.android.systemui.plugins.qs.QSTile.SignalState;
 import com.android.systemui.plugins.qs.QSTile.State;
+import com.android.systemui.plugins.qs.QSTileView;
+import com.android.systemui.qs.QSPanel.TileRecord;
+import com.android.systemui.qs.QSTileHost;
 import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
@@ -48,19 +52,20 @@ import javax.inject.Named;
 public class QuickQSPanel extends QSPanel {
 
     public static final String NUM_QUICK_TILES = "sysui_qqs_count";
-    private static final String TAG = "QuickQSPanel";
 
-    private boolean mDisabledByPolicy;
-    private static int mDefaultMaxTiles;
-    private int mMaxTiles;
+    private int mMaxTiles = 6;
     protected QSPanel mFullPanel;
+
+    public QuickQSPanel(Context context, AttributeSet attrs) {
+        this(context, attrs, null);
+    }
 
     @Inject
     public QuickQSPanel(@Named(VIEW_CONTEXT) Context context, AttributeSet attrs,
             DumpController dumpController) {
         super(context, attrs, dumpController);
         if (mFooter != null) {
-            removeView(mFooter.getView());
+            removeView((View) mFooter.getView());
         }
         if (mTileLayout != null) {
             for (int i = 0; i < mRecords.size(); i++) {
@@ -68,7 +73,6 @@ public class QuickQSPanel extends QSPanel {
             }
             removeView((View) mTileLayout);
         }
-        mDefaultMaxTiles = getResources().getInteger(R.integer.quick_qs_panel_max_columns);
         mTileLayout = new HeaderTileLayout(context);
         mTileLayout.setListening(mListening);
         addView((View) mTileLayout, 0 /* Between brightness and footer */);
@@ -133,8 +137,9 @@ public class QuickQSPanel extends QSPanel {
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (QS_SHOW_BRIGHTNESS.equals(key)) {
-            // No Brightness or Tooltip for you!
+        // No tunings for you.
+        if (key.equals(QS_SHOW_BRIGHTNESS)) {
+            // No Brightness for you.
             super.onTuningChanged(key, "0");
         }
     }
@@ -159,31 +164,7 @@ public class QuickQSPanel extends QSPanel {
     };
 
     public static int getNumQuickTiles(Context context) {
-        return Dependency.get(TunerService.class).getValue(NUM_QUICK_TILES, mDefaultMaxTiles);
-    }
-
-    void setDisabledByPolicy(boolean disabled) {
-        if (disabled != mDisabledByPolicy) {
-            mDisabledByPolicy = disabled;
-            setVisibility(disabled ? View.GONE : View.VISIBLE);
-        }
-    }
-
-    /**
-     * Sets the visibility of this {@link QuickQSPanel}. This method has no effect when this panel
-     * is disabled by policy through {@link #setDisabledByPolicy(boolean)}, and in this case the
-     * visibility will always be {@link View#GONE}. This method is called externally by
-     * {@link QSAnimator} only.
-     */
-    @Override
-    public void setVisibility(int visibility) {
-        if (mDisabledByPolicy) {
-            if (getVisibility() == View.GONE) {
-                return;
-            }
-            visibility = View.GONE;
-        }
-        super.setVisibility(visibility);
+        return Dependency.get(TunerService.class).getValue(NUM_QUICK_TILES, 6);
     }
 
     private static class HeaderTileLayout extends TileLayout {

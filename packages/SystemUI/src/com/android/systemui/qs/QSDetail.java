@@ -41,6 +41,7 @@ import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.qs.DetailAdapter;
+import com.android.systemui.qs.QSTileHost;
 import com.android.systemui.statusbar.CommandQueue;
 
 public class QSDetail extends LinearLayout {
@@ -323,9 +324,7 @@ public class QSDetail extends LinearLayout {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    if (isAttachedToWindow()) {
-                        handleShowingDetail(detail, x, y, false /* toggleQs */);
-                    }
+                    handleShowingDetail(detail, x, y, false /* toggleQs */);
                 }
             });
         }

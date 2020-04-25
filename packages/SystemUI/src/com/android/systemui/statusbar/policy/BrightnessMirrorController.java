@@ -24,12 +24,14 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.service.quicksettings.Tile;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.FrameLayout;
 
 import com.android.internal.util.Preconditions;
 import com.android.systemui.R;
+import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.phone.NotificationPanelView;
 import com.android.systemui.statusbar.phone.StatusBarWindowView;
 
@@ -61,6 +63,7 @@ public class BrightnessMirrorController
         });
         mVisibilityCallback = visibilityCallback;
         mIcon = (ImageView) mBrightnessMirror.findViewById(R.id.brightness_icon);
+        updateIcon();
         // enable the brightness icon
         mIcon.setVisibility(View.VISIBLE);
     }
@@ -98,6 +101,7 @@ public class BrightnessMirrorController
     }
 
     public void updateResources() {
+        updateIcon();
         FrameLayout.LayoutParams lp =
                 (FrameLayout.LayoutParams) mBrightnessMirror.getLayoutParams();
         Resources r = mBrightnessMirror.getResources();
@@ -159,5 +163,7 @@ public class BrightnessMirrorController
         mIcon.setImageResource(automatic ?
                 com.android.systemui.R.drawable.ic_qs_brightness_auto_on :
                 com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
+        mIcon.setColorFilter(QSTileImpl.getColorForState(mContext, Tile.STATE_ACTIVE),
+                android.graphics.PorterDuff.Mode.SRC_IN);
     }
 }

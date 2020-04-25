@@ -38,6 +38,7 @@ import android.util.Log;
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.Dependency;
 import com.android.systemui.qs.QSTileHost;
+import com.android.systemui.qs.external.CustomTile;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 
@@ -49,9 +50,8 @@ import java.util.Comparator;
  * Runs the day-to-day operations of which tiles should be bound and when.
  */
 public class TileServices extends IQSService.Stub {
-    static final int DEFAULT_MAX_BOUND = 3;
+    static final int DEFAULT_MAX_BOUND = 6;
     static final int REDUCED_MAX_BOUND = 1;
-    private static final String TAG = "TileServices";
 
     private final ArrayMap<CustomTile, TileServiceManager> mServices = new ArrayMap<>();
     private final ArrayMap<ComponentName, CustomTile> mTiles = new ArrayMap<>();
@@ -88,8 +88,6 @@ public class TileServices extends IQSService.Stub {
             mTiles.put(component, tile);
             mTokenMap.put(service.getToken(), tile);
         }
-        // Makes sure binding only happens after the maps have been populated
-        service.startLifecycleManagerAndAddTile();
         return service;
     }
 
@@ -105,9 +103,7 @@ public class TileServices extends IQSService.Stub {
             mTokenMap.remove(service.getToken());
             mTiles.remove(tile.getComponent());
             final String slot = tile.getComponent().getClassName();
-            // TileServices doesn't know how to add more than 1 icon per slot, so remove all
-            mMainHandler.post(() -> mHost.getIconController()
-                    .removeAllIconsForSlot(slot));
+            mMainHandler.post(() -> mHost.getIconController().removeIcon(slot, 0));
         }
     }
 
@@ -182,11 +178,6 @@ public class TileServices extends IQSService.Stub {
             verifyCaller(customTile);
             synchronized (mServices) {
                 final TileServiceManager tileServiceManager = mServices.get(customTile);
-                if (tileServiceManager == null || !tileServiceManager.isLifecycleStarted()) {
-                    Log.e(TAG, "TileServiceManager not started for " + customTile.getComponent(),
-                            new IllegalStateException());
-                    return;
-                }
                 tileServiceManager.clearPendingBind();
                 tileServiceManager.setLastUpdate(System.currentTimeMillis());
             }
@@ -202,13 +193,6 @@ public class TileServices extends IQSService.Stub {
             verifyCaller(customTile);
             synchronized (mServices) {
                 final TileServiceManager tileServiceManager = mServices.get(customTile);
-                // This should not happen as the TileServiceManager should have been started for the
-                // first bind to happen.
-                if (tileServiceManager == null || !tileServiceManager.isLifecycleStarted()) {
-                    Log.e(TAG, "TileServiceManager not started for " + customTile.getComponent(),
-                            new IllegalStateException());
-                    return;
-                }
                 tileServiceManager.clearPendingBind();
             }
             customTile.refreshState();
