@@ -19,10 +19,12 @@
     android:id="@+id/volume_dialog_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="right"
-    android:layout_gravity="right"
+    android:gravity="top|right"
+    android:layout_gravity="top|right"
     android:background="@android:color/transparent"
-    android:theme="@style/qs_theme">
+    android:theme="@style/qs_theme"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
     <!-- right-aligned to be physically near volume button -->
     <LinearLayout
@@ -32,69 +34,60 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
-        android:paddingTop="@dimen/volume_dialog_panel_transparent_padding"
-        android:paddingBottom="@dimen/volume_dialog_panel_transparent_padding"
-        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding"
+        android:paddingLeft="@dimen/volume_dialog_panel_transparent_padding_right"
         android:orientation="vertical"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
-        <FrameLayout
-            android:id="@+id/ringer"
-            android:layout_width="@dimen/volume_dialog_ringer_size"
-            android:layout_height="@dimen/volume_dialog_ringer_size"
-            android:layout_marginBottom="@dimen/volume_dialog_spacer"
-            android:translationZ="@dimen/volume_dialog_elevation"
-            android:clipToPadding="false"
-            android:background="@drawable/rounded_bg_full">
-            <com.android.keyguard.AlphaOptimizedImageButton
-                android:id="@+id/ringer_icon"
-                style="@style/VolumeButtons"
-                android:background="@drawable/rounded_ripple"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                android:padding="@dimen/volume_dialog_ringer_icon_padding"
-                android:tint="@color/accent_tint_color_selector"
-                android:layout_gravity="center"
-                android:soundEffectsEnabled="false" />
-
-            <include layout="@layout/volume_dnd_icon"
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_marginTop="6dp"/>
-        </FrameLayout>
-
+        <!-- android:minWidth="@dimen/volume_dialog_panel_width" -->
         <LinearLayout
             android:id="@+id/main"
-            android:minWidth="@dimen/volume_dialog_panel_width"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:layout_gravity="right"
+            android:layout_gravity="center_horizontal|top"
             android:orientation="vertical"
             android:translationZ="@dimen/volume_dialog_elevation"
             android:clipChildren="false"
             android:clipToPadding="false"
+            android:animateLayoutChanges="true"
             android:background="@drawable/rounded_bg_full" >
             <LinearLayout
                 android:id="@+id/volume_dialog_rows"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/volume_dialog_panel_width"
+                android:layout_gravity="center"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingRight="@dimen/volume_dialog_stream_padding"
-                android:paddingLeft="@dimen/volume_dialog_stream_padding">
+                android:background="@drawable/rounded_bg_full"
+                android:orientation="horizontal">
                     <!-- volume rows added and removed here! :-) -->
             </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/fake_padding"
+            android:layout_height="56dp"
+            android:layout_width="0dp" />
+
+        <LinearLayout
+            android:id="@+id/buttons_group"
+            android:layout_width="@dimen/volume_dialog_ringer_size"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg_full"
+            android:layout_marginTop="@dimen/volume_dialog_spacer"
+            android:translationZ="@dimen/volume_dialog_elevation"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
             <FrameLayout
                 android:id="@+id/settings_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_bg_bottom_background">
+                android:layout_width="@dimen/volume_dialog_ringer_size"
+                android:layout_height="@dimen/volume_dialog_ringer_size">
                 <com.android.keyguard.AlphaOptimizedImageButton
                     android:id="@+id/settings"
-                    android:src="@drawable/ic_tune_black_16dp"
+                    android:src="@drawable/ic_tune_black_24dp"
                     android:layout_width="@dimen/volume_dialog_tap_target_size"
                     android:layout_height="@dimen/volume_dialog_tap_target_size"
                     android:layout_gravity="center"
@@ -102,6 +95,29 @@
                     android:background="@drawable/ripple_drawable_20dp"
                     android:tint="?android:attr/textColorSecondary"
                     android:soundEffectsEnabled="false" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/ringer"
+                android:layout_width="@dimen/volume_dialog_ringer_size"
+                android:layout_height="@dimen/volume_dialog_ringer_size"
+                android:background="@drawable/rounded_bg_full">
+                <com.android.keyguard.AlphaOptimizedImageButton
+                    android:id="@+id/ringer_icon"
+                    style="@style/VolumeButtons"
+                    android:background="@drawable/rounded_ripple"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:padding="@dimen/volume_dialog_ringer_icon_padding"
+                    android:tint="@color/accent_tint_color_selector"
+                    android:layout_gravity="center"
+                    android:soundEffectsEnabled="false" />
+
+                <include layout="@layout/volume_dnd_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"/>
             </FrameLayout>
         </LinearLayout>
 

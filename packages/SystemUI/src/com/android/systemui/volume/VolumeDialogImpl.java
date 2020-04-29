@@ -61,6 +61,7 @@ import android.os.VibrationEffect;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.text.InputFilter;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Slog;
 import android.util.SparseBooleanArray;
@@ -80,6 +81,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -136,6 +138,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private ImageButton mRingerIcon;
     private ViewGroup mODICaptionsView;
     private CaptionsToggleImageButton mODICaptionsIcon;
+    private View mButtonsGroup;
     private View mSettingsView;
     private ImageButton mSettingsIcon;
     private FrameLayout mZenIcon;
@@ -165,6 +168,7 @@ public class VolumeDialogImpl implements VolumeDialog,
     private View mODICaptionsTooltipView = null;
 
     private boolean mLeftVolumeRocker;
+    private PanelMode mPanelMode = PanelMode.MINI;
 
     public VolumeDialogImpl(Context context) {
         mContext =
@@ -177,7 +181,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mShowActiveStreamOnly = showActiveStreamOnly();
         mHasSeenODICaptionsTooltip =
                 Prefs.getBoolean(context, Prefs.Key.HAS_SEEN_ODI_CAPTIONS_TOOLTIP, false);
-        mLeftVolumeRocker = mContext.getResources().getBoolean(R.bool.config_audioPanelOnLeftSide);
+        mLeftVolumeRocker = true;//mContext.getResources().getBoolean(R.bool.config_audioPanelOnLeftSide);
     }
 
     @Override
@@ -209,7 +213,15 @@ public class VolumeDialogImpl implements VolumeDialog,
         mConfigurableTexts = new ConfigurableTexts(mContext);
         mHovering = false;
         mShowing = false;
+
         mWindow = mDialog.getWindow();
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                .getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
         mWindow.requestFeature(Window.FEATURE_NO_TITLE);
         mWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mWindow.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND
@@ -226,11 +238,14 @@ public class VolumeDialogImpl implements VolumeDialog,
         lp.format = PixelFormat.TRANSLUCENT;
         lp.setTitle(VolumeDialogImpl.class.getSimpleName());
         lp.windowAnimations = -1;
-        if(!isAudioPanelOnLeftSide()){
-            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-        } else {
-            lp.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-        }
+        lp.gravity = Gravity.TOP;
+        int panelWidth = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_width);
+        int sidePadding = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_transparent_padding_right);
+        if (!isAudioPanelOnLeftSide())
+            lp.x = width - panelWidth - (sidePadding * 2);
+        else lp.x = -(width - panelWidth - (sidePadding * 2));
+        lp.y = height / 2 - mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_total_height) / 2;
+        lp.privateFlags |= WindowManager.LayoutParams.PRIVATE_FLAG_NO_MOVE_ANIMATION;
         mWindow.setAttributes(lp);
         mWindow.setLayout(WRAP_CONTENT, WRAP_CONTENT);
 
@@ -239,11 +254,11 @@ public class VolumeDialogImpl implements VolumeDialog,
         mDialogView.setAlpha(0);
         mDialog.setCanceledOnTouchOutside(true);
         mDialog.setOnShowListener(dialog -> {
-            if (!isLandscape()) mDialogView.setTranslationX((mDialogView.getWidth() / 2.0f)*(isAudioPanelOnLeftSide() ? -1 : 1));
+            if (!isLandscape()) mDialogView.setTranslationX(0);
             mDialogView.setAlpha(0);
             mDialogView.animate()
                     .alpha(1)
-                    .translationX(0)
+                    //.translationX(0)
                     .setDuration(DIALOG_SHOW_ANIMATION_DURATION)
                     .setInterpolator(new SystemUIInterpolators.LogDecelerateInterpolator())
                     .withEndAction(() -> {
@@ -321,7 +336,9 @@ public class VolumeDialogImpl implements VolumeDialog,
             addExistingRows();
         }
 
+        mButtonsGroup = mDialog.findViewById(R.id.buttons_group);
         updateRowsH(getActiveRow());
+        updatePanelOnMode();
         initRingerH();
         initSettingsH();
         initODICaptionsH();
@@ -614,6 +631,47 @@ public class VolumeDialogImpl implements VolumeDialog,
         }
     }
 
+    private void updatePanelOnMode() {
+        Log.d(TAG, "updatePanelOnMode called");
+        PanelMode mode = mPanelMode;
+
+        for(final VolumeRow row : mRows) {
+            if (mode != PanelMode.MINI) {
+                row.slider.setThumb(mContext.getDrawable(R.drawable.seekbar_thumb_material_anim));
+                row.icon.setVisibility(VISIBLE);
+            } else {
+                row.slider.setThumb(new ColorDrawable(Color.TRANSPARENT));
+                row.icon.setVisibility(GONE);
+            }
+
+            updateVolumeRowTintH(row, getActiveRow().equals(row));
+        }
+
+        LinearLayout main = (LinearLayout) mDialog.findViewById(R.id.main);
+        View fakePadding = mDialog.findViewById(R.id.fake_padding);
+        ViewGroup.LayoutParams mainLP = main.getLayoutParams();
+
+        ViewPropertyAnimator animator = mButtonsGroup.animate()
+                .alpha(1)
+                .setDuration(350)
+                .setInterpolator(new SystemUIInterpolators.LogAccelerateInterpolator());
+
+        if(mode != PanelMode.MINI) {
+            mainLP.width = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_width);
+            fakePadding.setVisibility(GONE);
+            mButtonsGroup.setVisibility(VISIBLE);
+            animator.start();
+        } else {
+            mainLP.width = mContext.getResources().getDimensionPixelSize(R.dimen.volume_dialog_panel_mini_width);
+            fakePadding.setVisibility(GONE);
+            mButtonsGroup.setVisibility(GONE);
+            mButtonsGroup.setAlpha(0);
+            animator.alpha(0);
+        }
+        
+        main.setLayoutParams(mainLP);
+    }
+
     private void updateODICaptionsH(boolean isServiceComponentEnabled, boolean fromTooltip) {
         if (mODICaptionsView != null) {
             mODICaptionsView.setVisibility(isServiceComponentEnabled ? VISIBLE : GONE);
@@ -770,7 +828,10 @@ public class VolumeDialogImpl implements VolumeDialog,
             // Only logs when the volume dialog visibility is changed.
             Events.writeEvent(mContext, Events.EVENT_DISMISS_DIALOG, reason);
         }
-        mDialogView.setTranslationX(0);
+        
+        if (mPanelMode != PanelMode.MINI)
+            mDialogView.setTranslationX(0);
+
         mDialogView.setAlpha(1);
         ViewPropertyAnimator animator = mDialogView.animate()
                 .alpha(0)
@@ -778,9 +839,12 @@ public class VolumeDialogImpl implements VolumeDialog,
                 .setInterpolator(new SystemUIInterpolators.LogAccelerateInterpolator())
                 .withEndAction(() -> mHandler.postDelayed(() -> {
                     mDialog.dismiss();
+                    mPanelMode = PanelMode.MINI;
+                    updatePanelOnMode();
                     tryToRemoveCaptionsTooltip();
                 }, 50));
-        if (!isLandscape()) animator.translationX((mDialogView.getWidth() / 2.0f)*(isAudioPanelOnLeftSide() ? -1 : 1));
+        if (!isLandscape() && mPanelMode != PanelMode.MINI)
+            animator.translationX((mDialogView.getWidth() / 2.0f)*(isAudioPanelOnLeftSide() ? -1 : 1));
         animator.start();
         checkODICaptionsTooltip(true);
         mController.notifyVisible(false);
@@ -1435,6 +1499,8 @@ public class VolumeDialogImpl implements VolumeDialog,
             if (D.BUG) Log.d(TAG, "onStartTrackingTouch"+ " " + mRow.stream);
             mController.setActiveStream(mRow.stream);
             mRow.tracking = true;
+            mPanelMode = PanelMode.COLLAPSED;
+            updatePanelOnMode();
         }
 
         @Override
@@ -1495,5 +1561,11 @@ public class VolumeDialogImpl implements VolumeDialog,
         private int animTargetProgress;
         private int lastAudibleLevel = 1;
         private FrameLayout dndIcon;
+    }
+
+    private enum PanelMode {
+        MINI,
+        COLLAPSED,
+        EXPANDED,
     }
 }
