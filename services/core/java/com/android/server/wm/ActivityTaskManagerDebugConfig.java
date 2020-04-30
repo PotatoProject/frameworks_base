@@ -68,6 +68,7 @@ public class ActivityTaskManagerDebugConfig {
     static final boolean DEBUG_ACTIVITY_STARTS = DEBUG_ALL || false;
     public static final boolean DEBUG_CLEANUP = DEBUG_ALL || false;
     public static final boolean DEBUG_METRICS = DEBUG_ALL || false;
+    public static final boolean DEBUG_APPLOCK = DEBUG_ALL || false;
 
     static final String POSTFIX_APP = APPEND_CATEGORY_NAME ? "_App" : "";
     static final String POSTFIX_CLEANUP = (APPEND_CATEGORY_NAME) ? "_Cleanup" : "";
@@ -90,4 +91,5 @@ public class ActivityTaskManagerDebugConfig {
     static final String POSTFIX_TRANSITION = APPEND_CATEGORY_NAME ? "_Transition" : "";
     static final String POSTFIX_VISIBILITY = APPEND_CATEGORY_NAME ? "_Visibility" : "";
     static final String POSTFIX_RESULTS = APPEND_CATEGORY_NAME ? "_Results" : "";
+    public static final String POSTFIX_APPLOCK = APPEND_CATEGORY_NAME ? "_AppLock" : "";
 }
