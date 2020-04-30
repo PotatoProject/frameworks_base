@@ -16,6 +16,24 @@
       "revId": "eeaff0a1312d5662a7aca390da2f543dc4f3ff7e",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60fb0e42_248618c2",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/ThemeModeController.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000063
+      },
+      "writtenOn": "2020-04-30T09:44:22Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "868000a1_17e5b61e",
+      "revId": "eeaff0a1312d5662a7aca390da2f543dc4f3ff7e",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": false
     }
   ]
 }
