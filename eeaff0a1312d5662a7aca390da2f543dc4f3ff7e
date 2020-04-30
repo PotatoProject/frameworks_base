@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "868000a1_17e5b61e",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/ThemeModeController.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1000063
+      },
+      "writtenOn": "2020-04-30T05:27:26Z",
+      "side": 1,
+      "message": "I\u0027d prefer we replace this anonymous asynctask with a runnable to prevent memory leaks.",
+      "revId": "eeaff0a1312d5662a7aca390da2f543dc4f3ff7e",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
