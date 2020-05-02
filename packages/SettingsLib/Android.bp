@@ -36,6 +36,16 @@ android_library {
 
 }
 
+android_library {
+
+    name: "SettingsLib-res",
+    static_libs: [
+        "androidx.preference_preference",
+    ],
+
+    resource_dirs: ["res"],
+}
+
 // NOTE: Keep this module in sync with ./common.mk
 java_defaults {
     name: "SettingsLibDefaults",
