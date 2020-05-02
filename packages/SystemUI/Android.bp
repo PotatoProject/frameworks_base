@@ -30,6 +30,35 @@ java_library {
 }
 
 android_library {
+    name: "SystemUI-volumeplugins",
+    srcs: [
+        "src/com/android/keyguard/AlphaOptimizedImageButton.java",
+        "src/com/android/systemui/Prefs.java",
+        "src/com/android/systemui/statusbar/phone/ExpandableIndicator.java",
+    ],
+    resource_dirs: [
+        "res-keyguard",
+        "res",
+    ],
+    static_libs: [
+        "SystemUIPluginLib",
+        "SystemUISharedLib",
+        "SettingsLib",
+        "com.google.android.material_material",
+        "androidx-constraintlayout_constraintlayout",
+        "jsr330",
+        "dagger2-2.19",
+    ],
+    manifest: "AndroidManifestLibs.xml",
+
+    optimize: {
+        enabled: true,
+    },
+
+    plugins: ["dagger2-compiler-2.19"],
+}
+
+android_library {
     name: "SystemUI-core",
     srcs: [
         "src/**/*.kt",
