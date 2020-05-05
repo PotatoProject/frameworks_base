@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f93c2b1b_89378fd7",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 4911,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-05T10:51:40Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 4911,
+        "startChar": 23,
+        "endLine": 4911,
+        "endChar": 24
+      },
+      "revId": "be4a423e50ef92c98a4499c54367723a34973dc6",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17f940d0_0641cee2",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileBaseView.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-05T10:51:40Z",
+      "side": 1,
+      "message": "consider naming member variables as mYourVariable instead of yourVariable",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 79,
+        "endChar": 28
+      },
+      "revId": "be4a423e50ef92c98a4499c54367723a34973dc6",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
