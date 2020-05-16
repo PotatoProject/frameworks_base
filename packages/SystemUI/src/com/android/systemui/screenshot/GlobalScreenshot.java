@@ -771,7 +771,7 @@ class GlobalScreenshot {
 
     void takeScreenshot(Consumer<Uri> finisher, boolean statusBarVisible, boolean navBarVisible) {
         if (mScreenshotLayout.getParent() != null) {
-            finisher.run();
+            finisher.accept(null);
             return;
         }
 
@@ -786,7 +786,7 @@ class GlobalScreenshot {
     void takeScreenshotPartial(final Consumer<Uri> finisher, final boolean statusBarVisible,
             final boolean navBarVisible) {
         if (mScreenshotLayout.getParent() != null) {
-            finisher.run();
+            finisher.accept(null);
             return;
         }
         mWindowManager.addView(mScreenshotLayout, mWindowLayoutParams);
@@ -806,7 +806,7 @@ class GlobalScreenshot {
             @Override
             public void onClick(View v) {
                 mScreenshotLayout.post(() -> {
-                    finisher.run();
+                    finisher.accept(null);
                     hideScreenshotSelector();
                 });
             }
