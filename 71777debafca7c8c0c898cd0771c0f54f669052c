@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5bd5fa44_3e4a406b",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileBaseView.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000039
+      },
+      "writtenOn": "2020-05-18T17:40:04Z",
+      "side": 1,
+      "message": "you might want to split the line here, might be too long",
+      "revId": "71777debafca7c8c0c898cd0771c0f54f669052c",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
