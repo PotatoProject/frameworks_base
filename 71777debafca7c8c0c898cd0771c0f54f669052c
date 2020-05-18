@@ -16,6 +16,24 @@
       "revId": "71777debafca7c8c0c898cd0771c0f54f669052c",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86dd8ba2_b4be4383",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileBaseView.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-18T17:43:02Z",
+      "side": 1,
+      "message": "It comes to 117 chars, which is within IntelliJ\u0027s 120 char line limit 😊",
+      "parentUuid": "5bd5fa44_3e4a406b",
+      "revId": "71777debafca7c8c0c898cd0771c0f54f669052c",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
     }
   ]
 }
