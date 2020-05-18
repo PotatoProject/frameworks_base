@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f9864f58_f9b048bc",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 4911,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-18T12:16:24Z",
+      "side": 1,
+      "message": "use spaces, not tabs",
+      "range": {
+        "startLine": 4911,
+        "startChar": 0,
+        "endLine": 4911,
+        "endChar": 1
+      },
+      "revId": "4f5633a0c26c4f5714a5c816bd5ba1e6482afaa5",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a5f1495_a66b32a3",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 5047,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-18T12:16:24Z",
+      "side": 1,
+      "message": "see above",
+      "range": {
+        "startLine": 5047,
+        "startChar": 0,
+        "endLine": 5047,
+        "endChar": 1
+      },
+      "revId": "4f5633a0c26c4f5714a5c816bd5ba1e6482afaa5",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53899dc7_ead368a5",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 5158,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-05-18T12:16:24Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 5158,
+        "startChar": 0,
+        "endLine": 5158,
+        "endChar": 1
+      },
+      "revId": "4f5633a0c26c4f5714a5c816bd5ba1e6482afaa5",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
