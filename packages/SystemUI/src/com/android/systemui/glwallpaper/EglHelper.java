@@ -206,8 +206,15 @@ public class EglHelper {
      * @return true if EglContext is ready.
      */
     public boolean createEglContext() {
-        int[] attrib_list = new int[] {EGL_CONTEXT_CLIENT_VERSION, 2,
-                EGL_CONTEXT_PRIORITY_LEVEL_IMG, EGL_CONTEXT_PRIORITY_LOW_IMG, EGL_NONE};
+        int[] attrib_list = new int[5];
+        int idx = 0;
+        attrib_list[idx++] = EGL_CONTEXT_CLIENT_VERSION;
+        attrib_list[idx++] = 2;
+        if (mContextPrioritySupported) {
+            attrib_list[idx++] = EGL_CONTEXT_PRIORITY_LEVEL_IMG;
+            attrib_list[idx++] = EGL_CONTEXT_PRIORITY_LOW_IMG;
+        }
+        attrib_list[idx++] = EGL_NONE;
         if (hasEglDisplay()) {
             mEglContext = eglCreateContext(mEglDisplay, mEglConfig, EGL_NO_CONTEXT, attrib_list, 0);
         } else {
