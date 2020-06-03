@@ -4116,11 +4116,11 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
 
     private void setBlackStatusBar(boolean enable) {
-        if (mStatusBarView == null || mStatusBarView.getBackground() == null) return;
+        if (mStatusBarWindow == null) return;
         if (enable) {
-            ((BarBackgroundDrawable) mStatusBarView.getBackground()).setColorOverride(new Integer(0xFF000000));
+            ((BarBackgroundDrawable) mStatusBarWindow.getBackground()).setColorOverride(new Integer(0xFF000000));
         } else {
-            ((BarBackgroundDrawable) mStatusBarView.getBackground()).setColorOverride(null);
+            ((BarBackgroundDrawable) mStatusBarWindow.getBackground()).setColorOverride(null);
         }
     }
 
