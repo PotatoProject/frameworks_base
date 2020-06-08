@@ -390,9 +390,10 @@ public class CameraMetadataNative implements Parcelable {
         }
     }
 
-    private  ArrayList<AdditionalResolutionInfo> parseResolutions(String data) {
+    private ArrayList<AdditionalResolutionInfo> parseResolutions(String data) {
         data = data.replaceAll("\\s+","");
         if (data == "") return null;
+	Log.i(TAG, "Parsing " + data);
         String[][] a = Arrays.stream(data.substring(2, data.length()-2).split("\\],\\["))
                 .map(sub -> sub.split(":"))
                 .toArray(String[][]::new);
@@ -401,6 +402,7 @@ public class CameraMetadataNative implements Parcelable {
             int dLen = a[i].length;
             if (dLen >= 2) {
                 Size resolution = new Size(Integer.parseInt(a[i][0]), Integer.parseInt(a[i][1]));
+		Log.i(TAG, "parsed size: " + resolution.toString());
                 int format;
                 boolean input;
                 if (dLen == 3) {
@@ -413,6 +415,7 @@ public class CameraMetadataNative implements Parcelable {
                     format = NATIVE_JPEG_FORMAT;
                     input = false;
                 }
+		Log.i(TAG, "parsed size: " + resolution.toString());
                 ret.add(new AdditionalResolutionInfo(resolution, format, input));
             }
         }
