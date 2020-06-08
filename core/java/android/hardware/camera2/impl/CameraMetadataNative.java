@@ -374,6 +374,7 @@ public class CameraMetadataNative implements Parcelable {
         extraResolutions = new HashMap<Integer,ArrayList<AdditionalResolutionInfo>>();
         int idFront = SystemProperties.getInt(PROP_CAMERA_FRONT_SENSOR_ID, -1);
         int idRear = SystemProperties.getInt(PROP_CAMERA_REAR_SENSOR_ID, -1);
+	Log.i(TAG, "idFront=" + Integer.toString(idFront) + " idRear=" + Integer.toString(idRear));
         if (idFront != -1) {
             String data = SystemProperties.get(PROP_CAMERA_RESOLUTION_PREFIX + Integer.toString(idFront), "");
             ArrayList<AdditionalResolutionInfo> resData = parseResolutions(data);
@@ -390,9 +391,10 @@ public class CameraMetadataNative implements Parcelable {
         }
     }
 
-    private  ArrayList<AdditionalResolutionInfo> parseResolutions(String data) {
+    private ArrayList<AdditionalResolutionInfo> parseResolutions(String data) {
         data = data.replaceAll("\\s+","");
         if (data == "") return null;
+	Log.i(TAG, "Parsing " + data);
         String[][] a = Arrays.stream(data.substring(2, data.length()-2).split("\\],\\["))
                 .map(sub -> sub.split(":"))
                 .toArray(String[][]::new);
@@ -401,6 +403,7 @@ public class CameraMetadataNative implements Parcelable {
             int dLen = a[i].length;
             if (dLen >= 2) {
                 Size resolution = new Size(Integer.parseInt(a[i][0]), Integer.parseInt(a[i][1]));
+		Log.i(TAG, "parsed size: " + resolution.toString());
                 int format;
                 boolean input;
                 if (dLen == 3) {
@@ -413,6 +416,7 @@ public class CameraMetadataNative implements Parcelable {
                     format = NATIVE_JPEG_FORMAT;
                     input = false;
                 }
+		Log.i(TAG, "parsed size: " + resolution.toString());
                 ret.add(new AdditionalResolutionInfo(resolution, format, input));
             }
         }
@@ -462,11 +466,15 @@ public class CameraMetadataNative implements Parcelable {
      * @hide
      */
     public <T> T get(CameraCharacteristics.Key<T> key) {
+	Log.i(TAG, "mCameraId=" + this.mCameraId);
+	Log.i(TAG, "extraResolution Keys=" + extraResolutions.keySet().toString());
+	Log.i(TAG, "extraResolution containsKey=" + extraResolutions.containsKey(this.mCameraId));
         if ((key == CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE ||
                 key == CameraCharacteristics.SENSOR_INFO_PRE_CORRECTION_ACTIVE_ARRAY_SIZE ||
                 key == CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE) &&
                 extraResolutions.containsKey(this.mCameraId)) {
             String maxRes = SystemProperties.get(PROP_CAMERA_RESOLUTION_PREFIX + Integer.toString(this.mCameraId) + ".max", "");
+	    Log.i(TAG, "maxRes=" + maxRes);
             int len = maxRes == "" ? -1 : maxRes.split(":").length;
             if (len == 2) {
                 int width = Integer.parseInt(maxRes.split(":")[0]);
