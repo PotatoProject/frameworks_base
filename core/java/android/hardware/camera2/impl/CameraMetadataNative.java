@@ -67,6 +67,7 @@ import android.location.LocationManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.ServiceSpecificException;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.Size;
 
@@ -78,6 +79,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * Implementation of camera metadata marshal/unmarshal across Binder to
@@ -289,6 +291,36 @@ public class CameraMetadataNative implements Parcelable {
     private static final String GPS_PROCESS = "GPS";
     private static final int FACE_LANDMARK_SIZE = 6;
 
+    private HashMap<Integer,ArrayList<AdditionalResolutionInfo>> extraResolutions;
+    private static final String PROP_CAMERA_FRONT_SENSOR_ID = "ro.camera.sensor.id_front";
+    private static final String PROP_CAMERA_REAR_SENSOR_ID = "ro.camera.sensor.id_rear";
+    private static final String PROP_CAMERA_RESOLUTION_PREFIX = "ro.camera.sensor.highres.";
+
+    private class AdditionalResolutionInfo {
+        public int format;
+        public boolean input;
+        public Size res;
+
+        public AdditionalResolutionInfo(Size size, int format, boolean input) {
+            this.res = size;
+            this.format = format;
+            this.input = input;
+        }
+    }
+
+    private class MiResolution {
+        public StreamConfiguration[] configurations;
+        public StreamConfigurationDuration[] minFrameDurations;
+        public StreamConfigurationDuration[] stallDurations;
+
+        public MiResolution(StreamConfiguration[] configurations, StreamConfigurationDuration[] minFrameDurations,
+                        StreamConfigurationDuration[] stallDurations) {
+            this.configurations = configurations;
+            this.minFrameDurations = minFrameDurations;
+            this.stallDurations = stallDurations;
+        }
+    }
+
     private static String translateLocationProviderToProcess(final String provider) {
         if (provider == null) {
             return null;
@@ -319,6 +351,7 @@ public class CameraMetadataNative implements Parcelable {
 
     public CameraMetadataNative() {
         super();
+        populateExtraResolutions();
         mMetadataPtr = nativeAllocate();
         if (mMetadataPtr == 0) {
             throw new OutOfMemoryError("Failed to allocate native CameraMetadata");
@@ -330,10 +363,60 @@ public class CameraMetadataNative implements Parcelable {
      */
     public CameraMetadataNative(CameraMetadataNative other) {
         super();
+        populateExtraResolutions();
         mMetadataPtr = nativeAllocateCopy(other);
         if (mMetadataPtr == 0) {
             throw new OutOfMemoryError("Failed to allocate native CameraMetadata");
         }
+    }
+
+    private void populateExtraResolutions() {
+        extraResolutions = new HashMap<Integer,ArrayList<AdditionalResolutionInfo>>();
+        int idFront = SystemProperties.getInt(PROP_CAMERA_FRONT_SENSOR_ID, -1);
+        int idRear = SystemProperties.getInt(PROP_CAMERA_REAR_SENSOR_ID, -1);
+        if (idFront != -1) {
+            String data = SystemProperties.get(PROP_CAMERA_RESOLUTION_PREFIX + Integer.toString(idFront), "");
+            ArrayList<AdditionalResolutionInfo> resData = parseResolutions(data);
+            if (data != null) {
+                extraResolutions.put(idFront, resData);
+            }
+        }
+        if (idRear != -1) {
+            String data = SystemProperties.get(PROP_CAMERA_RESOLUTION_PREFIX + Integer.toString(idRear), "");
+            ArrayList<AdditionalResolutionInfo> resData = parseResolutions(data);
+            if (data != null) {
+                extraResolutions.put(idRear, resData);
+            }
+        }
+    }
+
+    private ArrayList<AdditionalResolutionInfo> parseResolutions(String data) {
+        data = data.replaceAll("\\s+","");
+        if ("".equals(data)) return null;
+        String[][] a = Arrays.stream(data.substring(2, data.length()-2).split("\\],\\["))
+                .map(sub -> sub.split(":"))
+                .toArray(String[][]::new);
+        ArrayList<AdditionalResolutionInfo> ret = new ArrayList<AdditionalResolutionInfo>();
+        for (int i = 0; i < a.length; i++) {
+            int dLen = a[i].length;
+            if (dLen >= 2) {
+                Size resolution = new Size(Integer.parseInt(a[i][0]), Integer.parseInt(a[i][1]));
+                int format;
+                boolean input;
+                if (dLen == 3) {
+                    format = Integer.parseInt(a[i][2]);
+                    input = false;
+                } else if (dLen == 4) {
+                    format = Integer.parseInt(a[i][2]);
+                    input = !"0".equals(a[i][3]);
+                } else {
+                    format = NATIVE_JPEG_FORMAT;
+                    input = false;
+                }
+                ret.add(new AdditionalResolutionInfo(resolution, format, input));
+            }
+        }
+        return ret;
     }
 
     /**
@@ -379,6 +462,22 @@ public class CameraMetadataNative implements Parcelable {
      * @hide
      */
     public <T> T get(CameraCharacteristics.Key<T> key) {
+        if ((key == CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE ||
+                key == CameraCharacteristics.SENSOR_INFO_PRE_CORRECTION_ACTIVE_ARRAY_SIZE ||
+                key == CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE) &&
+                extraResolutions.containsKey(this.mCameraId)) {
+            String maxRes = SystemProperties.get(PROP_CAMERA_RESOLUTION_PREFIX + Integer.toString(this.mCameraId) + ".max", "");
+            int len = maxRes == "" ? -1 : maxRes.split(":").length;
+            if (len == 2) {
+                int width = Integer.parseInt(maxRes.split(":")[0]);
+                int height = Integer.parseInt(maxRes.split(":")[1]);
+                if (key == CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE) {
+                    return (T) new Size(width, height);
+                } else {
+                    return (T) new Rect(0,0, width, height);
+                }
+            }
+        }
         return get(key.getNativeKey());
     }
 
@@ -1226,6 +1325,39 @@ public class CameraMetadataNative implements Parcelable {
         return null;
     }
 
+    private boolean MiAddResolution(AdditionalResolutionInfo[] miResInfoArr, MiResolution miResolution) {
+        AdditionalResolutionInfo[] miResInfoArr2 = miResInfoArr;
+        MiResolution miResolution2 = miResolution;
+        if (miResInfoArr2.length == 0) {
+            return false;
+        }
+        miResolution2.configurations = (StreamConfiguration[]) Arrays.copyOf(miResolution2.configurations, miResolution2.configurations.length + miResInfoArr2.length);
+        int i = 0;
+        int length = miResInfoArr2.length;
+        for (AdditionalResolutionInfo miResInfo : miResInfoArr2) {
+            Log.d("CameraMetadataJVWyroczen", "MiAddResolution: " + miResInfo.res.getWidth() + "x" + miResInfo.res.getHeight() + ", format:" + miResInfo.format + ", input:" + miResInfo.input);
+            miResolution2.configurations[miResolution2.configurations.length - length] = new StreamConfiguration(miResInfo.format, miResInfo.res.getWidth(), miResInfo.res.getHeight(), miResInfo.input);
+            if (!miResInfo.input) {
+                i++;
+            }
+            length--;
+        }
+        if (i == 0) {
+            return true;
+        }
+        miResolution2.minFrameDurations = (StreamConfigurationDuration[]) Arrays.copyOf(miResolution2.minFrameDurations, miResolution2.minFrameDurations.length + i);
+        miResolution2.stallDurations = (StreamConfigurationDuration[]) Arrays.copyOf(miResolution2.stallDurations, miResolution2.stallDurations.length + i);
+        for (AdditionalResolutionInfo miResInfo2 : miResInfoArr2) {
+            if (!miResInfo2.input) {
+                miResolution2.minFrameDurations[miResolution2.minFrameDurations.length - i] = new StreamConfigurationDuration(miResInfo2.format, miResInfo2.res.getWidth(), miResInfo2.res.getHeight(), 50000000);
+                miResolution2.stallDurations[miResolution2.stallDurations.length - i] = new StreamConfigurationDuration(miResInfo2.format, miResInfo2.res.getWidth(), miResInfo2.res.getHeight(), 33333333);
+                i--;
+            }
+        }
+        return true;
+    }
+
+
     private StreamConfigurationMap getStreamConfigurationMap() {
         StreamConfiguration[] configurations = getBase(
                 CameraCharacteristics.SCALER_AVAILABLE_STREAM_CONFIGURATIONS);
@@ -1256,6 +1388,19 @@ public class CameraMetadataNative implements Parcelable {
         ReprocessFormatsMap inputOutputFormatsMap = getBase(
                 CameraCharacteristics.SCALER_AVAILABLE_INPUT_OUTPUT_FORMATS_MAP);
         boolean listHighResolution = isBurstSupported();
+
+
+        MiResolution miResolution = new MiResolution(configurations, minFrameDurations, stallDurations);
+        if (extraResolutions.containsKey(this.mCameraId)) {
+            AdditionalResolutionInfo[] additionalResolutionArray = extraResolutions.get(this.mCameraId).toArray(new AdditionalResolutionInfo[0]);
+            if (MiAddResolution(additionalResolutionArray, miResolution)) {
+                configurations = miResolution.configurations;
+                minFrameDurations = miResolution.minFrameDurations;
+                stallDurations = miResolution.stallDurations;
+            }
+        }
+
+
         return new StreamConfigurationMap(
                 configurations, minFrameDurations, stallDurations,
                 depthConfigurations, depthMinFrameDurations, depthStallDurations,
