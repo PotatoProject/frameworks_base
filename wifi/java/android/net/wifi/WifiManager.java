@@ -4553,6 +4553,88 @@ public class WifiManager {
     }
 
     /**
+     * Base class for Sta state callback. Should be extended by applications and set when
+     * calling {@link WifiManager#registerStaStateCallback(StaStateCallback, Handler)}.
+     * @hide
+     */
+    public interface StaStateCallback {
+        /**
+         * Callback invoked to inform clients about the current sta state.
+         *
+         * @hide
+         */
+        void onStaToBeOff();
+    }
+
+    /**
+     * Callback proxy for StaStateCallback objects.
+     *
+     * @hide
+     */
+    private class StaStateCallbackProxy extends IStaStateCallback.Stub {
+        private final Handler mHandler;
+        private final StaStateCallback mCallback;
+
+        StaStateCallbackProxy(Looper looper, StaStateCallback callback) {
+            mHandler = new Handler(looper);
+            mCallback = callback;
+        }
+
+        @Override
+        public void onStaToBeOff() {
+            if (mVerboseLoggingEnabled) {
+                Log.v(TAG, "StaStateCallbackProxy: onStaToBeOff");
+            }
+            mHandler.post(() -> {
+                mCallback.onStaToBeOff();
+            });
+        }
+    }
+
+    /**
+     * Registers a callback for monitoring sta state. See {@link StaStateCallback}. These
+     * callbacks will be invoked ...
+     * {@link #unregisterStaStateCallback(StaStateCallback)}
+     *
+     * @param callback Callback for sta state events
+     * @param handler  The Handler on whose thread to execute the callbacks of the {@code callback}
+     *                 object. If null, then the application's main thread will be used.
+     * @hide
+     */
+    public void registerStaStateCallback(@NonNull StaStateCallback callback,
+                                             @Nullable Handler handler) {
+        if (callback == null) throw new IllegalArgumentException("callback cannot be null");
+        Log.v(TAG, "registerStaStateCallback: callback=" + callback + ", handler=" + handler);
+
+        Looper looper = (handler == null) ? mContext.getMainLooper() : handler.getLooper();
+        Binder binder = new Binder();
+        try {
+            mService.registerStaStateCallback(
+                    binder, new StaStateCallbackProxy(looper, callback), callback.hashCode());
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
+    /**
+     * Allow callers to unregister a previously registered callback. After calling this method,
+     * applications will no longer receive sta state notifications.
+     *
+     * @param callback Callback to unregister for sta state events
+     * @hide
+     */
+    public void unregisterStaStateCallback(@NonNull StaStateCallback callback) {
+        if (callback == null) throw new IllegalArgumentException("callback cannot be null");
+        Log.v(TAG, "unregisterStaStateCallback: callback=" + callback);
+
+        try {
+            mService.unregisterStaStateCallback(callback.hashCode());
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
+    /**
      * Helper method to update the local verbose logging flag based on the verbose logging
      * level from wifi service.
      */
