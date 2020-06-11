@@ -175,6 +175,8 @@
 
     <permission android:name="com.android.systemui.permission.PLUGIN"
             android:protectionLevel="signature" />
+    
+    <protected-broadcast android:name="com.android.systemui.action.PLUGIN_CHANGED"/>
 
     <!-- Adding Quick Settings tiles -->
     <uses-permission android:name="android.permission.BIND_QUICK_SETTINGS_TILE" />
@@ -706,6 +708,14 @@
         <receiver android:name=".statusbar.phone.ThemeModeController">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_INSTALL" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".statusbar.phone.VolumePluginManager">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_INSTALL" />
+                <action android:name="android.intent.action.PACKAGE_CHANGED" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <data android:scheme="package"/>
             </intent-filter>
