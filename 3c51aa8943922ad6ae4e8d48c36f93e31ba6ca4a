@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5ae4241_42e00f65",
+        "filename": "packages/SystemUI/AndroidManifest.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 178,
+        "startChar": 0,
+        "endLine": 178,
+        "endChar": 4
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bec21dd_0ebc1016",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "\"The Potato Open Sauce Project\", for consistency across headers",
+      "range": {
+        "startLine": 4,
+        "startChar": 22,
+        "endLine": 4,
+        "endChar": 26
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "691d7aee_67cbea29",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 4
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c6b4cad_8f29358e",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "tab",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 1
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea00e0ba_fa5b0b4d",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 16
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b71e1357_0fcca6bf",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 137,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 16
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1a1fccf_da839d5a",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "whitespace",
+      "range": {
+        "startLine": 191,
+        "startChar": 0,
+        "endLine": 191,
+        "endChar": 8
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6832c704_cfe0342b",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/VolumePluginManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2020-06-13T20:25:34Z",
+      "side": 1,
+      "message": "tabs",
+      "range": {
+        "startLine": 201,
+        "startChar": 0,
+        "endLine": 201,
+        "endChar": 9
+      },
+      "revId": "3c51aa8943922ad6ae4e8d48c36f93e31ba6ca4a",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
