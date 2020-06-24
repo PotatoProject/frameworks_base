@@ -486,9 +486,7 @@ public class FODCircleView extends ImageView  implements ConfigurationListener {
                 com.android.internal.R.bool.config_maskMainBuiltInDisplayCutout);
         if (mCutoutMasked != cutoutMasked){
             mCutoutMasked = cutoutMasked;
-            if (mIsCircleShowing) {
                 updatePosition();
-            }
         }
     }
 }
