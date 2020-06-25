@@ -80,12 +80,14 @@ public class VolumePluginManager extends BroadcastReceiver {
     private PluginPrefs mPluginPrefs;
     private PluginEnabler mPluginEnabler;
     private PluginManager mManager;
-    private final PackageManager mPackageManager;
-    private final Handler mHandler;
+    private PackageManager mPackageManager;
+    private Handler mHandler;
     private CustomSettingsObserver mCustomSettingsObserver;
     private String mCurrentPlugin = DEFAULT_VOLUME_PLUGIN;
     private Context mContext;
     private ContentResolver mResolver;
+
+    public VolumePluginManager() {}
 
     public VolumePluginManager(Context context, Handler handler) {
         mPluginEnabler = new PluginEnablerImpl(context);
@@ -103,6 +105,8 @@ public class VolumePluginManager extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+	if (mContext == null) mContext = context;
+	if (mHandler == null) mHandler = new Handler(mContext.getMainLooper());
         updateState();
     }
 
