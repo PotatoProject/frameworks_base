@@ -87,6 +87,8 @@ public class VolumePluginManager extends BroadcastReceiver {
     private Context mContext;
     private ContentResolver mResolver;
 
+    public VolumePluginManager() {}
+
     public VolumePluginManager(Context context, Handler handler) {
         mPluginEnabler = new PluginEnablerImpl(context);
         mPluginPrefs = new PluginPrefs(context);
@@ -103,6 +105,8 @@ public class VolumePluginManager extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+	if (mContext == null) mContext = context;
+	if (mHandler == null) mHandler = new Handler(mContext.getMainLooper());
         updateState();
     }
 
