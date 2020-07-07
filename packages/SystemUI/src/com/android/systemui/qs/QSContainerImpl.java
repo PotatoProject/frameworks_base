@@ -82,6 +82,7 @@ public class QSContainerImpl extends FrameLayout {
     private boolean mSetQsFromWall;
     private boolean mSetQsFromResources;
     private boolean mQsBackGroundColorRGB;
+    private boolean mImmerseMode;
 
     private IOverlayManager mOverlayManager;
 
@@ -110,10 +111,9 @@ public class QSContainerImpl extends FrameLayout {
         mBackgroundGradient = findViewById(R.id.quick_settings_gradient_view);
         mSideMargins = getResources().getDimensionPixelSize(R.dimen.notification_side_paddings);
         mQsBackGround = getContext().getDrawable(R.drawable.qs_background_primary);
-        updateSettings();
-
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         setMargins();
+        updateSettings();
     }
 
     @Override
@@ -148,6 +148,9 @@ public class QSContainerImpl extends FrameLayout {
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_RGB), false,
                     this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.DISPLAY_CUTOUT_MODE), false,
+                    this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -174,7 +177,10 @@ public class QSContainerImpl extends FrameLayout {
                 UserHandle.USER_CURRENT));
         mQsBackGroundColorRGB = Settings.System.getIntForUser(getContext().getContentResolver(),
                     Settings.System.QS_PANEL_BG_RGB, 0, UserHandle.USER_CURRENT) == 1;
+        mImmerseMode = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
         setQsBackground();
+        setBackgroundGradientVisibility(null);
     }
 
     private void setQsBackground() {
@@ -347,7 +353,8 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void setBackgroundGradientVisibility(Configuration newConfig) {
-        if (newConfig.orientation == ORIENTATION_LANDSCAPE) {
+        if (newConfig == null) newConfig = mContext.getResources().getConfiguration();
+        if (newConfig.orientation == ORIENTATION_LANDSCAPE || mImmerseMode) {
             mBackgroundGradient.setVisibility(View.INVISIBLE);
             mStatusBarBackground.setVisibility(View.INVISIBLE);
         } else {
