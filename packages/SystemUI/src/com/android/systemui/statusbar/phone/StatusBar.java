@@ -881,7 +881,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                     if (mHeadsUpManager.hasPinnedHeadsUp()) {
                         mNotificationPanel.notifyBarPanelExpansionChanged();
                     }
-                    handleCutout(null);
                     mStatusBarView.setBouncerShowing(mBouncerShowing);
                     if (oldStatusBarView != null) {
                         float fraction = oldStatusBarView.getExpansionFraction();
@@ -904,6 +903,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     checkBarModes();
                     mBurnInProtectionController =
                         new BurnInProtectionController(mContext, this, mStatusBarView);
+                    handleCutout(null);
                 }).getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.status_bar_container, new CollapsedStatusBarFragment(),
@@ -1920,6 +1920,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TILES_BG_DISCO),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    "sysui_rounded_size"),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -1944,7 +1947,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                     Settings.System.LOCKSCREEN_MEDIA_BLUR))) {
                 setLockScreenMediaBlurLevel();
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.DISPLAY_CUTOUT_MODE)) ||
-                    uri.equals(Settings.System.getUriFor(Settings.System.STOCK_STATUSBAR_IN_HIDE))) {
+                    uri.equals(Settings.System.getUriFor(Settings.System.STOCK_STATUSBAR_IN_HIDE))||
+                    uri.equals(Settings.Secure.getUriFor("sysui_rounded_size"))) {
                 handleCutout(null);
             } else if (uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_PORTRAIT)) ||
                     uri.equals(Settings.System.getUriFor(Settings.System.QS_ROWS_LANDSCAPE)) ||
@@ -4121,13 +4125,32 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (mStatusBarWindow == null || mStatusBarWindow.getBarTransitions() == null) return;
         if (enable) {
             mStatusBarWindow.getBarTransitions().getBackground().setColorOverride(new Integer(0xFF000000));
+            Log.i("FANCY", "setBlackStatus: applied black");
         } else {
             mStatusBarWindow.getBarTransitions().getBackground().setColorOverride(null);
         }
     }
 
+    private void setNotificationPanelPadding(boolean enable) {
+        if (mNotificationPanel == null) return;
+        if (enable) {
+            int size = (int) (Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                    "sysui_rounded_size", -1, UserHandle.USER_CURRENT) * getDisplayDensity());
+            // Choose a sane safe size in immerse, often
+            // defaults are too large
+            if (size < 0) {
+                size = (int) (20 * getDisplayDensity());
+            }
+            mNotificationPanel.setPadding(size, 0, size, 0);
+        } else {
+            mNotificationPanel.setPadding(0, 0, 0, 0);
+        }
+
+    }
+
     private void handleCutout(Configuration newConfig) {
         boolean immerseMode;
+        if (newConfig == null) newConfig = mContext.getResources().getConfiguration();
         if (newConfig == null || newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             immerseMode = Settings.System.getIntForUser(mContext.getContentResolver(),
                         Settings.System.DISPLAY_CUTOUT_MODE, 0, UserHandle.USER_CURRENT) == 1;
@@ -4140,6 +4163,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                         Settings.System.STOCK_STATUSBAR_IN_HIDE, 1, UserHandle.USER_CURRENT) == 1;
         setBlackStatusBar(immerseMode);
         setCutoutOverlay(hideCutoutMode);
+        setNotificationPanelPadding(immerseMode);
         setStatusBarStockOverlay(hideCutoutMode && statusBarStock);
     }
 
