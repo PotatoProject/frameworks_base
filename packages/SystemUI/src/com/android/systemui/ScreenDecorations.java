@@ -710,7 +710,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     }
 
     private boolean shouldDrawCutout() {
-        return shouldDrawCutout(mContext);
+        return !mImmerseMode && shouldDrawCutout(mContext);
     }
 
     static boolean shouldDrawCutout(Context context) {
@@ -1341,6 +1341,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
 
     private void updateAllForCutout() {
         onTuningChanged(SIZE, null);
+        updateWindowVisibilities();
         updateLayoutParams();
     }
 
