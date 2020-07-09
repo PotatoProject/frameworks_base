@@ -368,6 +368,9 @@ public class NotificationPanelView extends PanelView implements
      */
     private float mLinearDarkAmount;
 
+    private boolean mNotchHide;
+    private boolean mStatusbarStock;
+
     private boolean mPulsing;
     private LockscreenGestureLogger mLockscreenGestureLogger = new LockscreenGestureLogger();
     private boolean mNoVisibleNotifications = true;
@@ -1262,6 +1265,20 @@ public class NotificationPanelView extends PanelView implements
         return mNotificationStackScroller.getOpeningHeight();
     }
 
+    public boolean cutoutChecks(float valueY,float mStatusBarHeaderHeight) {
+        float mStatusBarHeaderHeightEmulated;
+        if(mNotchHide && mStatusbarStock) {
+            mStatusBarHeaderHeightEmulated  = 24 + mStatusBarHeaderHeight;
+        }
+        else if(mNotchHide && !mStatusbarStock) {
+            mStatusBarHeaderHeightEmulated  = 2 * mStatusBarHeaderHeight;
+        }
+        else {
+            mStatusBarHeaderHeightEmulated = mStatusBarHeaderHeight;
+        }
+        return valueY < mStatusBarHeaderHeightEmulated ? true : false;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mBlockTouches || (mQs != null && mQs.isCustomizing())) {
@@ -1276,7 +1293,7 @@ public class NotificationPanelView extends PanelView implements
 
         if (mDoubleTapToSleepEnabled && !mPulsing && !mDozing
                 && mBarState == StatusBarState.KEYGUARD
-                && event.getY() < mStatusBarHeaderHeight) {
+                && cutoutChecks(event.getY(),mStatusBarHeaderHeight)) {
             if (mDoubleTapGesture.onTouchEvent(event)) {
                 return false;
             }
@@ -3256,6 +3273,10 @@ public class NotificationPanelView extends PanelView implements
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.DOUBLE_TAP_SLEEP_GESTURE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.DISPLAY_CUTOUT_MODE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STOCK_STATUSBAR_IN_HIDE), false, this);
             update();
         }
 
@@ -3278,6 +3299,10 @@ public class NotificationPanelView extends PanelView implements
             ContentResolver resolver = mContext.getContentResolver();
             mDoubleTapToSleepEnabled = Settings.System.getInt(
                     resolver, Settings.System.DOUBLE_TAP_SLEEP_GESTURE, 0) == 1;
+            mNotchHide = Settings.System.getInt(
+                    resolver, Settings.System.DISPLAY_CUTOUT_MODE, 0) == 2;
+            mStatusbarStock = Settings.System.getInt(
+                    resolver, Settings.System.STOCK_STATUSBAR_IN_HIDE, 1) == 1;
         }
     }
 
