@@ -714,7 +714,7 @@ public class ScreenDecorations extends SystemUI implements Tunable,
     }
 
     static boolean shouldDrawCutout(Context context) {
-        return context.getResources().getBoolean(
+        return !mImmerseMode && context.getResources().getBoolean(
                 com.android.internal.R.bool.config_fillMainBuiltInDisplayCutout);
     }
 
