@@ -978,6 +978,12 @@ public class Resources {
     public int getColor(@ColorRes int id, @Nullable Theme theme) throws NotFoundException {
         final TypedValue value = obtainTempTypedValue();
         try {
+            Class.forName("co.potatoproject.pte.TestClass");
+            Log.e(TAG, "FANCY TestClass found!");
+        } catch (ClassNotFoundException e) {
+            Log.e(TAG, "FANCY TestClass unavailable!");
+        }
+        try {
             final ResourcesImpl impl = mResourcesImpl;
             impl.getValue(id, value, true);
             if (value.type >= TypedValue.TYPE_FIRST_INT
