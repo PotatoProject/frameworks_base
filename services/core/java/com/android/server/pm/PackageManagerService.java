@@ -2864,6 +2864,38 @@ public class PackageManagerService extends IPackageManager.Stub
                     | SCAN_AS_PRODUCT_SERVICES,
                     0);
 
+            // POSP MOD: USERSPACE EXTRA FAKE ROOT
+            File privilegedExtraAppDir = new File(Environment.getExtraDirectory(),
+                        "priv-app");
+            try {
+                privilegedExtraAppDir = privilegedExtraAppDir.getCanonicalFile();
+            } catch (IOException e) {
+                // failed to look up canonical path, continue with original one
+            }
+            scanDirTracedLI(privilegedExtraAppDir,
+                    mDefParseFlags
+                    | PackageParser.PARSE_IS_SYSTEM_DIR,
+                    scanFlags
+                    | SCAN_AS_SYSTEM
+                    | SCAN_AS_VENDOR
+                    | SCAN_AS_PRIVILEGED,
+                    0);
+
+            File extraAppDir = new File(Environment.getExtraDirectory(), "app");
+            try {
+                extraAppDir = extraAppDir.getCanonicalFile();
+            } catch (IOException e) {
+                // failed to look up canonical path, continue with original one
+            }
+            scanDirTracedLI(extraAppDir,
+                    mDefParseFlags
+                    | PackageParser.PARSE_IS_SYSTEM_DIR,
+                    scanFlags
+                    | SCAN_AS_SYSTEM
+                    | SCAN_AS_VENDOR,
+                    0);
+            // END POSP MOD: USERSPACE EXTRA FAKE ROOT
+
             // Prune any system packages that no longer exist.
             final List<String> possiblyDeletedUpdatedSystemApps = new ArrayList<>();
             // Stub packages must either be replaced with full versions in the /data
@@ -12735,6 +12767,8 @@ public class PackageManagerService extends IPackageManager.Stub
             codeRoot = Environment.getProductServicesDirectory();
         } else if (FileUtils.contains(Environment.getOdmDirectory(), codePath)) {
             codeRoot = Environment.getOdmDirectory();
+        } else if (FileUtils.contains(Environment.getExtraDirectory(), codePath)) {
+            codeRoot = Environment.getExtraDirectory();
         } else {
             // Unrecognized code path; take its top real segment as the apk root:
             // e.g. /something/app/blah.apk => /something
@@ -19115,12 +19149,14 @@ public class PackageManagerService extends IPackageManager.Stub
             final File privilegedAppDir = new File(Environment.getRootDirectory(), "priv-app");
             final File privilegedVendorAppDir = new File(Environment.getVendorDirectory(), "priv-app");
             final File privilegedOdmAppDir = new File(Environment.getOdmDirectory(), "priv-app");
+            final File privilegedExtraAppDir = new File(Environment.getExtraDirectory(), "priv-app");
             final File privilegedProductAppDir = new File(Environment.getProductDirectory(), "priv-app");
             final File privilegedProductServicesAppDir =
                     new File(Environment.getProductServicesDirectory(), "priv-app");
             return path.startsWith(privilegedAppDir.getCanonicalPath() + "/")
                     || path.startsWith(privilegedVendorAppDir.getCanonicalPath() + "/")
                     || path.startsWith(privilegedOdmAppDir.getCanonicalPath() + "/")
+                    || path.startsWith(privilegedExtraAppDir.getCanonicalPath() + "/")
                     || path.startsWith(privilegedProductAppDir.getCanonicalPath() + "/")
                     || path.startsWith(privilegedProductServicesAppDir.getCanonicalPath() + "/");
         } catch (IOException e) {
@@ -19141,7 +19177,8 @@ public class PackageManagerService extends IPackageManager.Stub
     static boolean locationIsVendor(String path) {
         try {
             return path.startsWith(Environment.getVendorDirectory().getCanonicalPath() + "/")
-                    || path.startsWith(Environment.getOdmDirectory().getCanonicalPath() + "/");
+                    || path.startsWith(Environment.getOdmDirectory().getCanonicalPath() + "/")
+                    || path.startsWith(Environment.getExtraDirectory().getCanonicalPath() + "/");
         } catch (IOException e) {
             Slog.e(TAG, "Unable to access code path " + path);
         }
@@ -19170,6 +19207,15 @@ public class PackageManagerService extends IPackageManager.Stub
     static boolean locationIsOdm(String path) {
         try {
             return path.startsWith(Environment.getOdmDirectory().getCanonicalPath() + "/");
+        } catch (IOException e) {
+            Slog.e(TAG, "Unable to access code path " + path);
+        }
+        return false;
+    }
+
+    static boolean locationIsExtra(String path) {
+        try {
+            return path.startsWith(Environment.getExtraDirectory().getCanonicalPath() + "/");
         } catch (IOException e) {
             Slog.e(TAG, "Unable to access code path " + path);
         }
@@ -19302,6 +19348,9 @@ public class PackageManagerService extends IPackageManager.Stub
         }
         if (locationIsOdm(codePathString)) {
             scanFlags |= SCAN_AS_ODM;
+        }
+        if (locationIsExtra(codePathString)) {
+            scanFlags |= SCAN_AS_VENDOR;
         }
 
         final File codePath = new File(codePathString);

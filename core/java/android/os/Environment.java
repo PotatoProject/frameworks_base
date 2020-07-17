@@ -57,6 +57,9 @@ public class Environment {
     private static final String ENV_PRODUCT_SERVICES_ROOT = "PRODUCT_SERVICES_ROOT";
 
     /** {@hide} */
+    private static final String ENV_EXTRA_ROOT = "EXTRA_ROOT";
+
+    /** {@hide} */
     public static final String DIR_ANDROID = "Android";
     private static final String DIR_DATA = "data";
     private static final String DIR_MEDIA = "media";
@@ -79,6 +82,9 @@ public class Environment {
     private static final File DIR_PRODUCT_ROOT = getDirectory(ENV_PRODUCT_ROOT, "/product");
     private static final File DIR_PRODUCT_SERVICES_ROOT = getDirectory(ENV_PRODUCT_SERVICES_ROOT,
                                                            "/product_services");
+
+    /** {@hide} */
+    private static final File DIR_EXTRA_ROOT = getDirectory(ENV_EXTRA_ROOT, "/data/extra");
 
     @UnsupportedAppUsage
     private static UserEnvironment sCurrentUser;
@@ -289,6 +295,14 @@ public class Environment {
     @UnsupportedAppUsage
     public static File getDataSystemDirectory() {
         return new File(getDataDirectory(), "system");
+    }
+
+    /**
+     * @hide
+     */
+    @SystemApi
+    public static @NonNull File getExtraDirectory() {
+        return DIR_EXTRA_ROOT;
     }
 
     /**
