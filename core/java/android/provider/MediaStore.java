@@ -3358,6 +3358,7 @@ public final class MediaStore {
             addCanonicalFile(res, new File(Environment.getRootDirectory(), "media"));
             addCanonicalFile(res, new File(Environment.getOemDirectory(), "media"));
             addCanonicalFile(res, new File(Environment.getProductDirectory(), "media"));
+            addCanonicalFile(res, new File(Environment.getExtraDirectory(), "media"));
         } else if (VOLUME_EXTERNAL.equals(volumeName)) {
             for (String exactVolume : getExternalVolumeNames(context)) {
                 addCanonicalFile(res, getVolumePath(exactVolume));
