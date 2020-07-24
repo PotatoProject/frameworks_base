@@ -602,6 +602,8 @@ public class PackageManagerService extends IPackageManager.Stub
 
     private static final String OEM_OVERLAY_DIR = "/oem/overlay";
 
+    private static final String EXTRA_OVERLAY_DIR = "/data/extra/overlay";
+
     /** Canonical intent used to identify what counts as a "web browser" app */
     private static final Intent sBrowserIntent;
     static {
@@ -2607,6 +2609,7 @@ public class PackageManagerService extends IPackageManager.Stub
             }
 
             File frameworkDir = new File(Environment.getRootDirectory(), "framework");
+            File frameworkDirExtra = new File(Environment.getExtraDirectory(), "framework");
 
             final VersionInfo ver = mSettings.getInternalVersion();
             mIsUpgrade = !Build.DATE.equals(ver.fingerprint);
@@ -2689,11 +2692,27 @@ public class PackageManagerService extends IPackageManager.Stub
                     | SCAN_AS_SYSTEM
                     | SCAN_AS_OEM,
                     0);
+            scanDirTracedLI(new File(EXTRA_OVERLAY_DIR),
+                    mDefParseFlags
+                    | PackageParser.PARSE_IS_SYSTEM_DIR,
+                    scanFlags
+                    | SCAN_AS_SYSTEM
+                    | SCAN_AS_PRODUCT,
+                    0);
 
             mParallelPackageParserCallback.findStaticOverlayPackages();
 
             // Find base frameworks (resource packages without code).
             scanDirTracedLI(frameworkDir,
+                    mDefParseFlags
+                    | PackageParser.PARSE_IS_SYSTEM_DIR,
+                    scanFlags
+                    | SCAN_NO_DEX
+                    | SCAN_AS_SYSTEM
+                    | SCAN_AS_PRIVILEGED,
+                    0);
+            // Find base extra frameworks
+            scanDirTracedLI(frameworkDirExtra,
                     mDefParseFlags
                     | PackageParser.PARSE_IS_SYSTEM_DIR,
                     scanFlags
@@ -3743,7 +3762,9 @@ public class PackageManagerService extends IPackageManager.Stub
             // in general and should not be used for production changes. In this specific case,
             // we know that they will work.
             File frameworkDir = new File(Environment.getRootDirectory(), "framework");
-            if (cacheDir.lastModified() < frameworkDir.lastModified()) {
+            File frameworkDirExtra = new File(Environment.getExtraDirectory(), "framework");
+            if (cacheDir.lastModified() < frameworkDir.lastModified() ||
+                            cacheDir.lastModified() < frameworkDirExtra.lastModified()) {
                 FileUtils.deleteContents(cacheBaseDir);
                 cacheDir = FileUtils.createDir(cacheBaseDir, cacheName);
             }
