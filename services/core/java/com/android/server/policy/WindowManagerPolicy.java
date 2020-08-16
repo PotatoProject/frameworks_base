@@ -69,6 +69,7 @@ import android.annotation.IntDef;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.WindowConfiguration;
+import android.content.Intent;
 import android.content.Context;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
@@ -1468,4 +1469,11 @@ public interface WindowManagerPolicy extends WindowManagerPolicyConstants {
      * @return whether the value was changed.
      */
     boolean setAodShowing(boolean aodShowing);
+
+    public interface FingerListener {
+        void powerDown(boolean z);
+    }
+    void registerFingerListener(FingerListener fingerListener);
+    void interceptPowerKeyByFinger(long time);
+    void notifySideFpAuthenOrEnroll(boolean start);
 }
