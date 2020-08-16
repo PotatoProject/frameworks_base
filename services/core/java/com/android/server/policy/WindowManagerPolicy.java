@@ -1464,4 +1464,11 @@ public interface WindowManagerPolicy extends WindowManagerPolicyConstants {
      * @return whether the value was changed.
      */
     boolean setAodShowing(boolean aodShowing);
+
+    public interface FingerListener {
+        void powerDown(boolean z);
+    }
+    void registerFingerListener(FingerListener fingerListener);
+    void interceptPowerKeyByFinger(long j);
+    void notifySideFpAuthenOrEnroll(boolean z);
 }

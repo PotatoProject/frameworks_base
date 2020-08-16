@@ -78,4 +78,9 @@ public class Utils {
     public static boolean isABdevice(Context context) {
         return SystemProperties.getBoolean("ro.build.ab_update", false);
     }
+
+    // Check to see if device has power button fingerprint
+    public static boolean hasPowerButtonFingerprint(Context context) {
+        return context.getResources().getBoolean(com.android.internal.R.bool.config_powerButtonFingerprint);
+    }
 }

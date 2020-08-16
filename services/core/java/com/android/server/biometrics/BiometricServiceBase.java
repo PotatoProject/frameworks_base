@@ -23,6 +23,7 @@ import android.app.ActivityManager;
 import android.app.ActivityTaskManager;
 import android.app.AppOpsManager;
 import android.app.IActivityTaskManager;
+import android.app.KeyguardManager;
 import android.app.SynchronousUserSwitchObserver;
 import android.app.TaskStackListener;
 import android.content.ComponentName;
@@ -45,6 +46,7 @@ import android.os.IBinder;
 import android.os.IHwBinder;
 import android.os.IRemoteCallback;
 import android.os.Looper;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.RemoteException;
@@ -59,7 +61,10 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.FrameworkStatsLog;
+import com.android.internal.util.custom.Utils;
+import com.android.server.policy.WindowManagerPolicy;
 import com.android.server.SystemService;
+import com.android.server.LocalServices;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,10 +87,12 @@ public abstract class BiometricServiceBase extends SystemService
     private static final int MSG_USER_SWITCHING = 10;
     private static final long CANCEL_TIMEOUT_LIMIT = 3000; // max wait for onCancel() from HAL,in ms
 
-    private final Context mContext;
+    protected final Context mContext;
     private final String mKeyguardPackage;
+    protected ListenPowerKey mListenPowerKey = new ListenPowerKey();
     private final IActivityTaskManager mActivityTaskManager;
     private final PowerManager mPowerManager;
+    private final KeyguardManager mKeyguardManager;
     private final UserManager mUserManager;
     private final MetricsLogger mMetricsLogger;
     private final BiometricTaskStackListener mTaskStackListener = new BiometricTaskStackListener();
@@ -108,6 +115,10 @@ public abstract class BiometricServiceBase extends SystemService
                 case MSG_USER_SWITCHING:
                     handleUserSwitching(msg.arg1);
                     break;
+                case 11:
+                    if (Utils.hasPowerButtonFingerprint(mContext))
+                        handlePowerKeyDown(msg.arg1);
+                    break;
                 default:
                     Slog.w(getTag(), "Unknown message:" + msg.what);
             }
@@ -122,6 +133,7 @@ public abstract class BiometricServiceBase extends SystemService
     private ClientMonitor mPendingClient;
     private PerformanceStats mPerformanceStats;
     protected int mCurrentUserId = UserHandle.USER_NULL;
+    private final FingerprintStateListener mFingerprintStateListener = new FingerprintStateListener();
     protected long mHalDeviceId;
     private int mOEMStrength; // Tracks the OEM configured biometric modality strength
     // Tracks if the current authentication makes use of CryptoObjects.
@@ -131,6 +143,7 @@ public abstract class BiometricServiceBase extends SystemService
     // Transactions that make use of CryptoObjects are tracked by mCryptoPerformaceMap.
     protected HashMap<Integer, PerformanceStats> mCryptoPerformanceMap = new HashMap<>();
     protected int mHALDeathCount;
+    private WindowManagerPolicy mWindowManagerPolicy;
 
     protected class PerformanceStats {
         public int accept; // number of accepted biometrics
@@ -658,6 +671,7 @@ public abstract class BiometricServiceBase extends SystemService
         mActivityTaskManager = ((ActivityTaskManager) context.getSystemService(
                 Context.ACTIVITY_TASK_SERVICE)).getService();
         mPowerManager = mContext.getSystemService(PowerManager.class);
+        mKeyguardManager = mContext.getSystemService(KeyguardManager.class);
         mUserManager = UserManager.get(mContext);
         mMetricsLogger = new MetricsLogger();
         mCleanupUnusedFingerprints = mContext.getResources().getBoolean(
@@ -667,6 +681,9 @@ public abstract class BiometricServiceBase extends SystemService
     @Override
     public void onStart() {
         listenForUserSwitches();
+        if (Utils.hasPowerButtonFingerprint(mContext)) {
+            registerForWindowManger();
+        }
     }
 
     @Override
@@ -728,6 +745,12 @@ public abstract class BiometricServiceBase extends SystemService
             ArrayList<Byte> token) {
         ClientMonitor client = mCurrentClient;
         final boolean authenticated = identifier.getBiometricId() != 0;
+
+        if (client != null && isKeyguard(mCurrentClient.getOwnerString())
+                && mWindowManagerPolicy != null && authenticated && Utils.hasPowerButtonFingerprint(mContext)) {
+            long now = SystemClock.uptimeMillis();
+            mWindowManagerPolicy.interceptPowerKeyByFinger(now);
+        }
 
         if (client != null && client.onAuthenticated(identifier, authenticated, token)) {
             removeClient(client);
@@ -1152,6 +1175,13 @@ public abstract class BiometricServiceBase extends SystemService
             return;
         }
 
+        if (!isKeyguard(mCurrentClient.getOwnerString())
+                && (this.mCurrentClient.getClass().getSuperclass().getSimpleName().equals("AuthenticationClientImpl")
+                    || this.mCurrentClient.getClass().getSuperclass().getSimpleName().equals("EnrollClientImpl"))
+                    && Utils.hasPowerButtonFingerprint(mContext)) {
+            notifyInterceptPowerKey(true);
+        }
+
         int status = mCurrentClient.start();
         if (status == 0) {
             notifyClientActiveCallbacks(true);
@@ -1163,6 +1193,9 @@ public abstract class BiometricServiceBase extends SystemService
     }
 
     protected void removeClient(ClientMonitor client) {
+        if (Utils.hasPowerButtonFingerprint(mContext))
+            notifyInterceptPowerKey(false);
+
         if (client != null) {
             client.destroy();
             if (client != mCurrentClient && mCurrentClient != null) {
@@ -1331,6 +1364,10 @@ public abstract class BiometricServiceBase extends SystemService
         }
     }
 
+    protected void handlePowerKeyDown(int isPowerKeyDown) {
+        mListenPowerKey.setPowerKeyDown(isPowerKeyDown);
+    }
+
     private void userActivity() {
         long now = SystemClock.uptimeMillis();
         mPowerManager.userActivity(now, PowerManager.USER_ACTIVITY_EVENT_TOUCH, 0);
@@ -1351,7 +1388,6 @@ public abstract class BiometricServiceBase extends SystemService
         return userInfo != null && userInfo.isManagedProfile();
     }
 
-
     private int getEffectiveUserId(int userId) {
         UserManager um = UserManager.get(mContext);
         if (um != null) {
@@ -1363,7 +1399,6 @@ public abstract class BiometricServiceBase extends SystemService
         }
         return userId;
     }
-
 
     private void listenForUserSwitches() {
         try {
@@ -1380,8 +1415,76 @@ public abstract class BiometricServiceBase extends SystemService
         }
     }
 
+    private void registerForWindowManger() {
+        mWindowManagerPolicy = LocalServices.getService(WindowManagerPolicy.class);
+        mWindowManagerPolicy.registerFingerListener(mFingerprintStateListener);
+    }
+
+    private void notifyInterceptPowerKey(boolean start) {
+        if (mWindowManagerPolicy != null) {
+            mWindowManagerPolicy.notifySideFpAuthenOrEnroll(start);
+        }
+    }
+
     private void removeLockoutResetCallback(
             LockoutResetMonitor monitor) {
         mLockoutMonitors.remove(monitor);
+    }
+
+    protected boolean isScreenOn() {
+        return mPowerManager.isInteractive();
+    }
+
+    protected boolean isKeyguardLocked() {
+       return mKeyguardManager.isKeyguardLocked();
+    }
+
+    public static class ListenPowerKey {
+        private boolean dealOnChange = false;
+        private ChangeListener listener;
+        private int mIsPowerKeyDown;
+
+        public interface ChangeListener {
+            void onChange(boolean z);
+        }
+
+        public ChangeListener getListener() {
+            return listener;
+        }
+
+        public void setPowerKeyDown(int isPowerKeyDown) {
+            mIsPowerKeyDown = isPowerKeyDown;
+            if (listener != null) {
+                listener.onChange(this.dealOnChange);
+            }
+        }
+
+        public int getPowerKeyDown() {
+            return mIsPowerKeyDown;
+        }
+
+        public void setDealOnChange(boolean value) {
+            dealOnChange = value;
+        }
+
+        public boolean getDealOnChange() {
+            return dealOnChange;
+        }
+
+        public void setListener(ChangeListener newListener) {
+            listener = newListener;
+        }
+    }
+
+    private final class FingerprintStateListener implements WindowManagerPolicy.FingerListener {
+        public void powerDown(boolean isPowerKeyDown) {
+            Message msg = mHandler.obtainMessage(11);
+            int i = 1;
+            if (!isPowerKeyDown) {
+                i = 0;
+            }
+            msg.arg1 = i;
+            msg.sendToTarget();
+        }
     }
 }
