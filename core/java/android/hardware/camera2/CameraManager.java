@@ -1249,6 +1249,7 @@ public final class CameraManager {
             cameraIds = new String[idCount];
             idCount = 0;
             for (int i = 0; i < mDeviceStatus.size(); i++) {
+                if (!exposeAuxCamera && i == 2) break;
                 int status = mDeviceStatus.valueAt(i);
                 if (status == ICameraServiceListener.STATUS_NOT_PRESENT
                         || status == ICameraServiceListener.STATUS_ENUMERATING) continue;
