@@ -56,4 +56,14 @@
 
     <!-- Hide FOD while Going to sleep from lockscreen to avoid HBM flicker -->
     <bool name="config_inDisplayFingerprintFlickersGoingToSleep">false</bool>
+
+    <!-- Power Menu -->
+    <string-array translatable="false" name="custom_config_globalActionsList">
+        <item>emergency</item>
+        <item>lockdown</item>
+        <item>power</item>
+        <item>restart</item>
+        <item>screenshot</item> <!--2 buttons nav-->
+    </string-array>
+
 </resources>
