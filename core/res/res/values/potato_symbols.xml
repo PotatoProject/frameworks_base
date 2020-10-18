@@ -41,4 +41,7 @@
 
   <!-- Hide FOD while Going to sleep from lockscreen to avoid HBM flicker -->
   <java-symbol type="bool" name="config_inDisplayFingerprintFlickersGoingToSleep" />
+
+  <!-- Whether device has VOOC charging support -->
+  <java-symbol type="bool" name="config_hasVoocCharger" />
 </resources>
