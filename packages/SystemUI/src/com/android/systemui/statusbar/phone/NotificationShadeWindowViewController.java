@@ -54,6 +54,7 @@ import com.android.systemui.statusbar.notification.stack.NotificationStackScroll
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.InjectionInflationController;
+import com.android.internal.util.custom.LineageButtons;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -82,6 +83,7 @@ public class NotificationShadeWindowViewController {
     private final NotificationShadeWindowView mView;
     private final ShadeController mShadeController;
     private final NotificationShadeDepthController mDepthController;
+    private AmbientDisplayConfiguration mAmbientConfig;
 
     private GestureDetector mGestureDetector;
     private View mBrightnessMirror;
@@ -109,6 +111,8 @@ public class NotificationShadeWindowViewController {
 
     // custom additions start
     private boolean mDoubleTapEnabledNative;
+
+    private boolean mIsMusicTickerTap;
 
     @Inject
     public NotificationShadeWindowViewController(
@@ -157,6 +161,7 @@ public class NotificationShadeWindowViewController {
 
         // This view is not part of the newly inflated expanded status bar.
         mBrightnessMirror = mView.findViewById(R.id.brightness_mirror);
+        mAmbientConfig = new AmbientDisplayConfiguration(mView.getContext());
     }
 
     /** Inflates the {@link R.layout#status_bar_expanded} layout and sets it up. */
@@ -164,15 +169,13 @@ public class NotificationShadeWindowViewController {
         mStackScrollLayout = mView.findViewById(R.id.notification_stack_scroller);
 
         TunerService.Tunable tunable = (key, newValue) -> {
-            AmbientDisplayConfiguration configuration =
-                    new AmbientDisplayConfiguration(mView.getContext());
             switch (key) {
                 case Settings.Secure.DOZE_DOUBLE_TAP_GESTURE:
-                    mDoubleTapEnabled = configuration.doubleTapGestureEnabled(
+                    mDoubleTapEnabled = mAmbientConfig.doubleTapGestureEnabled(
                             UserHandle.USER_CURRENT);
                     break;
                 case Settings.Secure.DOZE_TAP_SCREEN_GESTURE:
-                    mSingleTapEnabled = configuration.tapGestureEnabled(UserHandle.USER_CURRENT);
+                    mSingleTapEnabled = mAmbientConfig.tapGestureEnabled(UserHandle.USER_CURRENT);
                     break;
                 case Settings.Secure.DOUBLE_TAP_TO_WAKE:
                     mDoubleTapEnabledNative = Settings.Secure.getIntForUser(mView.getContext().getContentResolver(),
@@ -199,6 +202,12 @@ public class NotificationShadeWindowViewController {
 
                     @Override
                     public boolean onDoubleTap(MotionEvent e) {
+                        if (mIsMusicTickerTap) {
+                            /* this gets called in pulsing Ambient screen,
+                            for double taps on screen OFF or AoD check DozeTriggers onSlpiTap*/
+                            LineageButtons.getAttachedInstance(mView.getContext()).skipTrack();
+                            return true;
+                        }
                         if (mDoubleTapEnabled || mSingleTapEnabled || mDoubleTapEnabledNative) {
                             mService.wakeUpIfDozing(
                                     SystemClock.uptimeMillis(), mView, "DOUBLE_TAP");
@@ -296,10 +305,16 @@ public class NotificationShadeWindowViewController {
 
             @Override
             public boolean shouldInterceptTouchEvent(MotionEvent ev) {
-                if (mStatusBarStateController.isDozing() && !mService.isPulsing()
+                mIsMusicTickerTap = false;
+                if (mStatusBarStateController.isDozing()) {
+                    if (!mAmbientConfig.deviceHasSoli() && mService.isDoubleTapOnMusicTicker(ev.getX(), ev.getY())) {
+                        mIsMusicTickerTap = true;
+                    }
+                    if (!mService.isPulsing()
                         && !mDockManager.isDocked()) {
-                    // Capture all touch events in always-on.
-                    return true;
+                        // Capture all touch events in always-on.
+                        return true;
+                    }
                 }
                 boolean intercept = false;
                 if (mNotificationPanelViewController.isFullyExpanded()
