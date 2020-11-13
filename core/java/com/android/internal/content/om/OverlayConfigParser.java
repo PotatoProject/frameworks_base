@@ -151,6 +151,7 @@ final class OverlayConfigParser {
                 case PackagePartitions.PARTITION_OEM:
                     return POLICY_OEM;
                 case PackagePartitions.PARTITION_PRODUCT:
+                case PackagePartitions.PARTITION_EXTRA:
                     return POLICY_PRODUCT;
                 default:
                     throw new IllegalStateException("Unable to determine policy for "

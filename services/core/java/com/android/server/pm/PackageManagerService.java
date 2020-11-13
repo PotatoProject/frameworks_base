@@ -2724,6 +2724,8 @@ public class PackageManagerService extends IPackageManager.Stub
                     return SCAN_AS_OEM;
                 case PackagePartitions.PARTITION_PRODUCT:
                     return SCAN_AS_PRODUCT;
+                case PackagePartitions.PARTITION_EXTRA:
+                    return SCAN_AS_PRODUCT | SCAN_AS_SYSTEM;
                 case PackagePartitions.PARTITION_SYSTEM_EXT:
                     return SCAN_AS_SYSTEM_EXT;
                 default:
@@ -3044,6 +3046,7 @@ public class PackageManagerService extends IPackageManager.Stub
             }
 
             File frameworkDir = new File(Environment.getRootDirectory(), "framework");
+            File frameworkDirExtra = new File(Environment.getExtraDirectory(), "framework");
 
             final VersionInfo ver = mSettings.getInternalVersion();
             mIsUpgrade = !Build.FINGERPRINT.equals(ver.fingerprint);
@@ -3101,12 +3104,16 @@ public class PackageManagerService extends IPackageManager.Stub
                 if (partition.getOverlayFolder() == null) {
                     continue;
                 }
+                Log.i(TAG, "FANCY! Scanning " + partition.toString() + " for overlays");
                 scanDirTracedLI(partition.getOverlayFolder(), systemParseFlags,
                         systemScanFlags | partition.scanFlag, 0,
                         packageParser, executorService);
             }
 
             scanDirTracedLI(frameworkDir, systemParseFlags,
+                    systemScanFlags | SCAN_NO_DEX | SCAN_AS_PRIVILEGED, 0,
+                    packageParser, executorService);
+            scanDirTracedLI(frameworkDirExtra, systemParseFlags,
                     systemScanFlags | SCAN_NO_DEX | SCAN_AS_PRIVILEGED, 0,
                     packageParser, executorService);
             if (!mPackages.containsKey("android")) {
@@ -3116,10 +3123,12 @@ public class PackageManagerService extends IPackageManager.Stub
             for (int i = 0, size = mDirsToScanAsSystem.size(); i < size; i++) {
                 final ScanPartition partition = mDirsToScanAsSystem.get(i);
                 if (partition.getPrivAppFolder() != null) {
+                   Log.i(TAG, "FANCY! Scanning " + partition.toString() + " for priv-apps");
                     scanDirTracedLI(partition.getPrivAppFolder(), systemParseFlags,
                             systemScanFlags | SCAN_AS_PRIVILEGED | partition.scanFlag, 0,
                             packageParser, executorService);
                 }
+                Log.i(TAG, "FANCY! Scanning " + partition.toString() + " for apps");
                 scanDirTracedLI(partition.getAppFolder(), systemParseFlags,
                         systemScanFlags | partition.scanFlag, 0,
                         packageParser, executorService);
@@ -3955,7 +3964,9 @@ public class PackageManagerService extends IPackageManager.Stub
             // in general and should not be used for production changes. In this specific case,
             // we know that they will work.
             File frameworkDir = new File(Environment.getRootDirectory(), "framework");
-            if (cacheDir.lastModified() < frameworkDir.lastModified()) {
+            File frameworkDirExtra = new File(Environment.getExtraDirectory(), "framework");
+            if (cacheDir.lastModified() < frameworkDir.lastModified() ||
+                            cacheDir.lastModified() < frameworkDirExtra.lastModified()) {
                 FileUtils.deleteContents(cacheBaseDir);
                 cacheDir = FileUtils.createDir(cacheBaseDir, cacheName);
             }

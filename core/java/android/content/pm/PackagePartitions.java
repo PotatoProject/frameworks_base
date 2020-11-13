@@ -46,6 +46,7 @@ public class PackagePartitions {
     public static final int PARTITION_OEM = 3;
     public static final int PARTITION_PRODUCT = 4;
     public static final int PARTITION_SYSTEM_EXT = 5;
+    public static final int PARTITION_EXTRA = 6;
 
     @IntDef(flag = true, prefix = { "PARTITION_" }, value = {
         PARTITION_SYSTEM,
@@ -53,7 +54,8 @@ public class PackagePartitions {
         PARTITION_ODM,
         PARTITION_OEM,
         PARTITION_PRODUCT,
-        PARTITION_SYSTEM_EXT
+        PARTITION_SYSTEM_EXT,
+        PARTITION_EXTRA
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface PartitionType {}
@@ -75,6 +77,8 @@ public class PackagePartitions {
                     new SystemPartition(Environment.getProductDirectory(), PARTITION_PRODUCT,
                             true /* containsPrivApp */, true /* containsOverlay */),
                     new SystemPartition(Environment.getSystemExtDirectory(), PARTITION_SYSTEM_EXT,
+                            true /* containsPrivApp */, true /* containsOverlay */),
+                    new SystemPartition(Environment.getExtraDirectory(), PARTITION_EXTRA,
                             true /* containsPrivApp */, true /* containsOverlay */)));
 
     /**
