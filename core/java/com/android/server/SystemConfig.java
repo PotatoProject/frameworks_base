@@ -466,6 +466,12 @@ public class SystemConfig {
         readPermissions(Environment.buildPath(
                 Environment.getRootDirectory(), "etc", "permissions"), ALLOW_ALL);
 
+        // Extra configuration
+        readPermissions(Environment.buildPath(
+                Environment.getExtraDirectory(), "etc", "sysconfig"), ALLOW_ALL);
+        readPermissions(Environment.buildPath(
+                Environment.getExtraDirectory(), "etc", "permissions"), ALLOW_ALL);
+
         // Vendors are only allowed to customize these
         int vendorPermissionFlag = ALLOW_LIBS | ALLOW_FEATURES | ALLOW_PRIVAPP_PERMISSIONS
                 | ALLOW_ASSOCIATIONS;
