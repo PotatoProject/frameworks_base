@@ -66,6 +66,9 @@ public class Environment {
     private static final String ENV_APEX_ROOT = "APEX_ROOT";
 
     /** {@hide} */
+    private static final String ENV_EXTRA_ROOT = "EXTRA_ROOT";
+
+    /** {@hide} */
     public static final String DIR_ANDROID = "Android";
     private static final String DIR_DATA = "data";
     private static final String DIR_MEDIA = "media";
@@ -90,6 +93,8 @@ public class Environment {
             "/system_ext");
     private static final File DIR_APEX_ROOT = getDirectory(ENV_APEX_ROOT,
             "/apex");
+    /** {@hide} */
+    private static final File DIR_EXTRA_ROOT = getDirectory(ENV_EXTRA_ROOT, "/data/extra");
 
     /**
      * Scoped Storage is on by default. However, it is not strictly enforced and there are multiple
@@ -375,6 +380,14 @@ public class Environment {
     }
 
     /**
+     * @hide
+     */
+    @SystemApi
+    public static @NonNull File getExtraDirectory() {
+        return DIR_EXTRA_ROOT;
+    }
+
+    /**
      * Returns the base directory for per-user system directory, device encrypted.
      * {@hide}
      */
@@ -592,6 +605,7 @@ public class Environment {
         addCanonicalFile(res, new File(Environment.getRootDirectory(), "media"));
         addCanonicalFile(res, new File(Environment.getOemDirectory(), "media"));
         addCanonicalFile(res, new File(Environment.getProductDirectory(), "media"));
+        addCanonicalFile(res, new File(Environment.getExtraDirectory(), "media"));
         return res;
     }
 
