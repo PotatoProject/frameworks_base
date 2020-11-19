@@ -169,8 +169,8 @@ public class QSFactoryImpl implements QSFactory {
     private QSTileImpl createTileInternal(String tileSpec) {
         // Stock tiles.
         switch (tileSpec) {
-            case "wifi":
-                return mWifiTileProvider.get();
+            //case "wifi":
+            //    return mWifiTileProvider.get();
             case "internet":
                 return mInternetTileProvider.get();
             case "bt":
