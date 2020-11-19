@@ -57,6 +57,7 @@ public class FODCircleView extends ImageView {
     private final int mSize;
     private final int mDreamingMaxOffset;
     private final int mNavigationBarSize;
+    private final boolean mDeviceFlickersGoingToSleep;
     private final boolean mShouldBoostBrightness;
     private final Paint mPaintFingerprintBackground = new Paint();
     private final Paint mPaintFingerprint = new Paint();
@@ -129,7 +130,16 @@ public class FODCircleView extends ImageView {
 
         @Override
         public void onStartedGoingToSleep(int why) {
-            hide();
+            if (mDeviceFlickersGoingToSleep) {
+                hide();
+            }
+        }
+
+        @Override
+        public void onScreenTurnedOff() {
+            if (!mDeviceFlickersGoingToSleep) {
+                hide();
+            }
         }
 
         @Override
@@ -168,6 +178,9 @@ public class FODCircleView extends ImageView {
         mColorBackground = res.getColor(R.color.config_fodColorBackground);
         mPaintFingerprintBackground.setColor(mColorBackground);
         mPaintFingerprintBackground.setAntiAlias(true);
+
+        mDeviceFlickersGoingToSleep = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_inDisplayFingerprintFlickersGoingToSleep);
 
         mWindowManager = context.getSystemService(WindowManager.class);
 
