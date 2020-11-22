@@ -195,7 +195,7 @@ public class NavigationBarInflaterView extends FrameLayout
             onLikelyDefaultLayoutChange();
         }
         if (QuickStepContract.isGesturalMode(mNavBarMode)) {
-            onLikelyDefaultLayoutChange();
+            setNavigationBarLayout(newValue);
         }
     }
 
@@ -216,6 +216,8 @@ public class NavigationBarInflaterView extends FrameLayout
     public void onLikelyDefaultLayoutChange() {
 
         // Reevaluate new layout
+        // Don't override custom layouts
+        if (mUsingCustomLayout) return;
         final String newValue = getDefaultLayout();
         if (!Objects.equals(mCurrentLayout, newValue)) {
             clearViews();
