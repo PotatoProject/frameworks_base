@@ -102,7 +102,6 @@ public class NetworkTraffic extends TextView {
     private INetworkManagementService mNetworkManagementService;
 
     protected boolean mVisible = true;
-    protected boolean mScreenOn = true;
 
     private ConnectivityManager mConnectivityManager;
 
@@ -135,14 +134,13 @@ public class NetworkTraffic extends TextView {
             mAttached = true;
             IntentFilter filter = new IntentFilter();
             filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            filter.addAction(Intent.ACTION_SCREEN_OFF);
-            filter.addAction(Intent.ACTION_SCREEN_ON);
             mContext.registerReceiver(mIntentReceiver, filter, null, mTrafficHandler);
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
+        clearHandlerCallbacks();
         super.onDetachedFromWindow();
         if (mAttached) {
             mContext.unregisterReceiver(mIntentReceiver);
@@ -193,7 +191,7 @@ public class NetworkTraffic extends TextView {
             }
 
             mConnectionAvailable = isConnectionAvailable();
-            final boolean enabled = mLocation != 0 && mScreenOn;
+            final boolean enabled = mLocation != 0;
             final boolean showUpstream =
                     mMode == MODE_UPSTREAM_ONLY || mMode == MODE_UPSTREAM_AND_DOWNSTREAM;
             final boolean showDownstream =
@@ -305,7 +303,7 @@ public class NetworkTraffic extends TextView {
     };
 
     protected void updateVisibility() {
-        boolean enabled = mIsActive && (mLocation == 2) && mScreenOn && getText() != "";
+        boolean enabled = mIsActive && (mLocation == 2) && getText() != "";
         if (enabled != mVisible) {
             mVisible = enabled;
             setVisibility(mVisible ? VISIBLE : GONE);
@@ -317,13 +315,7 @@ public class NetworkTraffic extends TextView {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action == null) return;
-            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && mScreenOn) {
-                updateViews();
-            } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
-                mScreenOn = true;
-                updateViews();
-            } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
-                mScreenOn = false;
+            if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 updateViews();
             }
         }
@@ -453,7 +445,7 @@ public class NetworkTraffic extends TextView {
     }
 
     protected void updateViews() {
-        if (mLocation == 2 && mScreenOn) {
+        if (mLocation == 2) {
             updateViewState();
         } else {
             clearHandlerCallbacks();
