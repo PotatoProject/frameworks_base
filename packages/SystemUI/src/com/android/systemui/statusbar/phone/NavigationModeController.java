@@ -21,6 +21,7 @@ import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_GESTURAL;
 import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_GESTURAL_OVERLAY;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,6 +29,9 @@ import android.content.om.IOverlayManager;
 import android.content.om.OverlayInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ApkAssets;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.PatternMatcher;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -96,7 +100,6 @@ public class NavigationModeController implements Dumpable {
             updateCurrentInteractionMode(true /* notify */);
         }
     };
-
 
     @Inject
     public NavigationModeController(Context context,
