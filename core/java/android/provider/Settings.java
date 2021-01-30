@@ -4905,6 +4905,11 @@ public final class Settings {
          */
         public static final String SHOW_FOURG_ICON = "show_fourg_icon";
 
+        /** Width of the navigation handle.
+         *  @hide
+         */
+        public static final String NAVIGATION_HANDLE_WIDTH = "navigation_handle_width";
+
         /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
@@ -5027,6 +5032,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(SYSTEMUI_PLUGIN_VOLUME);
             PRIVATE_SETTINGS.add(DISPLAY_CUTOUT_MODE);
             PRIVATE_SETTINGS.add(STOCK_STATUSBAR_IN_HIDE);
+            PRIVATE_SETTINGS.add(NAVIGATION_HANDLE_WIDTH);
         }
 
         /**
@@ -9115,13 +9121,13 @@ public final class Settings {
          * @hide
          */
         public static final String QS_SHOW_BRIGHTNESS_SLIDER = "qs_show_brightness_slider";
- 
+
         /**
          * Boolean value whether to link ringtone and notification volume
          * @hide
          */
         public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
-        
+
         /**
          * Whether applications can fake a signature.
          * 1 = permit apps to fake signature
