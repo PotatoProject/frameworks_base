@@ -368,7 +368,9 @@ public class NavigationBarInflaterView extends FrameLayout
         } else if (RIGHT.equals(button)) {
             button = extractButton(MENU_IME_ROTATE);
         }
-        if (HOME.equals(button)) {
+        if(HOME_HANDLE.equals(button)) {
+            v = inflater.inflate(R.layout.home_handle, parent, false);
+        } else if (HOME.equals(button)) {
             v = inflater.inflate(R.layout.home, parent, false);
         } else if (BACK.equals(button)) {
             v = inflater.inflate(R.layout.back, parent, false);
@@ -382,8 +384,6 @@ public class NavigationBarInflaterView extends FrameLayout
             v = inflater.inflate(R.layout.clipboard, parent, false);
         } else if (CONTEXTUAL.equals(button)) {
             v = inflater.inflate(R.layout.contextual, parent, false);
-        } else if (HOME_HANDLE.equals(button)) {
-            v = inflater.inflate(R.layout.home_handle, parent, false);
         } else if (IME_SWITCHER.equals(button)) {
             v = inflater.inflate(R.layout.ime_switcher, parent, false);
         } else if (button.startsWith(KEY)) {
