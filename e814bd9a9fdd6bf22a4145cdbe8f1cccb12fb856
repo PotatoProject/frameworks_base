@@ -22,6 +22,30 @@
       "revId": "e814bd9a9fdd6bf22a4145cdbe8f1cccb12fb856",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f398d4a6_bdc6fc7b",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/NavigationBarInflaterView.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 1000165
+      },
+      "writtenOn": "2021-02-09T15:17:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "921e3237_caa25686",
+      "range": {
+        "startLine": 456,
+        "startChar": 0,
+        "endLine": 456,
+        "endChar": 1
+      },
+      "revId": "e814bd9a9fdd6bf22a4145cdbe8f1cccb12fb856",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": false
     }
   ]
 }
