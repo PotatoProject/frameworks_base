@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3a68acc_4115b2fc",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/NavigationHandle.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2021-02-09T15:15:11Z",
+      "side": 1,
+      "message": "Extra whitespace",
+      "revId": "ece4fefa19f7cb812de50d19dbf956ab0dceb607",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
