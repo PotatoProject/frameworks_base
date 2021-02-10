@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8968076_11dc2497",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/NavigationModeController.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2021-02-10T16:32:09Z",
+      "side": 1,
+      "message": "Changes to this file have no effect",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 37
+      },
+      "revId": "c3a6f5c2b4ca6e1224405917f835b997ce49fd39",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
