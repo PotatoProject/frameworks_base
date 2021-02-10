@@ -16,6 +16,24 @@
       "revId": "ece4fefa19f7cb812de50d19dbf956ab0dceb607",
       "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2e840e9_7782dd15",
+        "filename": "packages/SystemUI/src/com/android/systemui/statusbar/phone/NavigationHandle.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000165
+      },
+      "writtenOn": "2021-02-10T04:00:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3a68acc_4115b2fc",
+      "revId": "ece4fefa19f7cb812de50d19dbf956ab0dceb607",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": false
     }
   ]
 }
