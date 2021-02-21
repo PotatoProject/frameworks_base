@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "feb9e8cd_57f292c4",
+        "filename": "packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialog.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2021-02-21T17:46:50Z",
+      "side": 1,
+      "message": "use spaces",
+      "range": {
+        "startLine": 702,
+        "startChar": 0,
+        "endLine": 702,
+        "endChar": 5
+      },
+      "revId": "314539677f486821ec2b8fc28987c8e5b96d3f53",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
