@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -89,6 +90,8 @@ public class NavigationBarInflaterView extends FrameLayout
     public static final String WEIGHT_SUFFIX = "W";
     public static final String WEIGHT_CENTERED_SUFFIX = "WC";
 
+    private static final String KEY_NAVIGATION_HINT =
+            Settings.Secure.NAVIGATION_BAR_HINT;
     private static final String OVERLAY_NAVIGATION_HIDE_HINT =
             "co.potatoproject.overlay.navbar.nohint";
 

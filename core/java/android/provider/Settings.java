@@ -9132,7 +9132,7 @@ public final class Settings {
          * @hide
          */
         public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
-        
+
         /**
          * Whether applications can fake a signature.
          * 1 = permit apps to fake signature
@@ -9140,6 +9140,12 @@ public final class Settings {
          * @hide
          */
         public static final String ALLOW_SIGNATURE_FAKE = "allow_signature_fake";
+
+        /**
+         * boolean value. toggles swipe up hint in gestural nav mode
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_HINT = "navigation_bar_hint";
 
         /**
          * Keys we no longer back up under the current schema, but want to continue to
