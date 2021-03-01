@@ -210,5 +210,8 @@ public class SystemSettingsValidators {
         VALIDATORS.put(System.SHOW_BATTERY_PERCENT, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.NOTIFICATION_LIGHT_PULSE, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.NAVIGATION_HANDLE_WIDTH, ANY_INTEGER_VALIDATOR);
+        VALIDATORS.put(System.NETWORK_TRAFFIC_LOCATION, new InclusiveIntegerRangeValidator(0, 2));
+        VALIDATORS.put(System.NETWORK_TRAFFIC_AUTOHIDE, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(System.NETWORK_TRAFFIC_UNIT_TYPE, new InclusiveIntegerRangeValidator(0, 1));
     }
 }

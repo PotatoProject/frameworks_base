@@ -70,6 +70,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private View mClockView;
     private View mNotificationIconAreaInner;
     private View mCenteredIconArea;
+    private View mNetworkTrafficHolder;
     private int mDisabled1;
     private StatusBar mStatusBarComponent;
     private DarkIconManager mDarkIconManager;
@@ -162,6 +163,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         mStatusIcons.setPadding(mStatusIcons.getPaddingLeft(), mStatusIcons.getPaddingTop(), (batteryStyle == 5/*hidden*/ ? 0 : mSignalClusterEndPadding), mStatusIcons.getPaddingBottom());
         mBatteryMeterView = mStatusBar.findViewById(R.id.battery);
         mBatteryMeterView.addCallback(mBatteryMeterViewCallback);
+        mNetworkTrafficHolder = mSystemIconArea.findViewById(R.id.network_traffic_holder);
         showSystemIconArea(false);
         showClock(false);
         initEmergencyCryptkeeperText();
@@ -319,10 +321,12 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     public void hideSystemIconArea(boolean animate) {
         animateHide(mSystemIconArea, animate);
+        animateHide(mNetworkTrafficHolder, animate);
     }
 
     public void showSystemIconArea(boolean animate) {
         animateShow(mSystemIconArea, animate);
+        animateShow(mNetworkTrafficHolder, animate);
     }
 
     public void hideClock(boolean animate) {
