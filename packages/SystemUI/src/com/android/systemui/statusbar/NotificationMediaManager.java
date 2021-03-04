@@ -42,6 +42,7 @@ import android.provider.DeviceConfig;
 import android.provider.DeviceConfig.Properties;
 import android.text.TextUtils;
 import android.provider.Settings;
+import android.service.notification.NotificationListenerService;
 import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +55,7 @@ import com.android.systemui.Dumpable;
 import com.android.systemui.Interpolators;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.dagger.qualifiers.Main;
+import com.android.systemui.media.MediaData;
 import com.android.systemui.media.MediaDataManager;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.statusbar.dagger.StatusBarModule;
@@ -261,6 +263,24 @@ public class NotificationMediaManager implements Dumpable, TunerService.Tunable 
             @Override
             public void onEntryCleanUp(@NonNull NotificationEntry entry) {
                 removeEntry(entry);
+            }
+        });
+
+        mMediaDataManager.addListener(new MediaDataManager.Listener() {
+            @Override
+            public void onMediaDataLoaded(@NonNull String key,
+                    @Nullable String oldKey, @NonNull MediaData data) {
+            }
+
+            @Override
+            public void onMediaDataRemoved(@NonNull String key) {
+                NotificationEntry entry = mEntryManager.getPendingOrActiveNotif(key);
+                if (entry != null) {
+                    // TODO(b/160713608): "removing" this notification won't happen and
+                    //  won't send the 'deleteIntent' if the notification is ongoing.
+                    mEntryManager.performRemoveNotification(entry.getSbn(),
+                            NotificationListenerService.REASON_CANCEL);
+                }
             }
         });
 
