@@ -60,6 +60,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.app.UiModeManager;
+import android.app.WallpaperColors;
 import android.app.WallpaperInfo;
 import android.app.WallpaperManager;
 import android.app.admin.DevicePolicyManager;
@@ -76,6 +77,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.media.AudioAttributes;
@@ -127,6 +129,7 @@ import androidx.lifecycle.LifecycleRegistry;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.colorextraction.ColorExtractor;
+import com.android.internal.graphics.ColorUtils;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEvent;
 import com.android.internal.logging.UiEventLogger;
@@ -3622,6 +3625,44 @@ public class StatusBar extends SystemUI implements DemoMode,
             mContext.setTheme(themeResId);
             mConfigurationController.notifyThemeChanged();
         }
+	updateAccentColors();
+    }
+
+    private void updateAccentColors() {
+        WallpaperColors systemColors = mColorExtractor
+                .getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+
+	if (systemColors != null)
+        {
+            int light;
+	    int dark;
+
+            Color mColor = systemColors.getPrimaryColor();
+	    float[] hsl = new float[3];
+            ColorUtils.colorToHSL(mColor.toArgb(), hsl);
+            Color mOppositeColor = oppositeShade(mColor);
+            boolean isDark = hsl[2] <= 0.5;
+
+            if(isDark) {
+                light = mColor.toArgb();
+                dark = mOppositeColor.toArgb();
+            } else {
+                light = mOppositeColor.toArgb();
+                dark = mColor.toArgb();
+            }
+
+            Settings.Secure.putStringForUser(mContext.getContentResolver(),
+                    "accent_light", Integer.toHexString(light), UserHandle.USER_CURRENT);
+            Settings.Secure.putStringForUser(mContext.getContentResolver(),
+                     "accent_dark", Integer.toHexString(dark), UserHandle.USER_CURRENT);
+        }
+    }
+
+    private Color oppositeShade(Color color) {
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(color.toArgb(), hsl);
+        hsl[2] = 1f - hsl[2];
+        return Color.valueOf(ColorUtils.HSLToColor(hsl));
     }
 
     private void updateDozingState() {

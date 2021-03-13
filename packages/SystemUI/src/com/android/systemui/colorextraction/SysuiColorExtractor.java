@@ -111,6 +111,10 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable,
         return super.getColors(which, type);
     }
 
+    public WallpaperColors getSystemColors() {
+        return mSystemColors;
+    }
+
     /**
      * Colors that should be using for scrims.
      *
