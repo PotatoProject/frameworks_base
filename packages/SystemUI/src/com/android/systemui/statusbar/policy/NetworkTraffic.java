@@ -61,7 +61,6 @@ public class NetworkTraffic extends TextView {
     // Thresholds themselves are always defined in kbps
     private static final long AUTOHIDE_THRESHOLD = 10;
 
-    protected static final int MODE_DISABLED = 0;
     protected static final int MODE_STATUS_BAR = 1;
     private static final int MODE_QS = 2;
 
@@ -178,7 +177,7 @@ public class NetworkTraffic extends TextView {
         }
 
         private void displayStatsAndReschedule() {
-            final boolean enabled = mMode != MODE_DISABLED && mScreenOn
+            final boolean enabled = mScreenOn
                     && isConnectionAvailable();
             final boolean shouldHide = !enabled ||
                     (mAutoHide &&
@@ -392,7 +391,7 @@ public class NetworkTraffic extends TextView {
     }
 
     protected void updateVisibility() {
-        if (mMode != MODE_DISABLED && mMode == getMyMode() && mTrafficVisible) {
+        if (mMode == getMyMode() && mTrafficVisible) {
             setVisibility(View.VISIBLE);
         } else {
             setVisibility(View.GONE);
