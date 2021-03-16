@@ -45,9 +45,6 @@ public class StatusBarNetworkTraffic extends NetworkTraffic {
 
     @Override
     protected int getMyMode(){
-        if (CutoutUtils.hasCutout(mContext)){
-            return MODE_DISABLED;
-        }
         return MODE_STATUS_BAR;
     }
 }
