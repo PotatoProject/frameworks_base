@@ -4874,7 +4874,7 @@ public final class Settings {
          */
         public static final String STOCK_STATUSBAR_IN_HIDE = "stock_statusbar_in_hide";
 
-        /*
+        /**
          * Whether to use smart clock or not
          * @hide
          */
