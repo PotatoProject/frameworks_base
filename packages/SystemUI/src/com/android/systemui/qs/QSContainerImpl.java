@@ -19,6 +19,8 @@ package com.android.systemui.qs;
 import static android.app.StatusBarManager.DISABLE2_QUICK_SETTINGS;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
+import android.annotation.SuppressLint;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
@@ -38,14 +40,17 @@ import android.widget.FrameLayout;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringForce;
 
+import com.android.internal.colorextraction.ColorExtractor;
+import com.android.systemui.Dependency;
 import com.android.systemui.R;
+import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.util.animation.PhysicsAnimator;
 
 /**
  * Wrapper view with background which contains {@link QSPanel} and {@link BaseStatusBarHeader}
  */
-public class QSContainerImpl extends FrameLayout {
+public class QSContainerImpl extends FrameLayout implements ColorExtractor.OnColorsChangedListener {
 
     private final Point mSizePoint = new Point();
     private static final FloatPropertyCompat<QSContainerImpl> BACKGROUND_BOTTOM =
@@ -88,12 +93,17 @@ public class QSContainerImpl extends FrameLayout {
     private Drawable mQsBackGround;
     private int mQsBackGroundAlpha;
     private int mQsBackGroundColor;
+    private boolean mSetQsFromWall;
+
+    private SysuiColorExtractor mColorExtractor;
 
     public QSContainerImpl(Context context, AttributeSet attrs) {
         super(context, attrs);
         Handler handler = new Handler();
         SettingsObserver settingsObserver = new SettingsObserver(handler);
         settingsObserver.observe();
+        mColorExtractor = Dependency.get(SysuiColorExtractor.class);
+        mColorExtractor.addOnColorsChangedListener(this);
     }
 
     @Override
@@ -126,6 +136,11 @@ public class QSContainerImpl extends FrameLayout {
         updateSettings();
     }
 
+    @Override
+    public void onColorsChanged(ColorExtractor colorExtractor, int which) {
+        setQsBackground();
+    }
+
     private class SettingsObserver extends ContentObserver {
         SettingsObserver(Handler handler) {
             super(handler);
@@ -139,6 +154,9 @@ public class QSContainerImpl extends FrameLayout {
                     this, UserHandle.USER_ALL);
             getContext().getContentResolver().registerContentObserver(Settings.System
                     .getUriFor(Settings.System.QS_PANEL_BG_COLOR), false,
+                    this, UserHandle.USER_ALL);
+            getContext().getContentResolver().registerContentObserver(Settings.System
+                    .getUriFor(Settings.System.SYSUI_COLORS_ACTIVE), false,
                     this, UserHandle.USER_ALL);
         }
 
@@ -155,6 +173,10 @@ public class QSContainerImpl extends FrameLayout {
                 mQsBackGroundColor = Settings.System.getIntForUser(getContext().getContentResolver(),
                         Settings.System.QS_PANEL_BG_COLOR, Color.WHITE, UserHandle.USER_CURRENT);
                 setQsBackground();
+            } else if (uri.equals(Settings.System.getUriFor(Settings.System.SYSUI_COLORS_ACTIVE))) {
+                mSetQsFromWall = Settings.System.getIntForUser(getContext().getContentResolver(),
+                        Settings.System.SYSUI_COLORS_ACTIVE, 0, UserHandle.USER_CURRENT) == 1;
+                setQsBackground();
             }
         }
     }
@@ -166,6 +188,8 @@ public class QSContainerImpl extends FrameLayout {
                 Settings.System.QS_PANEL_BG_ALPHA, 255, UserHandle.USER_CURRENT);
         mQsBackGroundColor = Settings.System.getIntForUser(getContext().getContentResolver(),
                 Settings.System.QS_PANEL_BG_COLOR, Color.WHITE, UserHandle.USER_CURRENT);
+        mSetQsFromWall = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SYSUI_COLORS_ACTIVE, 0, UserHandle.USER_CURRENT) == 1;
 
         setBackgroundGradientVisibility(null);
         setQsBackground();
@@ -194,11 +218,17 @@ public class QSContainerImpl extends FrameLayout {
     }
 
     private void setQsBackground() {
+        int currentColor = mSetQsFromWall ? getWallpaperColor() : mQsBackGroundColor;
         if (mQsBackGround != null) {
-            mQsBackGround.setColorFilter(mQsBackGroundColor, PorterDuff.Mode.SRC_ATOP);
+            mQsBackGround.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP);
             mQsBackGround.setAlpha(mQsBackGroundAlpha);
             mBackground.setBackground(mQsBackGround);
         }
+    }
+
+    private int getWallpaperColor() {
+        // TODO: Find a way to trigger setBackground on lock event, and use FLAG_LOCK there
+        return mColorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM).getPrimaryColor().toArgb();
     }
 
     @Override
