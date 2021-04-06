@@ -509,7 +509,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
     private int getWallpaperColor() {
         final SysuiColorExtractor colorExtractor = Dependency.get(SysuiColorExtractor.class);
         // TODO: Find a way to trigger setBackground on lock event, and use FLAG_LOCK there
-        return mColorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM).getPrimaryColor().toArgb();
+        return colorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM).getPrimaryColor().toArgb();
     }
 
     public static int getColorForState(Context context, int state) {
