@@ -30,6 +30,7 @@ import static com.android.settingslib.RestrictedLockUtils.EnforcedAdmin;
 import android.annotation.CallSuper;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
+import android.app.WallpaperColors;
 import android.app.WallpaperManager;
 import android.content.res.ColorUtils;
 import android.content.Context;
@@ -506,10 +507,13 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
      */
     public abstract CharSequence getTileLabel();
 
-    private static int getWallpaperColor() {
+    private static int getWallpaperColor(int defaultColor) {
         final SysuiColorExtractor colorExtractor = Dependency.get(SysuiColorExtractor.class);
         // TODO: Find a way to trigger setBackground on lock event, and use FLAG_LOCK there
-        return colorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM).getPrimaryColor().toArgb();
+	if (colorExtractor == null) return defaultColor;
+        WallpaperColors wallpaperColors = colorExtractor.getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+	if (wallpaperColors == null) return defaultColor;
+        return .getPrimaryColor().toArgb();
     }
 
     public static int getColorForState(Context context, int state) {
@@ -522,7 +526,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
 
         int qsBackGroundColor = ColorUtils.getValidQsColor(System.getIntForUser(context.getContentResolver(),
                 System.QS_PANEL_BG_COLOR, defaultColor, UserHandle.USER_CURRENT));
-        int qsBackGroundColorWall = ColorUtils.getValidQsColor(getWallpaperColor());
+        int qsBackGroundColorWall = ColorUtils.getValidQsColor(getWallpaperColor(defaultColor));
 
         switch (state) {
             case Tile.STATE_UNAVAILABLE:
