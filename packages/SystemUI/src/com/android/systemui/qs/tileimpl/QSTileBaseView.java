@@ -81,6 +81,7 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
     private int mBgSize;
 
     private boolean mShouldDisco;
+    private boolean setQsUseNewTint;
 
 
     public QSTileBaseView(Context context, QSIconView icon) {
@@ -130,6 +131,9 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
         mShouldDisco = Settings.System.getIntForUser(context.getContentResolver(),
                 Settings.System.QS_TILES_BG_DISCO, 0, UserHandle.USER_CURRENT) == 1;
 
+        setQsUseNewTint = Settings.System.getIntForUser(context.getContentResolver(),
+                Settings.System.QS_PANEL_BG_USE_NEW_TINT, 1, UserHandle.USER_CURRENT) == 1;
+
         setActiveColor(context);
         mColorDisabled = Utils.getDisabled(context,
                 Utils.getColorAttrDefaultColor(context, android.R.attr.textColorTertiary));
@@ -147,7 +151,10 @@ public class QSTileBaseView extends com.android.systemui.plugins.qs.QSTileView {
             mColorActive = ColorUtils.genRandomAccentColor(isThemeDark(context), (long) mIcon.toString().hashCode());
         else {
             int activeColor = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
-            mColorActive = ColorUtils.setAlphaComponent(activeColor, 51 /* 20% opacity */);
+            if (setQsUseNewTint)
+	        mColorActive = ColorUtils.setAlphaComponent(activeColor, 51 /* 20% opacity */);
+            else
+                mColorActive = Utils.getColorAttrDefaultColor(context, android.R.attr.colorAccent);
         }
     }
 
