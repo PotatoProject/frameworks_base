@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba74761c_1d6e8a83",
+        "filename": "core/java/android/provider/Settings.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 4926,
+      "author": {
+        "id": 1000039
+      },
+      "writtenOn": "2021-05-05T10:14:49Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 4926,
+        "startChar": 55,
+        "endLine": 4926,
+        "endChar": 59
+      },
+      "revId": "d58d6f4e1f53eac5bb0fe5c3c40995b0d6fbb55c",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34ec70c1_5eddbbcc",
+        "filename": "packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSIconViewImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1000039
+      },
+      "writtenOn": "2021-05-05T10:14:49Z",
+      "side": 1,
+      "message": "remember to update this",
+      "range": {
+        "startLine": 185,
+        "startChar": 28,
+        "endLine": 185,
+        "endChar": 43
+      },
+      "revId": "d58d6f4e1f53eac5bb0fe5c3c40995b0d6fbb55c",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554",
+      "unresolved": true
+    }
+  ]
+}
