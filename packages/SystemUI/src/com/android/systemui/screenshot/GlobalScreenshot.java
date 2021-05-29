@@ -948,7 +948,7 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
         mActionsView.addView(shareChip);
         chips.add(shareChip);
 
-        /* ScreenshotActionChip editChip = (ScreenshotActionChip) inflater.inflate(
+        ScreenshotActionChip editChip = (ScreenshotActionChip) inflater.inflate(
                 R.layout.global_screenshot_action_chip, mActionsView, false);
         editChip.setText(imageData.editAction.title);
         editChip.setIcon(imageData.editAction.getIcon(), true);
@@ -958,7 +958,7 @@ public class GlobalScreenshot implements ViewTreeObserver.OnComputeInternalInset
             mOnCompleteRunnable.run();
         });
         mActionsView.addView(editChip);
-        chips.add(editChip); */
+        chips.add(editChip);
 
         ScreenshotActionChip deleteChip = (ScreenshotActionChip) inflater.inflate(
                 R.layout.global_screenshot_action_chip, mActionsView, false);
