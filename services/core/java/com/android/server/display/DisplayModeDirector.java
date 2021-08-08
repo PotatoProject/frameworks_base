@@ -862,8 +862,6 @@ public class DisplayModeDirector {
                 Settings.System.getUriFor(Settings.System.MIN_REFRESH_RATE);
         private final Uri mLowPowerModeSetting =
                 Settings.Global.getUriFor(Settings.Global.LOW_POWER_MODE);
-        private final Uri mLowPowerRefreshRateSetting =
-                Settings.System.getUriFor(Settings.System.LOW_POWER_REFRESH_RATE);
 
         private final Context mContext;
         private float mDefaultPeakRefreshRate;
@@ -887,8 +885,6 @@ public class DisplayModeDirector {
             cr.registerContentObserver(mMinRefreshRateSetting, false /*notifyDescendants*/, this,
                     UserHandle.USER_SYSTEM);
             cr.registerContentObserver(mLowPowerModeSetting, false /*notifyDescendants*/, this,
-                    UserHandle.USER_SYSTEM);
-            cr.registerContentObserver(mLowPowerRefreshRateSetting, false /*notifyDescendants*/, this,
                     UserHandle.USER_SYSTEM);
 
             Float deviceConfigDefaultPeakRefresh =
@@ -930,8 +926,7 @@ public class DisplayModeDirector {
                 if (mPeakRefreshRateSetting.equals(uri)
                         || mMinRefreshRateSetting.equals(uri)) {
                     updateRefreshRateSettingLocked();
-                } else if (mLowPowerModeSetting.equals(uri)
-                        || mLowPowerRefreshRateSetting.equals(uri)) {
+                } else if (mLowPowerModeSetting.equals(uri)) {
                     updateLowPowerModeSettingLocked();
                 }
             }
@@ -940,10 +935,8 @@ public class DisplayModeDirector {
         private void updateLowPowerModeSettingLocked() {
             boolean inLowPowerMode = Settings.Global.getInt(mContext.getContentResolver(),
                     Settings.Global.LOW_POWER_MODE, 0 /*default*/) != 0;
-            boolean shouldSwitchRefreshRate = Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.LOW_POWER_REFRESH_RATE, 1 /*default*/) != 0;
             final Vote vote;
-            if (inLowPowerMode && shouldSwitchRefreshRate) {
+            if (inLowPowerMode) {
                 vote = Vote.forRefreshRates(0f, 60f);
             } else {
                 vote = null;
