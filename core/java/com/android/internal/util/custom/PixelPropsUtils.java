@@ -42,9 +42,9 @@ public class PixelPropsUtils {
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
         propsToChange.put("MANUFACTURER", "Google");
-        propsToChange.put("DEVICE", "redfin");
-        propsToChange.put("PRODUCT", "redfin");
-        propsToChange.put("MODEL", "Pixel 5");
+        propsToChange.put("DEVICE", "coral");
+        propsToChange.put("PRODUCT", "coral");
+        propsToChange.put("MODEL", "Pixel 4 XL");
         propsToChange.put("IS_DEBUGGABLE", false);
         propsToChange.put("IS_ENG", false);
         propsToChange.put("IS_USERDEBUG", false);
