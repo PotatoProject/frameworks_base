@@ -165,6 +165,7 @@ public class UdfpsController implements DozeReceiver {
     private boolean mOnFingerDown;
     private boolean mAttemptedToDismissKeyguard;
     private Set<Callback> mCallbacks = new HashSet<>();
+    private final int mUdfpsVendorCode;
 
     @VisibleForTesting
     public static final AudioAttributes VIBRATION_SONIFICATION_ATTRIBUTES =
@@ -318,6 +319,19 @@ public class UdfpsController implements DozeReceiver {
                     return;
                 }
                 mView.setDebugMessage(message);
+            });
+        }
+
+        @Override
+        public void onAcquired(int sensorId, int acquiredInfo, int vendorCode) {
+            mFgExecutor.execute(() -> {
+                if (acquiredInfo == 6 && (mStatusBarStateController.isDozing() || !mScreenOn)) {
+                    if (vendorCode == mUdfpsVendorCode) {
+                        mPowerManager.wakeUp(mSystemClock.uptimeMillis(),
+                                PowerManager.WAKE_REASON_GESTURE, TAG);
+                        onAodInterrupt(0, 0, 0, 0); // To-Do pass proper values
+                    }
+                }
             });
         }
     }
@@ -645,6 +659,9 @@ public class UdfpsController implements DozeReceiver {
         context.registerReceiver(mBroadcastReceiver, filter);
 
         udfpsHapticsSimulator.setUdfpsController(this);
+
+        mUdfpsVendorCode = mContext.getResources().getInteger(R.integer.config_udfps_vendor_code);
+
     }
 
     /**
