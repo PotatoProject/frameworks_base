@@ -56,6 +56,7 @@ class FingerprintAuthenticationClient extends AuthenticationClient<IBiometricsFi
     @NonNull private final SensorOverlays mSensorOverlays;
     @NonNull private final FingerprintSensorPropertiesInternal mSensorProps;
     @NonNull private final CallbackWithProbe<Probe> mALSProbeCallback;
+    @NonNull private final IUdfpsOverlayController mUdfpsOverlayController;
 
     private boolean mIsPointerDown;
 
@@ -81,6 +82,7 @@ class FingerprintAuthenticationClient extends AuthenticationClient<IBiometricsFi
         mSensorOverlays = new SensorOverlays(udfpsOverlayController, sidefpsController);
         mSensorProps = sensorProps;
         mALSProbeCallback = createALSCallback(false /* startWithClient */);
+        mUdfpsOverlayController = udfpsOverlayController;
     }
 
     @Override
@@ -99,6 +101,15 @@ class FingerprintAuthenticationClient extends AuthenticationClient<IBiometricsFi
     @Override
     protected Callback wrapCallbackForStart(@NonNull Callback callback) {
         return new CompositeCallback(mALSProbeCallback, callback);
+    }
+
+    @Override
+    public void onAcquired(int acquiredInfo, int vendorCode) {
+        super.onAcquired(acquiredInfo, vendorCode);
+        try {
+            mUdfpsOverlayController.onAcquired(getSensorId(), acquiredInfo, vendorCode);
+        } catch (Exception e) {
+        }
     }
 
     @Override
