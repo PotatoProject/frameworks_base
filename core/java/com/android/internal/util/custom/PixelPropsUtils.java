@@ -41,6 +41,14 @@ public class PixelPropsUtils {
         "com.breel.wallpapers20"
     };
 
+    private static final String[] packagesToKeep = {
+        "com.google.android.GoogleCamera",
+        "com.google.android.apps.cameralite",
+        "com.google.ar.core",
+        "com.google.android.apps.wearables.maestro.companion",
+        "com.google.android.apps.recorder"
+    };
+
     // Codenames for currently supported Pixels by Google
     private static final String[] pixelCodenames = {
         "oriole",
@@ -74,7 +82,7 @@ public class PixelPropsUtils {
             setPropValue("MODEL", "Pixel 5" + " ");
             sIsGms = true;
         }
-        if (packageName.startsWith("com.google.") || Arrays.asList(extraPackagesToChange).contains(packageName)){
+        if (packageName.startsWith("com.google.") || Arrays.asList(extraPackagesToChange).contains(packageName) && !Arrays.asList(packagesToKeep).contains(packageName)){
             if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
             for (Map.Entry<String, Object> prop : propsToChange.entrySet()) {
                 String key = prop.getKey();
