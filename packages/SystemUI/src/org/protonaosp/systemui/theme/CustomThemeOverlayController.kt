@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.protonaosp.systemui.theme
-
 import android.annotation.ColorInt
 import android.app.WallpaperColors
 import android.app.WallpaperManager
 import android.content.Context
 import android.content.om.FabricatedOverlay
 import android.os.Handler
+import android.os.SystemProperties
 import android.os.UserManager
 import android.provider.Settings
 import android.util.Log
@@ -53,7 +52,6 @@ import java.util.concurrent.Executor
 import javax.inject.Inject
 import kotlin.math.log10
 import kotlin.math.pow
-
 @SysUISingleton
 class CustomThemeOverlayController @Inject constructor(
     private val context: Context,
@@ -89,7 +87,7 @@ class CustomThemeOverlayController @Inject constructor(
 ), Tunable {
     private lateinit var cond: Zcam.ViewingConditions
     private lateinit var targets: MaterialYouTargets
-
+    private lateinit var colorScheme: DynamicColorScheme
     private var colorOverride: Int = Settings.Secure.getInt(mContext.contentResolver, PREF_COLOR_OVERRIDE, COLOR_OVERRIDE_DEFAULT)
     private var chromaFactor: Double = Settings.Secure.getFloat(mContext.contentResolver, PREF_CHROMA_FACTOR, 1.0f).toDouble()
     private var accurateShades: Boolean = Settings.Secure.getInt(mContext.contentResolver, PREF_ACCURATE_SHADES, 1) != 0
@@ -97,13 +95,11 @@ class CustomThemeOverlayController @Inject constructor(
             Settings.Secure.getInt(mContext.contentResolver, PREF_WHITE_LUMINANCE, WHITE_LUMINANCE_USER_DEFAULT))
     private var linearLightness: Boolean = Settings.Secure.getInt(mContext.contentResolver, PREF_LINEAR_LIGHTNESS, 0) != 0
     private var customColor: Boolean = Settings.Secure.getInt(mContext.contentResolver, PREF_CUSTOM_COLOR, 0) == 1
-
     override fun start() {
         tunerService.addTunable(this, PREF_COLOR_OVERRIDE, PREF_WHITE_LUMINANCE,
                 PREF_CHROMA_FACTOR, PREF_ACCURATE_SHADES, PREF_LINEAR_LIGHTNESS, PREF_CUSTOM_COLOR)
         super.start()
     }
-
     override fun onTuningChanged(key: String?, newValue: String?) {
         key?.let {
             if (it.contains(PREF_PREFIX)) {
@@ -122,11 +118,9 @@ class CustomThemeOverlayController @Inject constructor(
             }
         }
     }
-
     // Seed colors
     override fun getNeutralColor(colors: WallpaperColors) = colors.primaryColor.toArgb()
     override fun getAccentColor(colors: WallpaperColors) = getNeutralColor(colors)
-
     override fun getOverlay(primaryColor: Int, type: Int): FabricatedOverlay {
         cond = Zcam.ViewingConditions(
             surroundFactor = Zcam.ViewingConditions.SURROUND_AVERAGE,
@@ -140,55 +134,68 @@ class CustomThemeOverlayController @Inject constructor(
             ).toXyz().y * whiteLuminance,
             referenceWhite = Illuminants.D65.toAbs(whiteLuminance),
         )
-
         targets = MaterialYouTargets(
             chromaFactor = chromaFactor,
             useLinearLightness = linearLightness,
             cond = cond,
         )
-
         // Generate color scheme
-        val colorScheme = DynamicColorScheme(
+        colorScheme = DynamicColorScheme(
             targets = targets,
             seedColor = if (customColor) Srgb(colorOverride) else Srgb(primaryColor),
             chromaFactor = chromaFactor,
             cond = cond,
             accurateShades = accurateShades,
         )
-
         val (groupKey, colorsList) = when (type) {
             ACCENT -> "accent" to colorScheme.accentColors
             NEUTRAL -> "neutral" to colorScheme.neutralColors
             else -> error("Unknown type $type")
         }
-
+        setBootAnimColors()
         return FabricatedOverlay.Builder(context.packageName, groupKey, "android").run {
             colorsList.withIndex().forEach { listEntry ->
                 val group = "$groupKey${listEntry.index + 1}"
-
                 listEntry.value.forEach { (shade, color) ->
                     val colorSrgb = color.convert<Srgb>()
                     Log.d(TAG, "Color $group $shade = ${colorSrgb.toHex()}")
                     setColor("system_${group}_$shade", colorSrgb)
                 }
             }
-
             // Override special modulated surface colors for performance and consistency
             if (type == NEUTRAL) {
                 // surface light = neutral1 20 (L* 98)
                 colorsList[0][20]?.let { setColor("surface_light", it) }
-
                 // surface highlight dark = neutral1 650 (L* 35)
                 colorsList[0][650]?.let { setColor("surface_highlight_dark", it) }
             }
-
             build()
         }
     }
-
+    private fun setBootAnimColors() {
+        try {
+            val bootColors: List<Color> = getBootColors()
+            for(i in 0..bootColors.size - 1) {
+                val color: Int = bootColors[i].convert<Srgb>().toRgb8()
+                SystemProperties.set("persist.bootanim.color${i + 1}", color.toString())
+                Log.d("ThemeOverlayController", "Writing boot animation colors $i: $color")
+            }
+        } catch(e: RuntimeException) {
+            Log.w("ThemeOverlayController", "Cannot set sysprop. Look for 'init' and 'dmesg' logs for more info.")
+        }
+    }
+    private fun getBootColors(): List<Color> {
+         // The four colors here are chosen based on a figma spec of POSP bootanim
+         // If you plan on having your own custom animation you potentially want to change these colors
+         return listOf(
+             colorScheme.accent1[400]!!,
+             colorScheme.accent1[200]!!,
+             colorScheme.accent1[700]!!,
+             colorScheme.accent2[900]!!,
+         )
+    }
     companion object {
         private const val TAG = "CustomThemeOverlayController"
-
         private const val PREF_PREFIX = "monet_engine"
         private const val PREF_CUSTOM_COLOR = "${PREF_PREFIX}_custom_color"
         private const val PREF_COLOR_OVERRIDE = "${PREF_PREFIX}_color_override"
@@ -196,7 +203,6 @@ class CustomThemeOverlayController @Inject constructor(
         private const val PREF_ACCURATE_SHADES = "${PREF_PREFIX}_accurate_shades"
         private const val PREF_LINEAR_LIGHTNESS = "${PREF_PREFIX}_linear_lightness"
         private const val PREF_WHITE_LUMINANCE = "${PREF_PREFIX}_white_luminance_user"
-
         private const val WHITE_LUMINANCE_MIN = 1.0
         private const val WHITE_LUMINANCE_MAX = 10000.0
         private const val WHITE_LUMINANCE_USER_MAX = 1000
@@ -209,10 +215,8 @@ class CustomThemeOverlayController @Inject constructor(
             return (10.0).pow(userInv * log10(WHITE_LUMINANCE_MAX))
                     .coerceAtLeast(WHITE_LUMINANCE_MIN)
         }
-
         private fun FabricatedOverlay.Builder.setColor(name: String, @ColorInt color: Int) =
             setResourceValue("android:color/$name", TypedValue.TYPE_INT_COLOR_ARGB8, color)
-
         private fun FabricatedOverlay.Builder.setColor(name: String, color: Color): FabricatedOverlay.Builder {
             val rgb = color.convert<Srgb>().toRgb8()
             val argb = rgb or (0xff shl 24)
