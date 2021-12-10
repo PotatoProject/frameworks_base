@@ -47,7 +47,7 @@ public class PixelPropsUtils {
         propsToChange.put("MANUFACTURER", "Google");
         propsToChange.put("DEVICE", "redfin");
         propsToChange.put("PRODUCT", "redfin");
-        propsToChange.put("MODEL", "Pixel 5");
+        propsToChange.put("MODEL", "Pixel 5" + " ");
     }
 
     public static void setProps(String packageName) {
