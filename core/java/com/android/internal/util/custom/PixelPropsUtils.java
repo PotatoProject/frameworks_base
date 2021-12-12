@@ -42,12 +42,13 @@ public class PixelPropsUtils {
     static {
         propsToKeep = new HashMap<>();
         propsToKeep.put("com.google.android.settings.intelligence", new ArrayList<String>(Arrays.asList("FINGERPRINT")));
+        propsToKeep.put("com.google.android.gms", new ArrayList<String>(Arrays.asList("MODEL")));
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
         propsToChange.put("MANUFACTURER", "Google");
         propsToChange.put("DEVICE", "redfin");
         propsToChange.put("PRODUCT", "redfin");
-        propsToChange.put("MODEL", "Pixel 5" + " ");
+        propsToChange.put("MODEL", "Pixel 5");
     }
 
     public static void setProps(String packageName) {
@@ -55,6 +56,7 @@ public class PixelPropsUtils {
             return;
         }
         if (packageName.equals(PACKAGE_GMS)) {
+            setPropValue("MODEL", "Pixel 5" + " ");
             sIsGms = true;
         }
         if (packageName.startsWith("com.google.") || Arrays.asList(extraPackagesToChange).contains(packageName)){
