@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4e734b6_973e36e8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000156
+      },
+      "writtenOn": "2021-12-27T10:02:54Z",
+      "side": 1,
+      "message": "Tested on davinci (mi9t), udfps works without problem",
+      "revId": "31bb521a14c08dd6f93c57d070ac93b35446f1c7",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554"
+    }
+  ]
+}
