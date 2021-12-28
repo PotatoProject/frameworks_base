@@ -7,6 +7,9 @@ import com.android.systemui.dagger.SystemUIBinder;
 import com.android.systemui.dagger.SysUIComponent;
 import com.android.systemui.dagger.SystemUIModule;
 
+import com.posp.android.systemui.keyguard.KeyguardSliceProviderPosp;
+import com.posp.android.systemui.smartspace.KeyguardSmartspaceController;
+
 import dagger.Subcomponent;
 
 @SysUISingleton
@@ -22,4 +25,12 @@ public interface SysUIComponentPosp extends SysUIComponent {
     interface Builder extends SysUIComponent.Builder {
         SysUIComponentPosp build();
     }
+
+    /**
+     * Member injection into the supplied argument.
+     */
+    void inject(KeyguardSliceProviderPosp keyguardSliceProviderPosp);
+
+    @SysUISingleton
+    KeyguardSmartspaceController createKeyguardSmartspaceController();
 }
