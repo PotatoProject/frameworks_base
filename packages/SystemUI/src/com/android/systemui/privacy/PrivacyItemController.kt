@@ -110,7 +110,7 @@ class PrivacyItemController @Inject constructor(
     }
 
     var micCameraAvailable = isMicCameraEnabled()
-        private set
+
     var locationAvailable = isLocationEnabled()
 
     var allIndicatorsAvailable = micCameraAvailable && locationAvailable
@@ -127,12 +127,14 @@ class PrivacyItemController @Inject constructor(
                     micCameraAvailable = properties.getBoolean(MIC_CAMERA, DEFAULT_MIC_CAMERA)
                     allIndicatorsAvailable = micCameraAvailable && locationAvailable
                     callbacks.forEach { it.get()?.onFlagMicCameraChanged(micCameraAvailable) }
+                    update(false)
                 }
 
                 if (properties.keyset.contains(LOCATION)) {
                     locationAvailable = properties.getBoolean(LOCATION, DEFAULT_LOCATION)
                     allIndicatorsAvailable = micCameraAvailable && locationAvailable
                     callbacks.forEach { it.get()?.onFlagLocationChanged(locationAvailable) }
+                    update(false)
                 }
                 internalUiExecutor.updateListeningState()
             }
