@@ -5235,6 +5235,15 @@ public final class Settings {
         public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
 
         /**
+         * Whether the torch launch gesture to long press the power button when the
+         * screen is off should be enabled. *
+         * 0: disabled
+         * 1: long tap power for torch
+         * @hide
+         */
+        public static final String TORCH_POWER_BUTTON_GESTURE = "torch_power_button_gesture";
+
+        /**
          * These are all public system settings
          *
          * @hide
