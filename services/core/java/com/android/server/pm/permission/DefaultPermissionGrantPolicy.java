@@ -863,6 +863,11 @@ final class DefaultPermissionGrantPolicy {
         grantSystemFixedPermissionsToSystemPackage(pm,
                 MidiManager.BLUETOOTH_MIDI_SERVICE_PACKAGE, userId,
                 NEARBY_DEVICES_PERMISSIONS);
+
+        // Fries
+        grantPermissionsToPackage(pm, "com.potatoproject.fries", userId,
+                false /* ignoreSystemPackage */, true /*whitelistRestrictedPermissions*/,
+                READ_EXTERNAL_STORAGE);
     }
 
     private String getDefaultSystemHandlerActivityPackageForCategory(PackageManagerWrapper pm,
