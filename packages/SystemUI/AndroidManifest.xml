@@ -841,9 +841,9 @@
         </provider>
 
         <provider android:name="com.posp.android.systemui.keyguard.KeyguardSliceProviderPosp"
-                  android:authorities="com.android.systemui.keyguard"
-                  android:grantUriPermissions="true"
-                  android:exported="true">
+            android:enabled="false"
+            android:exported="true"
+            android:authorities="com.android.systemui.keyguard">
         </provider>
 
         <!-- Provides list and realistic previews of clock faces for the picker app. -->
