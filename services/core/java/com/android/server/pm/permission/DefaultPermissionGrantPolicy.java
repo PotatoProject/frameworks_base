@@ -926,6 +926,11 @@ final class DefaultPermissionGrantPolicy {
                 MidiManager.BLUETOOTH_MIDI_SERVICE_PACKAGE, userId,
                 NEARBY_DEVICES_PERMISSIONS);
 
+        // Fries
+        grantSystemFixedPermissionsToSystemPackage(pm,
+                "com.potatoproject.fries", userId,
+                STORAGE_PERMISSIONS);
+
         // Ad Service
         String commonServiceAction = "android.adservices.AD_SERVICES_COMMON_SERVICE";
         grantPermissionsToSystemPackage(pm, getDefaultSystemHandlerServicePackage(pm,
