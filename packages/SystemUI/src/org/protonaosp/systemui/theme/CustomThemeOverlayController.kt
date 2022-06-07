@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.posp.android.systemui.theme
+package org.protonaosp.systemui.theme
 
 import android.annotation.ColorInt
 import android.app.WallpaperColors
@@ -34,7 +34,7 @@ import com.android.systemui.dagger.qualifiers.Main
 import com.android.systemui.dump.DumpManager
 import com.android.systemui.keyguard.WakefulnessLifecycle
 import com.android.systemui.settings.UserTracker
-import com.android.systemui.flags.FeatureFlags
+import com.android.systemui.statusbar.FeatureFlags
 import com.android.systemui.statusbar.policy.DeviceProvisionedController
 import com.android.systemui.theme.ThemeOverlayApplier
 import com.android.systemui.theme.ThemeOverlayController
@@ -56,7 +56,7 @@ import kotlin.math.log10
 import kotlin.math.pow
 
 @SysUISingleton
-class ThemeOverlayControllerPosp @Inject constructor(
+class CustomThemeOverlayController @Inject constructor(
     private val context: Context,
     broadcastDispatcher: BroadcastDispatcher,
     @Background bgHandler: Handler,
@@ -219,7 +219,7 @@ class ThemeOverlayControllerPosp @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "ThemeOverlayControllerPosp"
+        private const val TAG = "CustomThemeOverlayController"
 
         private const val PREF_PREFIX = "monet_engine"
         private const val PREF_CUSTOM_COLOR = "${PREF_PREFIX}_custom_color"
