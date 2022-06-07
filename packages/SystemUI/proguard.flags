@@ -58,7 +58,3 @@
 
 # Custom rules
 -keep class com.posp.** { *; }
-
-# Google rules
--keep class com.google.** { *; }
--keep class vendor.** { *; }
