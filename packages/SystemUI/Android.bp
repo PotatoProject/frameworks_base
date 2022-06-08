@@ -83,7 +83,6 @@ android_library {
     resource_dirs: [
         "res-product",
         "res-keyguard",
-        "res-smartspace",
         "res",
     ],
     static_libs: [
@@ -111,6 +110,7 @@ android_library {
         "androidx.dynamicanimation_dynamicanimation",
         "androidx-constraintlayout_constraintlayout",
         "androidx.exifinterface_exifinterface",
+        "bcsmartspace-res",
         "kotlinx_coroutines_android",
         "kotlinx_coroutines",
         "iconloader_base",
