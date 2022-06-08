@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59edb7c3_afd5ba9f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000156
+      },
+      "writtenOn": "2022-06-08T07:50:05Z",
+      "side": 1,
+      "message": "Works fine, no issues with smartspace",
+      "revId": "f72caebb32acd554ae190b7b464ea04b06a73a3d",
+      "serverId": "8720d348-3d66-43e6-b480-1d69039ac554"
+    }
+  ]
+}
