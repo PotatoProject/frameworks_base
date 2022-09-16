@@ -95,3 +95,5 @@
     # on every field access without this.
     static void throwUninitializedPropertyAccessException(java.lang.String);
 }
+
+-keep class com.potatoproject.** { *; }
