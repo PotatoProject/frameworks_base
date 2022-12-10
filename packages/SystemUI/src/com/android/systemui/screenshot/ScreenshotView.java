@@ -1033,6 +1033,7 @@ public class ScreenshotView extends FrameLayout implements
         // Clear any references to the bitmap
         mScreenshotPreview.setImageDrawable(null);
         mScreenshotPreview.setVisibility(View.INVISIBLE);
+        mScreenshotPreview.setAlpha(1f);
         mScreenshotPreviewBorder.setAlpha(0);
         mPendingSharedTransition = false;
         mActionsContainerBackground.setVisibility(View.GONE);
