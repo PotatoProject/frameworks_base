@@ -416,6 +416,7 @@ public final class NotificationPanelViewController extends PanelViewController {
     private int mDisplayRightInset = 0; // in pixels
     private int mLargeScreenShadeHeaderHeight;
     private int mSplitShadeNotificationsScrimMarginBottom;
+    private int mQsTopMargin;
 
     private final KeyguardClockPositionAlgorithm
             mClockPositionAlgorithm =
@@ -635,6 +636,7 @@ public final class NotificationPanelViewController extends PanelViewController {
     private int mScreenCornerRadius;
     private boolean mQSAnimatingHiddenFromCollapsed;
     private boolean mUseLargeScreenShadeHeader;
+    private boolean mUseCombinedQSHeaders;
 
     private int mQsClipTop;
     private int mQsClipBottom;
@@ -1131,6 +1133,7 @@ public final class NotificationPanelViewController extends PanelViewController {
 
         mUseLargeScreenShadeHeader =
                 LargeScreenUtils.shouldUseLargeScreenShadeHeader(mView.getResources());
+        mUseCombinedQSHeaders = mFeatureFlags.isEnabled(Flags.COMBINED_QS_HEADERS);
 
         mLargeScreenShadeHeaderHeight =
                 mResources.getDimensionPixelSize(R.dimen.large_screen_shade_header_height);
@@ -1138,6 +1141,9 @@ public final class NotificationPanelViewController extends PanelViewController {
                 SystemBarUtils.getQuickQsOffsetHeight(mView.getContext());
         int topMargin = mUseLargeScreenShadeHeader ? mLargeScreenShadeHeaderHeight :
                 mResources.getDimensionPixelSize(R.dimen.notification_panel_margin_top);
+        mQsTopMargin = (mUseLargeScreenShadeHeader || !mUseCombinedQSHeaders) ? topMargin
+                : SystemBarUtils.getQuickQsOffsetHeight(mView.getContext()) -
+                    SystemBarUtils.getStatusBarHeight(mView.getContext());
         mLargeScreenShadeHeaderController.setLargeScreenActive(mUseLargeScreenShadeHeader);
         mAmbientState.setStackTopMargin(topMargin);
         mNotificationsQSContainerController.updateResources();
@@ -2724,7 +2730,7 @@ public final class NotificationPanelViewController extends PanelViewController {
         return Math.max(mQuickQsHeaderHeight * mAmbientState.getExpansionFraction(),
                 mAmbientState.getStackY()
                         // need to adjust for extra margin introduced by large screen shade header
-                        + mAmbientState.getStackTopMargin() * mAmbientState.getExpansionFraction()
+                        + mQsTopMargin * mAmbientState.getExpansionFraction()
                         - mAmbientState.getScrollY());
     }
 
