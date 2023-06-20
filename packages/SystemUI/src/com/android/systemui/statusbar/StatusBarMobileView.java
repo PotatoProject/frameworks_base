@@ -59,8 +59,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
     private View mInoutContainer;
     private ImageView mIn;
     private ImageView mOut;
-    private ImageView mMobile, mMobileType, mMobileRoaming;
-    private View mMobileRoamingSpace;
+    private ImageView mMobile, mMobileType, mMobileHd;
+    private View mMobileHdSpace;
     @StatusBarIconView.VisibleState
     private int mVisibleState = STATE_HIDDEN;
     private DualToneHandler mDualToneHandler;
@@ -119,8 +119,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobileGroup = findViewById(R.id.mobile_group);
         mMobile = findViewById(R.id.mobile_signal);
         mMobileType = findViewById(R.id.mobile_type);
-        mMobileRoaming = findViewById(R.id.mobile_roaming);
-        mMobileRoamingSpace = findViewById(R.id.mobile_roaming_space);
+        mMobileHd = findViewById(R.id.mobile_hd);
+        mMobileHdSpace = findViewById(R.id.mobile_hd_space);
         mIn = findViewById(R.id.mobile_in);
         mOut = findViewById(R.id.mobile_out);
         mInoutContainer = findViewById(R.id.inout_container);
@@ -176,8 +176,8 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
             mMobileType.setVisibility(View.GONE);
         }
         mMobile.setVisibility(mState.showTriangle ? View.VISIBLE : View.GONE);
-        mMobileRoaming.setVisibility(mState.roaming ? View.VISIBLE : View.GONE);
-        mMobileRoamingSpace.setVisibility(mState.roaming ? View.VISIBLE : View.GONE);
+        mMobileHd.setVisibility(mState.showHd ? View.VISIBLE : View.GONE);
+        mMobileHdSpace.setVisibility(mState.showHd ? View.VISIBLE : View.GONE);
         mIn.setVisibility(mState.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(mState.activityOut ? View.VISIBLE : View.GONE);
         mInoutContainer.setVisibility((mState.activityIn || mState.activityOut)
@@ -208,14 +208,14 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         }
 
         mMobile.setVisibility(state.showTriangle ? View.VISIBLE : View.GONE);
-        mMobileRoaming.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
-        mMobileRoamingSpace.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
+        mMobileHd.setVisibility(state.showHd ? View.VISIBLE : View.GONE);
+        mMobileHdSpace.setVisibility(state.showHd ? View.VISIBLE : View.GONE);
         mIn.setVisibility(state.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(state.activityOut ? View.VISIBLE : View.GONE);
         mInoutContainer.setVisibility((state.activityIn || state.activityOut)
                 ? View.VISIBLE : View.GONE);
 
-        needsLayout |= state.roaming != mState.roaming
+        needsLayout |= state.showHd != mState.showHd
                 || state.activityIn != mState.activityIn
                 || state.activityOut != mState.activityOut
                 || state.showTriangle != mState.showTriangle;
@@ -233,7 +233,7 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mIn.setImageTintList(color);
         mOut.setImageTintList(color);
         mMobileType.setImageTintList(color);
-        mMobileRoaming.setImageTintList(color);
+        mMobileHd.setImageTintList(color);
         mDotView.setDecorColor(tint);
         mDotView.setIconColor(tint, false);
     }
@@ -254,7 +254,7 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mIn.setImageTintList(list);
         mOut.setImageTintList(list);
         mMobileType.setImageTintList(list);
-        mMobileRoaming.setImageTintList(list);
+        mMobileHd.setImageTintList(list);
         mDotView.setDecorColor(color);
     }
 
