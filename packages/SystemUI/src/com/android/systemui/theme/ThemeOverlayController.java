@@ -47,6 +47,7 @@ import android.database.ContentObserver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -738,6 +739,9 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             }
         }
 
+        // Set boot animation colors
+        setBootAnimationColors();
+
         // Compatibility with legacy themes, where full packages were defined, instead of just
         // colors.
         if (!categoryToPackage.containsKey(OVERLAY_CATEGORY_SYSTEM_PALETTE)
@@ -780,6 +784,30 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             mThemeManager.applyCurrentUserOverlays(categoryToPackage, null, currentUser,
                     managedProfiles);
         }
+    }
+
+    private void setBootAnimationColors() {
+        try {
+            int[] bootColors = getBootColors();
+            for (int i = 0; i < bootColors.length; i++) {
+                int color = bootColors[i];
+                SystemProperties.set("persist.bootanim.color" + (i + 1), Integer.toString(color));
+                Log.d("ThemeOverlayController", "Writing boot animation colors " + i + ": " + color);
+            }
+        } catch (RuntimeException e) {
+            Log.w("ThemeOverlayController", "Cannot set sysprop. Look for 'init' and 'dmesg' logs for more info.");
+        }
+    }
+
+    private int[] getBootColors() {
+        // The four colors here are chosen based on a figma spec of POSP bootanim
+        // If you plan on having your own custom animation you potentially want to change these colors
+        return new int[] {
+            mContext.getColor(android.R.color.system_accent1_400),
+            mContext.getColor(android.R.color.system_accent1_200),
+            mContext.getColor(android.R.color.system_accent1_700),
+            mContext.getColor(android.R.color.system_accent2_900)
+        };
     }
 
     private Style fetchThemeStyleFromSetting() {
